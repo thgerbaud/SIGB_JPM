@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>API Google Books</title>
+    <meta name="description" content="Prise en main de l'API Google Books">
+</head>
+
+<body>
+    <h1>Entrez un numéro ISBN</h1>
+    <input type="number" id="ISBNInput">
+    <button id="searchButton">Chercher</button>
+    <h1>Résultat :</h1>
+    <section id="results"></section>
+
+</body>
+
+<script>
+
+    let ISBNInput;
+    let searchButton;
+    let results;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ISBNInput = document.getElementById("ISBNInput");
+        searchButton = document.getElementById("searchButton");
+        results = document.getElementById("results");
+        searchButton.addEventListener("click", askGoogleApi);
+    });
+
+    function askGoogleApi() {
+        const isbn = ISBNInput.value;
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`,{
+            method: "GET"
+        }).then(response => {
+            if(!response.ok){
+                return null
+            }else{
+                return response.json();
+            }
+        }).then(datas => {
+            if(datas == null || datas.totalItems<1){
+                displayError();
+            }else{
+                console.log(datas);
+                displayInfos(datas);
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    function displayInfos(datas) {
+        const infos = datas.items[0].volumeInfo;
+        const id = datas.items[0].id;
+        const title = infos.title;
+        const authors = infos.authors;
+        const publication = new Date(infos.publishedDate);
+        const description = infos.description;
+        const codes = infos.industryIdentifiers.map(element => `${element.type} : ${element.identifier}`);
+
+        results.innerHTML = `
+            <h3>${title}</h3>
+            <img src=https://books.google.com/books/content?id=${id}&printsec=frontcover&img=1&zoom=1&source=gbs_api>
+            <h4>Auteur(s) :</h4>
+            <ul>
+            <li>${authors.join("</li><li>")}</li>
+            </ul>
+            <h4>Date de publication :</h4>
+            ${publication.toDateString()}
+            <h4>Identifiants :</h4>
+            <ul>
+            <li>${codes.join("</li><li>")}</li>
+            </ul>
+            <h4>Description :</h4>
+            ${description} 
+        `;
+    }
+
+    function displayError() {
+        results.innerHTML = "<i>Aucun résultat trouvé</i>"
+    }
+
+</script>
+
+</html>
