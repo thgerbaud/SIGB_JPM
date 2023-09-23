@@ -1,16 +1,19 @@
 module.exports = mongoose => {
-    const Tutorial = mongoose.model(
-      "book",
-      mongoose.Schema(
-        {
-          title: String,
-          id: Number,
-          author: String,
-          description: String,
-        },
-        { timestamps: true }
-      )
-    );
-  
-    return Tutorial;
-  };
+	const Book = mongoose.model(
+		"book",
+		mongoose.Schema(
+			{
+				isbn: String,
+				title: String,
+				author: [String],
+				code: String,
+				description: String,
+				image: String,
+				publication: String,
+				location: String
+			}
+		)
+	);
+
+	return Book;
+};

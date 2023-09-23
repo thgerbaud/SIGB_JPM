@@ -1,3 +1,3 @@
 module.exports = {
-    url: "mongodb://localhost:27017/sigb_db"
-};
+    url: "mongodb+srv://boisgomin:nk5wd7DPQdnLfLOj@cluster0.thhic6a.mongodb.net/?retryWrites=true&w=majority"
+}

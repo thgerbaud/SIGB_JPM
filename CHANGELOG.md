@@ -10,3 +10,9 @@ Champs à rajouter par le bibliothéquaire :
 * code propre
 * localisation
 * nombre d'exemplaires
+
+TODO : 
+* changer author -> authors
+* styles
+* prévisualisation ?
+* cas aucun résultat
