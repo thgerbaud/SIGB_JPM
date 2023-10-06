@@ -1,32 +1,28 @@
 import http from "../http-common";
 
 class BookDataService {
-	async getAll() {
-		return http.get("/books");
+	async getAll(library) {
+		return http.get(`/books/${library}/`);
 	}
 
-	get(id) {
-		return http.get(`/books/${id}`);
+	get(library, id) {
+		return http.get(`/books/${library}/${id}`);
 	}
 
-	create(data) {
-		return http.post("/books", data);
+	create(library, data) {
+		return http.post(`/books/${library}/`, data);
 	}
 
-	update(id, data) {
-		return http.put(`/books/${id}`, data);
+	update(library, id, data) {
+		return http.put(`/books/${library}/${id}`, data);
 	}
 
-	delete(id) {
-		return http.delete(`/books/${id}`);
+	delete(library, id) {
+		return http.delete(`/books/${library}/${id}`);
 	}
 
-	deleteAll() {
-		return http.delete(`/books`);
-	}
-
-	findByTitle(title) {
-		return http.get(`/books?title=${title}`);
+	deleteAll(library) {
+		return http.delete(`/books/${library}/`);
 	}
 
 

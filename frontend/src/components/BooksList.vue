@@ -22,11 +22,14 @@
 					:key="index" @click="setActiveBook(book, index)">
 					{{ book.title }}
 				</li>
-			</ul>
+				<router-link :to="`/${library}/books/add`" class="nav-link">+ ajouter un livre</router-link>
 
+			</ul>
+			<!--
 			<button class="m-3 btn btn-sm btn-danger" @click="removeAllBooks">
-				Remove All
+				Tout supprimer
 			</button>
+		-->
 		</div>
 		<div class="col-md-6">
 			<div v-if="currentBook">
@@ -54,14 +57,15 @@
 					<label><strong>Location :</strong></label> {{ currentBook.location }}
 				</div>
 
-
+				<!---
 				<a class="badge badge-warning" :href="'/books/' + currentBook.id">
 					Edit
 				</a>
+			-->
 			</div>
 			<div v-else>
 				<br />
-				<p>Please click on a Book...</p>
+				<p>Cliquez sur un livre pour afficher les détails...</p>
 			</div>
 		</div>
 	</div>
@@ -74,6 +78,7 @@ export default {
 	name: "books-list",
 	data() {
 		return {
+			library: this.$route.params.library,
 			books: [],
 			currentBook: null,
 			currentIndex: -1,
@@ -82,10 +87,11 @@ export default {
 	},
 	methods: {
 		retrieveBooks() {
-			BookDataService.getAll()
+			BookDataService.getAll(this.library)
 				.then(response => {
-					this.books = response.data;
-					console.log(response.data);
+					console.log(response.data)
+					this.books = response.data.books;
+					console.log(this.books);
 				})
 				.catch(e => {
 					console.log(e);

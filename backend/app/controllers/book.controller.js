@@ -1,5 +1,6 @@
 const db = require("../models");
 const Book = db.books;
+const Library = db.library;
 
 // Create and Save a new Book
 exports.create = (req, res) => {
@@ -36,6 +37,24 @@ exports.create = (req, res) => {
 				publication: (new Date(infos.publishedDate)).toDateString()
 			});
 
+			const library = req.params.library;
+
+			Library.findOneAndUpdate(
+				{ '_id': library },
+				{ $push: { 'books': book } },
+				{ new: true }
+			)
+				.then(data => {
+					res.send(data);
+				})
+				.catch(err => {
+					res.status(500).send({
+						message:
+							err.message || "Some error occurred while creating the book."
+					});
+				});
+
+			/*
 			book
 				.save(book)
 				.then(data => {
@@ -47,7 +66,7 @@ exports.create = (req, res) => {
 							err.message || "Some error occurred while creating the book."
 					});
 				});
-
+				*/
 		}
 	}).catch(error => {
 		console.error(error);
@@ -57,9 +76,20 @@ exports.create = (req, res) => {
 
 // Retrieve all books from the database.
 exports.findAll = (req, res) => {
-	const isbn = req.query.isbn;
-	var condition = isbn ? { isbn: isbn } : {};
 
+	const library = req.params.library;
+
+	Library.findOne({ '_id': library })
+		.then(data => {
+			res.send(data);
+		})
+		.catch(err => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while retrieving books."
+			});
+		});
+	/*
 	Book.find(condition)
 		.then(books => {
 			res.send(books);
@@ -69,7 +99,7 @@ exports.findAll = (req, res) => {
 				message:
 					err.message || "Some error occurred while retrieving books."
 			});
-		});
+		});*/
 };
 
 // Find a single Book with an id
@@ -90,15 +120,15 @@ exports.delete = (req, res) => {
 // Delete all Book from the database.
 exports.deleteAll = (req, res) => {
 	Book.deleteMany({})
-	.then(() => {
-		res.send("Books deleted");
-	})
-	.catch(err => {
-		res.status(500).send({
-			message:
-				err.message || "Some error occurred while deleting books."
+		.then(() => {
+			res.send("Books deleted");
+		})
+		.catch(err => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while deleting books."
+			});
 		});
-	});
 };
 
 // Find all published Tutorials

@@ -36,12 +36,12 @@
           />
         </div>
   
-        <button @click="saveBook" class="btn btn-success">Submit</button>
+        <button @click="saveBook" class="btn btn-success">Ajouter</button>
       </div>
   
       <div v-else>
-        <h4>You submitted successfully!</h4>
-        <button class="btn btn-success" @click="newBook">Add</button>
+        <h4>Livre ajouté !</h4>
+        <router-link :to="`/${library}/books`" >Retour</router-link>
       </div>
     </div>
   </template>
@@ -53,6 +53,7 @@
     name: "add-book",
     data() {
       return {
+        library: this.$route.params.library,
         book: {
           isbn: null,
           code: "",
@@ -69,7 +70,7 @@
           location: this.book.location
         };
   
-        BookDataService.create(data)
+        BookDataService.create(this.library, data)
           .then(response => {
             this.book.id = response.data.id;
             console.log(response.data);
