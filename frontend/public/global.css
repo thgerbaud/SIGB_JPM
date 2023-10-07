@@ -14,7 +14,13 @@ body {
 main {
     padding: 1rem;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-size: 2.5rem;
 }
 
 button, input {
@@ -32,6 +38,27 @@ button {
 
 button:hover {
     background-color: #3a3a3a;
+}
+
+.secondary {
+    background: none;
+    color: black;
+}
+
+.secondary:hover {
+    color: white;
+    background-color: black;
+}
+
+.tertiary {
+    color: black;
+    border: none;
+    background: none;
+    text-decoration: underline;
+}
+
+.tertiary:hover {
+    background: none;
 }
 
 .btn-cancel {
