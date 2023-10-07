@@ -13,6 +13,8 @@ body {
 
 main {
     padding: 1rem;
+    display: flex;
+    justify-content: center;
 }
 
 button, input {
