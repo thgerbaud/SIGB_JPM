@@ -25,7 +25,7 @@
 
     <div v-else>
       <h4>Livre ajouté !</h4>
-      <router-link :to="`/${library}/books`">Retour</router-link>
+      <button @click="cancel" class="tertiary">Retour</button>
     </div>
   </main>
 </template>

@@ -36,5 +36,6 @@ menu {
 
 .nav-link {
     color: white;
+    text-decoration: none;
 }
 </style>
