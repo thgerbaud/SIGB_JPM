@@ -22,7 +22,7 @@
 					:key="index" @click="setActiveBook(book, index)">
 					{{ book.title }}
 				</li>
-				<router-link :to="`/${library}/books/add`" class="nav-link">+ ajouter un livre</router-link>
+				<router-link :to="`/${library}/books/add`">+ ajouter un livre</router-link>
 
 			</ul>
 			<!--

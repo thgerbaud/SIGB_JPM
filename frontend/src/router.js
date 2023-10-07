@@ -8,34 +8,47 @@ export default new Router({
 	routes: [
 		{
 			path: "/",
-			name: "login",
-			component: () => import("./components/LoginForm")
+			name: "home",
+			component: () => import("./views/HomeView"),
+			children: [
+				{
+					path: "/",
+					name: "login",
+					component: () => import("./components/LoginForm")
+				},
+				{
+					path: ":user/libraries",
+					name: "libraries",
+					component: () => import("./components/LibrariesList")
+				},
+				{
+					path: ":user/create",
+					name: "create-library",
+					component: () => import("./components/CreateLibrary")
+				}
+			]
 		},
 		{
-			path: "/:user/libraries",
-			name: "libraries",
-			component: () => import("./components/LibrariesList")
-		},
-		{
-			path: "/:user/create",
-			name: "create-library",
-			component: () => import("./components/CreateLibrary")
-		},
-		{
-			path: "/:library/books",
-			name: "books",
-			component: () => import("./components/BooksList")
-		},
-		{
-			path: "/:library/books/add",
-			name: "add",
-			component: () => import("./components/AddBook")
-		},
-		{
-			path: "/:library/books/:id",
-			name: "books-details",
-			component: () => import("./components/BookItem")
+			path: "/:library",
+			name: "library",
+			component: () => import("./views/LibraryView"),
+			children: [
+				{
+					path: "books",
+					name: "books",
+					component: () => import("./components/BooksList")
+				},
+				{
+					path: "books/add",
+					name: "add",
+					component: () => import("./components/AddBook")
+				},
+				{
+					path: "books/:id",
+					name: "books-details",
+					component: () => import("./components/BookItem")
+				}
+			]
 		}
-		
 	]
 });
