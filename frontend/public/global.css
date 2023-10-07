@@ -14,3 +14,30 @@ body {
 main {
     padding: 1rem;
 }
+
+button, input {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+button {
+    cursor: pointer;
+    border: 3px solid black;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #3a3a3a;
+}
+
+.btn-cancel {
+    color: red;
+    border: 3px solid red;
+    background: none;
+}
+
+.btn-cancel:hover {
+    background-color: rgb(255, 200, 200)
+}
