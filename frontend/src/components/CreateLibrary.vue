@@ -1,21 +1,27 @@
 <template>
-	<div>
-
+	<main class="submit-form">
+		
 		<div v-if="!submitted">
-			<h1>Créer une nouvelle bibliothèque</h1>
-			<label for="name">Nom :</label>
-			<input type="text" id="name" required v-model="library.name" name="name" />
-			<button @click="saveLibrary">Ajouter</button>
-			<router-link :to="'/'+user+'/libraries'">Annuler</router-link>
+			<h2>Créer une nouvelle bibliothèque</h2>
+
+			<div class="form-group">
+				<label for="name">Nom</label>
+				<input type="text" id="name" required v-model="library.name" name="name" placeholder="Nom de la bibliothèque"/>
+			</div>
+
+			<menu id="form-menu">
+				<button @click="returnHome" class="btn-cancel">Annuler</button>
+				<button @click="saveLibrary">Ajouter</button>
+			</menu>
 		</div>
 
 		<div v-else>
-			bibliothèque créée !
-			<router-link :to="'/'+user+'/libraries'">Y aller</router-link>
-			<router-link :to="'/'+user+'/libraries'">Revenir à l'accueil</router-link>
+			<h2>Bibliothèque créée !</h2>
+			<button @click="goToLibrary">Y aller</button>
+			<button @click="returnHome" class="secondary">Revenir aux bibliothèques</button>
 		</div>
 
-	</div>
+	</main>
 </template>
 
 <script>
@@ -50,6 +56,12 @@ export default {
 				.catch(e => {
 					console.log(e);
 				});
+		},
+		returnHome() {
+			this.$router.push(`/${this.user}/libraries/`);
+		},
+		goToLibrary() {
+			this.$router.push(`/${this.library.id}/books`);
 		}
 	}
 };

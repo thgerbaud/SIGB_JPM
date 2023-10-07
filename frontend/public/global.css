@@ -19,11 +19,17 @@ main {
     align-items: center;
 }
 
+menu {
+    margin: 0;
+    padding: 0;
+}
+
 h1 {
     font-size: 2.5rem;
 }
 
-button, input {
+button,
+input {
     font-size: 1rem;
     padding: 0.5rem 1rem;
 }
@@ -68,5 +74,37 @@ button:hover {
 }
 
 .btn-cancel:hover {
-    background-color: rgb(255, 200, 200)
+    background-color: red;
+    color: white;
+}
+
+.submit-form {
+    max-width: 300px;
+    margin: auto;
+}
+
+.submit-form>div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-control {
+    font-size: 1rem;
+}
+
+#form-menu {
+    display: flex;
+    gap: 1rem;
+}
+
+#form-menu button {
+    flex-grow: 1;
+    font-size: 1rem;
 }

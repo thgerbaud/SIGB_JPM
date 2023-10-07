@@ -17,7 +17,7 @@
         <input class="form-control" id="location" required v-model="book.location" name="location" placeholder="Localisation du livre"/>
       </div>
 
-      <menu id="add-book-menu">
+      <menu id="form-menu">
         <button @click="cancel" class="btn btn-cancel">Annuler</button>
         <button @click="saveBook" class="btn btn-success">Ajouter</button>
       </menu>
@@ -78,34 +78,4 @@ export default {
 </script>
   
 <style>
-.submit-form {
-  max-width: 300px;
-  margin: auto;
-}
-
-.submit-form > div {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-control {
-  font-size: 1rem;
-}
-
-#add-book-menu {
-  display: flex;
-  gap: 1rem;
-}
-
-#add-book-menu button {
-  flex-grow: 1;
-  font-size: 1rem;
-}
 </style>

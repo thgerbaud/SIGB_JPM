@@ -5,7 +5,8 @@
 			<h1>Mes bibliothèques :</h1>
 			<div v-if="libraries.length == 0">Aucune bibliothèque pour le moment</div>
 			<div v-else id="libraries-list">
-				<router-link v-for="(library, index) in libraries" :key="index" class="library-item" :to="`/${library._id}/books`">
+				<router-link v-for="(library, index) in libraries" :key="index" class="library-item"
+					:to="`/${library._id}/books`">
 					<div class="library-name">{{ library.name }}</div>
 					<div>></div>
 				</router-link>
@@ -14,10 +15,10 @@
 					<router-link :to="`/${library._id}/books`">{{ library.name }}</router-link>
 				</div>
 			-->
-				<router-link :to="`/${user}/create`" id="create-library-section">
-					<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
-				</router-link>
 			</div>
+			<router-link :to="`/${user}/create`" id="create-library-section">
+				<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
+			</router-link>
 		</section>
 		<router-link to="/">
 			<button class="tertiary">Déconnexion</button>
@@ -100,6 +101,7 @@ export default {
 }
 
 #create-library-section {
+	margin-top: 1rem;
 	display: flex;
 	text-decoration: none;
 }
