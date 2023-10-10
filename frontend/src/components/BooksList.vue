@@ -1,5 +1,5 @@
 <template>
-	<div class="list row">
+	<main>
 		<!--
 			<div class="col-md-8">
 				<div class="input-group mb-3">
@@ -16,20 +16,30 @@
 			</div>
 		-->
 		<div class="col-md-6">
-			<h4>Ma bibliothèque</h4>
+			<h1>Ma bibliothèque</h1>
+			<section id="books-list">
+				<router-link v-for="(book, index) in books" :key="index" :to="`/`">
+					<div class="book-preview">
+						<img :src="book.image" alt="couverture" class="book-cover">
+						<legend class="book-title">
+							{{ book.title }}
+						</legend>
+						<legend class="book-authors">
+							{{ book.author.join(" ") }}
+						</legend>
+					</div>
+				</router-link>
+			</section>
+			<!--
 			<ul class="list-group">
 				<li class="list-group-item" :class="{ active: index == currentIndex }" v-for="(book, index) in books"
 					:key="index" @click="setActiveBook(book, index)">
 					{{ book.title }}
 				</li>
-				<router-link :to="`/${library}/books/add`">+ ajouter un livre</router-link>
-
 			</ul>
-			<!--
-			<button class="m-3 btn btn-sm btn-danger" @click="removeAllBooks">
-				Tout supprimer
-			</button>
 		-->
+			<button id="add-book" @click="addBook">+ ajouter un livre</button>
+
 		</div>
 		<div class="col-md-6">
 			<div v-if="currentBook">
@@ -54,7 +64,7 @@
 					<label><strong>Code :</strong></label> {{ currentBook.code }}
 				</div>
 				<div>
-					<label><strong>Location :</strong></label> {{ currentBook.location }}
+					<label><strong>Localisation :</strong></label> {{ currentBook.location }}
 				</div>
 
 				<!---
@@ -68,7 +78,7 @@
 				<p>Cliquez sur un livre pour afficher les détails...</p>
 			</div>
 		</div>
-	</div>
+	</main>
 </template>
 	
 <script>
@@ -96,6 +106,10 @@ export default {
 				.catch(e => {
 					console.log(e);
 				});
+		},
+
+		addBook() {
+			this.$router.push(`/${this.library}/books/add`);
 		},
 
 		refreshList() {
@@ -138,9 +152,28 @@ export default {
 </script>
 	
 <style>
-.list {
-	text-align: left;
-	max-width: 750px;
-	margin: auto;
+#books-list {
+	display: flex;
+}
+
+#books-list .book-cover {
+	height: 200px;
+}
+
+#books-list .book-preview {
+	width: 200px;
+}
+
+.book-preview .book-title {
+	color: black;
+	font-weight: bold;
+}
+
+.book-preview .book-authors {
+	color: dimgray;
+}
+
+button#add-book {
+	margin-top: 1rem;
 }
 </style>

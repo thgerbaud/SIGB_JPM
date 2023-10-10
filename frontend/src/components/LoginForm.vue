@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main class="center-content">
         <div id="temp-login-form">
             <input id="user-input" type="text" placeholder="Nom d'utilisateur">
             <button @click="login">Se connecter</button>

@@ -1,9 +1,9 @@
 <template>
-	<main>
+	<main class="center-content">
 		<h2>Bienvenue, {{ user }}</h2>
 		<section id="libraries-view">
 			<h1>Mes bibliothèques :</h1>
-			<div v-if="libraries.length == 0">Aucune bibliothèque pour le moment</div>
+			<div v-if="libraries.length == 0"><i>Aucune bibliothèque pour le moment</i></div>
 			<div v-else id="libraries-list">
 				<router-link v-for="(library, index) in libraries" :key="index" class="library-item"
 					:to="`/${library._id}/books`">

@@ -12,7 +12,10 @@ body {
 }
 
 main {
-    padding: 1rem;
+    padding: 2rem;
+}
+
+.center-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -22,6 +25,10 @@ main {
 menu {
     margin: 0;
     padding: 0;
+}
+
+a {
+    text-decoration: none;
 }
 
 h1 {
