@@ -1,38 +1,52 @@
 <template>
-	<div v-if="currentBook" class="edit-form">
-		<h4>Book</h4>
-		<form>
-			<div class="form-group">
-				<label for="isbn">ISBN</label>
-				<input type="text" class="form-control" id="isbn" v-model="currentBook.isbn" />
-			</div>
-			<div class="form-group">
-				<label for="code">Code</label>
-				<input type="text" class="form-control" id="code" v-model="currentBook.code" />
-			</div>
-			<div class="form-group">
-				<label for="location">Location</label>
-				<input type="text" class="form-control" id="location" v-model="currentBook.location" />
-			</div>
+	<main>
+		<section v-if="book" class="edit-form">
+
+			<h3>{{ book.title }}</h3>
+
+			<img :src="book.image">
+			<h4>Auteur(s) :</h4>
+			{{ book.author.join(" ") }}
+			<h4>Date de publication :</h4>
+			{{ book.publication }}
+			<h4>ISBN :</h4>
+			{{ book.isbn }}
+			<h4>Description :</h4>
+			<p>{{ book.description }}</p>
+
+			<form>
+				<div class="form-group">
+					<label for="isbn">ISBN</label>
+					<input type="text" class="form-control" id="isbn" v-model="book.isbn" />
+				</div>
+				<div class="form-group">
+					<label for="code">Code</label>
+					<input type="text" class="form-control" id="code" v-model="book.code" />
+				</div>
+				<div class="form-group">
+					<label for="location">Location</label>
+					<input type="text" class="form-control" id="location" v-model="book.location" />
+				</div>
 
 
-		</form>
+			</form>
 
 
-		<button class="badge badge-danger mr-2" @click="deleteBook">
-			Delete
-		</button>
+			<button class="badge badge-danger mr-2" @click="deleteBook">
+				Delete
+			</button>
 
-		<button type="submit" class="badge badge-success" @click="updateBook">
-			Update
-		</button>
-		<p>{{ message }}</p>
-	</div>
+			<button type="submit" class="badge badge-success" @click="updateBook">
+				Update
+			</button>
+			<p>{{ message }}</p>
+		</section>
 
-	<div v-else>
-		<br />
-		<p>Please click on a Book...</p>
-	</div>
+		<section v-else>
+			<br />
+			<p>Please click on a Book...</p>
+		</section>
+	</main>
 </template>
   
 <script>
@@ -44,7 +58,7 @@ export default {
 		return {
 			id: this.$route.params.id,
 			library: this.$route.params.library,
-			currentBook: null,
+			book: null,
 			message: ''
 		};
 	},
@@ -52,9 +66,7 @@ export default {
 		getBook(library, id) {
 			BookDataService.get(library, id)
 				.then(response => {
-					console.log(response);
-					this.currentBook = response.data;
-					console.log(response.data);
+					this.book = response.data.books[0];
 				})
 				.catch(e => {
 					console.log(e);
@@ -62,7 +74,7 @@ export default {
 		},
 
 		updateBook() {
-			BookDataService.update(this.currentBook.id, this.currentBook)
+			BookDataService.update(this.book.id, this.book)
 				.then(response => {
 					console.log(response.data);
 					this.message = 'The book was updated successfully!';
@@ -73,7 +85,7 @@ export default {
 		},
 
 		deleteBook() {
-			BookDataService.delete(this.currentBook.id)
+			BookDataService.delete(this.book.id)
 				.then(response => {
 					console.log(response.data);
 					this.$router.push({ name: "book" });
@@ -89,9 +101,4 @@ export default {
 };
 </script>
   
-<style>
-.edit-form {
-	max-width: 300px;
-	margin: auto;
-}
-</style>
+<style></style>
