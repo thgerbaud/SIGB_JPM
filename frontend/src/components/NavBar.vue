@@ -1,7 +1,8 @@
 <template>
     <nav>
         <menu>
-            <router-link :to="`/${library}/books`" class="nav-link">Bibliothèque</router-link>
+            <router-link :to="`/${library._id}/books`" class="nav-link">{{ library.name }}</router-link>
+            <router-link to="/" class="nav-link">Bibliothèques</router-link>
             <router-link to="/" class="nav-link">Déconnexion</router-link>
         </menu>
     </nav>
@@ -11,10 +12,13 @@
 
 export default {
     name: "nav-bar",
+    props: ["library"],
     data() {
         return {
-            library: this.$route.params.library
         };
+    },
+    mounted() {
+        console.log(this.library);
     }
 }
 </script>

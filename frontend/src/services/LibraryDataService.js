@@ -5,8 +5,8 @@ class LibraryDataService {
 		return http.get(`/libraries/${user_id}`);
 	}
 
-	getLibrary(user_id, id) {
-		return http.get(`/libraries/${user_id}/${id}`);
+	getLibrary(id) {
+		return http.get(`/libraries/library/${id}`);
 	}
 
 	create(user_id, data) {

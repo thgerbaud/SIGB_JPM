@@ -1,6 +1,6 @@
 <template>
 	<div id="books-list">
-		<router-link v-for="(book, index) in books" :key="index" :to="`books/${book._id}`">
+		<router-link v-for="(book, index) in books" :key="index" :to="`/${library}/books/${book._id}`">
 			<BooksListItem :book="book"/>
 		</router-link>
 	</div>
@@ -12,7 +12,7 @@ import BooksListItem from './BooksListItem.vue';
 export default {
     name: "books-list",
 	components: { BooksListItem },
-    props: ["books"]
+    props: ["books", "library"]
 };
 </script>
 	

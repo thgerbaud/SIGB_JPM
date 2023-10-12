@@ -1,6 +1,6 @@
 <template>
 	<main>
-		<section class="edit-form">
+		<section v-if="book" class="edit-form">
 
 			<header>
 				<div id="header-infos">

@@ -17,7 +17,7 @@
 		-->
 		<section class="col-md-6">
 			<h1>Ma bibliothèque</h1>
-			<BooksList :books="books"/>
+			<BooksList :books="books" :library="library"/>
 			<button id="add-book-btn" @click="addBook">+ ajouter un livre</button>
 
 		</section>

@@ -1,8 +1,8 @@
 <template>
-    <div>
-        <NavBar/>
-        <router-view></router-view>
-    </div>
+	<div v-if="library">
+		<NavBar :library="library"/>
+		<router-view></router-view>
+	</div>
 </template>
 
 <script>
@@ -11,23 +11,29 @@ import NavBar from "../components/NavBar.vue";
 
 export default {
 	name: "library-view",
-    components: {NavBar},
+	components: { NavBar },
 	data() {
 		return {
-			library: this.$route.params.library
+			library: null
 		};
 	},
 	methods: {
 		retrieveLibrary() {
-			LibraryDataService.get() //TODO
+			LibraryDataService.getLibrary(this.$route.params.library)
+				.then(res => {
+					this.library = res.data;
+					console.log(this.library);
+				})
+				.catch(e => {
+					console.log(e);
+				});
 		}
 
 	},
 	mounted() {
-
+		this.retrieveLibrary();
 	}
 };
 </script>
 
-<style>
-</style>
+<style></style>

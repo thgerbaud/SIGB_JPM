@@ -31,13 +31,24 @@ exports.findAll = (req, res) => {
 		.catch(err => {
 			res.status(500).send({
 				message:
-					err.message || "Some error occurred while retrieving books."
+					err.message || "Some error occurred while retrieving libraries."
 			});
 		});
 }
 
 exports.findOne = (req, res) => {
+	const library = req.params.id;
 
+	Library.findOne({ '_id':library}, {'books':false})
+		.then(data => {
+			res.send(data);
+		})
+		.catch(err => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while retrieving library."
+			});
+		});
 }
 
 exports.update = (req, res) => {

@@ -11,7 +11,7 @@ module.exports = app => {
   
   
     // Retrieve a library
-    router.get("/:user_id/:id", library.findOne);
+    router.get("/library/:id", library.findOne);
   
     // Update a library with id
     router.put("/:user_id/:id", library.update);
