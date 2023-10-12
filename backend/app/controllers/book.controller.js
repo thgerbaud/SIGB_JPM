@@ -105,6 +105,26 @@ exports.findAll = (req, res) => {
 // Find a single Book with an id
 exports.findOne = (req, res) => {
 
+	const library = req.params.library;
+	const id = req.params.code;
+
+	Library.findOne({
+		$and: [
+			{'_id': library},
+			{'books._id': id}
+		]
+	}, {
+		_id: false,
+		'books.$': true
+	}).then(data => {
+		res.send(data);
+	})
+		.catch(err => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while retrieving books."
+			});
+		});
 };
 
 // Update a Book by the id in the request
