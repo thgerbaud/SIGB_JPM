@@ -1,5 +1,12 @@
 <template>
-    <router-view></router-view>
+    <router-view id="home-container"></router-view>
 </template>
 
-<style></style>
+<style>
+#home-container {
+    background-color: var(--primary);
+    /*background-image: url("../../public/img/library.jpg");*/
+    background-size: cover;
+    height: calc(100vh - 2rem);
+}
+</style>

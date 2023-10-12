@@ -1,9 +1,9 @@
 <template>
-    <main class="center-content">
-        <div id="temp-login-form">
+    <main>
+        <section id="temp-login-form" class="submit-form">
             <input id="user-input" type="text" placeholder="Nom d'utilisateur">
             <button @click="login">Se connecter</button>
-        </div>
+        </section>
     </main>
 </template>
 

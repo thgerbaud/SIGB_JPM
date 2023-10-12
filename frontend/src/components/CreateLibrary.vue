@@ -1,26 +1,29 @@
 <template>
-	<main class="submit-form">
-		
-		<div v-if="!submitted">
-			<h2>Créer une nouvelle bibliothèque</h2>
+	<main>
+		<section class="submit-form">
 
-			<div class="form-group">
-				<label for="name">Nom</label>
-				<input type="text" id="name" required v-model="library.name" name="name" placeholder="Nom de la bibliothèque"/>
+			<div v-if="!submitted">
+				<h2>Créer une nouvelle bibliothèque</h2>
+
+				<div class="form-group">
+					<label for="name">Nom</label>
+					<input type="text" id="name" required v-model="library.name" name="name"
+						placeholder="Nom de la bibliothèque" />
+				</div>
+
+				<menu id="form-menu">
+					<button @click="returnHome" class="btn-cancel">Annuler</button>
+					<button @click="saveLibrary">Ajouter</button>
+				</menu>
 			</div>
 
-			<menu id="form-menu">
-				<button @click="returnHome" class="btn-cancel">Annuler</button>
-				<button @click="saveLibrary">Ajouter</button>
-			</menu>
-		</div>
+			<div v-else>
+				<h2>Bibliothèque créée !</h2>
+				<button @click="goToLibrary">Y aller</button>
+				<button @click="returnHome" class="secondary">Revenir aux bibliothèques</button>
+			</div>
 
-		<div v-else>
-			<h2>Bibliothèque créée !</h2>
-			<button @click="goToLibrary">Y aller</button>
-			<button @click="returnHome" class="secondary">Revenir aux bibliothèques</button>
-		</div>
-
+		</section>
 	</main>
 </template>
 

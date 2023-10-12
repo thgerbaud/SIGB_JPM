@@ -12,7 +12,7 @@ export default new Router({
 			component: () => import("./views/HomeView"),
 			children: [
 				{
-					path: "/",
+					path: "",
 					name: "login",
 					component: () => import("./components/LoginForm")
 				},
@@ -36,7 +36,7 @@ export default new Router({
 				{
 					path: "books",
 					name: "books",
-					component: () => import("./components/BooksList")
+					component: () => import("./components/LibraryHome")
 				},
 				{
 					path: "books/add",

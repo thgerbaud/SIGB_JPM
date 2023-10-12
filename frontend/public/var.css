@@ -1,0 +1,25 @@
+:root {
+    font-size: 16px;
+    /* main colors */
+    --primary: #0c2c17;
+    --secondary: #a37e50;
+    --tertiary: #f0f0f0;
+    --black: #1b1c1e;
+    --white: #fefefe;
+    /* font colors */
+    --text-color: #1b1c1e;
+    --label-color: #2b2b2b;
+    --disabled-color: #b7b6bc;
+    /* small lengths */
+    --small1: 0.25rem;
+    --small2: 0.5rem;
+    --small3: 0.75rem;
+    /* medium lengths */
+    --medium1: 1rem;
+    --medium2: 1.25rem;
+    --medium3: 1.5rem;
+    /* large lenghts */
+    --large1: 2rem;
+    --large2: 3rem;
+    --large3: 4rem;
+}

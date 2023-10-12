@@ -5,7 +5,7 @@ class BookDataService {
 		return http.get(`/books/${library}/`);
 	}
 
-	get(library, id) {
+	async get(library, id) {
 		return http.get(`/books/${library}/${id}`);
 	}
 

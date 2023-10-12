@@ -1,28 +1,25 @@
 <template>
 	<main class="center-content">
-		<h2>Bienvenue, {{ user }}</h2>
-		<section id="libraries-view">
-			<h1>Mes bibliothèques :</h1>
-			<div v-if="libraries.length == 0"><i>Aucune bibliothèque pour le moment</i></div>
-			<div v-else id="libraries-list">
-				<router-link v-for="(library, index) in libraries" :key="index" class="library-item"
-					:to="`/${library._id}/books`">
-					<div class="library-name">{{ library.name }}</div>
-					<div>></div>
-				</router-link>
-				<!--
-				<div v-for="(library, index) in libraries" :key="index" class="library-item">
-					<router-link :to="`/${library._id}/books`">{{ library.name }}</router-link>
+		<section>
+			<h2 class="center-content">Bienvenue, {{ user }}</h2>
+			<div id="libraries-view">
+				<h1>Mes bibliothèques :</h1>
+				<div v-if="libraries.length == 0"><i>Aucune bibliothèque pour le moment</i></div>
+				<div v-else id="libraries-list">
+					<router-link v-for="(library, index) in libraries" :key="index" class="library-item"
+						:to="`/${library._id}/books`">
+						<div class="library-name">{{ library.name }}</div>
+						<div>></div>
+					</router-link>
 				</div>
-			-->
+				<router-link :to="`/${user}/create`" id="create-library-section">
+					<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
+				</router-link>
 			</div>
-			<router-link :to="`/${user}/create`" id="create-library-section">
-				<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
+			<router-link to="/" class="center-content">
+				<button class="tertiary">Déconnexion</button>
 			</router-link>
 		</section>
-		<router-link to="/">
-			<button class="tertiary">Déconnexion</button>
-		</router-link>
 	</main>
 </template>
 

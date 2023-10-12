@@ -23,7 +23,7 @@ export default {
 nav {
     position: sticky;
     top: 0;
-    background-color: black;
+    background-color: var(--primary);
     padding: 1rem;
 }
 
@@ -37,5 +37,6 @@ menu {
 .nav-link {
     color: white;
     text-decoration: none;
+    font-size: var(--medium2);
 }
 </style>
