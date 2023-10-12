@@ -1,19 +1,26 @@
 <template>
 	<main>
-		<section v-if="book" class="edit-form">
+		<section class="edit-form">
 
-			<h3>{{ book.title }}</h3>
+			<header>
+				<div id="header-infos">
+					<h1>{{ book.title }}</h1>
+					<legend id="authors">{{ book.author.join(" ") }}</legend>
+					<p id="description">{{ book.description }}</p>
+				</div>
+				<img id="cover-image" :src="book.image">
+			</header>
 
-			<img :src="book.image">
-			<h4>Auteur(s) :</h4>
-			{{ book.author.join(" ") }}
-			<h4>Date de publication :</h4>
-			{{ book.publication }}
-			<h4>ISBN :</h4>
-			{{ book.isbn }}
-			<h4>Description :</h4>
-			<p>{{ book.description }}</p>
 
+			<span class="label">Date de publication :</span> {{ book.publication }}
+			<br>
+			<span class="label">ISBN :</span> {{ book.isbn }}
+			<br>
+			<span class="label">Code :</span> {{ book.code }}
+			<br>
+			<span class="label">Localisation :</span> {{ book.location }}
+
+			<!--
 			<form>
 				<div class="form-group">
 					<label for="isbn">ISBN</label>
@@ -30,22 +37,19 @@
 
 
 			</form>
+		-->
+		</section>
 
-
-			<button class="badge badge-danger mr-2" @click="deleteBook">
-				Delete
+		<menu>
+			<button class="btn-cancel" @click="deleteBook">
+				Supprimer
 			</button>
 
 			<button type="submit" class="badge badge-success" @click="updateBook">
-				Update
+				Modifier
 			</button>
-			<p>{{ message }}</p>
-		</section>
+			</menu>
 
-		<section v-else>
-			<br />
-			<p>Please click on a Book...</p>
-		</section>
 	</main>
 </template>
   
@@ -101,4 +105,38 @@ export default {
 };
 </script>
   
-<style></style>
+<style scoped>
+header {
+	display: flex;
+	gap: 1rem;
+}
+
+h1 {
+	margin: 0;
+}
+
+#header-infos {
+	flex-grow: 1;
+}
+
+#authors {
+	font-size: var(--medium3);
+	color: var(--label-color);
+}
+
+#description {
+	text-align: justify;
+}
+
+#cover-image {
+	height: 300px;
+}
+
+.label {
+	font-weight: bold;
+}
+
+menu {
+	justify-content: right;
+}
+</style>

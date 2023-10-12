@@ -1,6 +1,6 @@
 <template>
 	<div id="books-list">
-		<router-link v-for="(book, index) in books" :key="index" :to="`${book._id}`">
+		<router-link v-for="(book, index) in books" :key="index" :to="`books/${book._id}`">
 			<BooksListItem :book="book"/>
 		</router-link>
 	</div>
