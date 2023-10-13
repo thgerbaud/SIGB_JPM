@@ -1,10 +1,10 @@
-import Vue from "vue";
-import Router from "vue-router";
+import { createWebHistory, createRouter, RouterView, RouterLink } from "vue-router";
 
-Vue.use(Router);
+RouterView.compatConfig = { MODE: 3 }
+RouterLink.compatConfig = { MODE: 3 }
 
-export default new Router({
-	mode: "history",
+export default createRouter({
+	history: createWebHistory(),
 	routes: [
 		{
 			path: "/",
