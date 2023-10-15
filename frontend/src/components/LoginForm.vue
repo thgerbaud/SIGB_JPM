@@ -1,14 +1,12 @@
 <template>
-    <main>
-        <section id="temp-login-form" class="submit-form">
-            <input id="user-input" type="text" placeholder="Nom d'utilisateur">
-            <button @click="login">Se connecter</button>
-        </section>
+    <main class="center-content">
+            <GoogleLogin :callback="callback" />
     </main>
 </template>
 
 <script>
 import router from '@/router';
+import { decodeCredential } from 'vue3-google-login'
 
 export default {
     name: "login-form",
@@ -17,6 +15,11 @@ export default {
             const user = document.getElementById("user-input").value;
             router.push({ path: `/${user}/libraries` });
             //TODO
+        },
+        callback(response) {
+            const userData = decodeCredential(response.credential);
+            console.log("Handle the userData", userData);
+            //router.push({ path: `/tgerbaud/libraries` })
         }
     }
 }
