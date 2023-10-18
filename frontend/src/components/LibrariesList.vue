@@ -1,7 +1,7 @@
 <template>
 	<main class="center-content">
 		<section>
-			<h2 class="center-content">Bienvenue, {{ user }}</h2>
+			<h2 class="center-content">Bienvenue, {{ user.name }}</h2>
 			<div id="libraries-view">
 				<h1>Mes bibliothèques :</h1>
 				<div v-if="libraries.length == 0"><i>Aucune bibliothèque pour le moment</i></div>
@@ -17,7 +17,7 @@
 				</router-link>
 			</div>
 			<router-link to="/" class="center-content">
-				<button class="tertiary">Déconnexion</button>
+				<button class="tertiary" @click="logout">Déconnexion</button>
 			</router-link>
 		</section>
 	</main>
@@ -31,12 +31,12 @@ export default {
 	data() {
 		return {
 			libraries: [],
-			user: this.$route.params.user
+			user: this.$store.state.user
 		};
 	},
 	methods: {
 		retrieveLibraries() {
-			LibraryDataService.getAll(this.user)
+			LibraryDataService.getAll(this.user.email)
 				.then(response => {
 					this.libraries = response.data;
 					console.log(response.data);
@@ -50,16 +50,12 @@ export default {
 			this.retrieveLibraries();
 		},
 
-		searchName() {
-			LibraryDataService.findByName(this.name)
-				.then(response => {
-					this.libraries = response.data;
-					console.log(response.data);
-				})
-				.catch(e => {
-					console.log(e);
-				});
-		}
+		logout() {
+            if(confirm("Se déconnecter ?")) {
+                this.$store.commit('logout');
+                this.$router.push('/');
+            }
+        }
 	},
 	mounted() {
 		this.retrieveLibraries();
