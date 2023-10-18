@@ -2,14 +2,14 @@
     <nav>
         <menu>
             <router-link :to="`/${library._id}/books`" class="nav-link">{{ library.name }}</router-link>
-            <router-link to="/home/libraries" class="nav-link">Bibliothèques</router-link>
         </menu>
         <div id="profile">
             <span id="profile-name">{{ user.name }}</span>
             <img id="profile-picture" :src="user.picture">
             <div v-if="toggle" id="profile-toggle">
-                <div id="email">{{ user.email }}</div>
-                <div id="logout" @click="logout">Déconnexion</div>
+                <div id="email" class="toggle-item">{{ user.email }}</div>
+                <div id="libraries" class="nav-link toggle-item" @click="exitLibrary">Mes bibliothèques</div>
+                <div id="logout" @click="logout" class="toggle-item">Déconnexion</div>
             </div>
         </div>
     </nav>
@@ -31,6 +31,11 @@ export default {
             if (confirm("Se déconnecter ?")) {
                 this.$store.commit('logout');
                 this.$router.push('/');
+            }
+        },
+        exitLibrary() {
+            if (confirm(`Quitter la bibliothèque ${this.library.name} ?`)) {
+                this.$router.push('/home/libraries');
             }
         },
         listener(e) {
@@ -92,27 +97,35 @@ menu,
 }
 
 #profile-toggle {
-    background-color: var(--secondary);
-    padding: 0.5rem 0rem;
+    background-color: var(--primary-light);
+    padding: 0;
     position: absolute;
     right: 0;
     top: 4rem;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: var(--medium1);
 }
 
-#profile-toggle>div {
-    padding: 0.5rem 1rem;
-    text-align: center;
-}
-
 #email {
-    color: var(--label-color);
     font-style: italic;
     cursor: text;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    background-color: var(--primary-light);
 }
 
-#logout:hover {
-    backdrop-filter: brightness(60%);
+#logout, #libraries {
+    padding: 1rem;
+    background-color: var(--primary);
+}
+
+#logout {
+    border-top: solid 1px var(--primary-light);
+    border-radius: 0 0 10px 10px;
+}
+
+#logout:hover, #libraries:hover {
+    color: var(--primary-light);
 }
 </style>
