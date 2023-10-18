@@ -4,7 +4,7 @@ module.exports = app => {
     var router = require("express").Router();
   
     // Create a new library
-    router.post("/:user_id", library.create);
+    router.post("/", library.create);
   
     // Retrieve all libraries of an user
     router.get("/:user_id", library.findAll);

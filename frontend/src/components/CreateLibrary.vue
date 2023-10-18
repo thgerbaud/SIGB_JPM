@@ -34,7 +34,7 @@ export default {
 	name: "create-library",
 	data() {
 		return {
-			user: this.$route.params.user,
+			user: this.$store.state.user,
 			library: {
 				name: "",
 				admin: []
@@ -46,13 +46,13 @@ export default {
 		saveLibrary() {
 			const data = {
 				name: this.library.name,
-				admin: [this.user],
+				admin: [this.user.email],
 				books: []
 			};
 
-			LibraryDataService.create(this.user, data)
+			LibraryDataService.create(data)
 				.then(response => {
-					this.library.id = response.data.id;
+					this.library.id = response.data._id;
 					console.log(response.data);
 					this.submitted = true;
 				})
@@ -61,12 +61,17 @@ export default {
 				});
 		},
 		returnHome() {
-			this.$router.push(`/${this.user}/libraries/`);
+			this.$router.push(`/home/libraries/`);
 		},
 		goToLibrary() {
 			this.$router.push(`/${this.library.id}/books`);
 		}
-	}
+	},
+	beforeCreate() {
+        if(!this.$store.getters.isLoggedIn) {
+            this.$router.push('/');
+        }
+    },
 };
 
 </script>

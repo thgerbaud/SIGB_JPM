@@ -1,6 +1,6 @@
 <template>
 	<main class="center-content">
-		<section>
+		<section v-if="user">
 			<h2 class="center-content">Bienvenue, {{ user.name }}</h2>
 			<div id="libraries-view">
 				<h1>Mes bibliothèques :</h1>
@@ -12,13 +12,16 @@
 						<div>></div>
 					</router-link>
 				</div>
-				<router-link :to="`/${user}/create`" id="create-library-section">
+				<router-link to="/home/create" id="create-library-section">
 					<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
 				</router-link>
 			</div>
 			<router-link to="/" class="center-content">
 				<button class="tertiary" @click="logout">Déconnexion</button>
 			</router-link>
+		</section>
+		<section v-else>
+			Seems your logged out...
 		</section>
 	</main>
 </template>
@@ -36,6 +39,9 @@ export default {
 	},
 	methods: {
 		retrieveLibraries() {
+			if (!this.$store.getters.isLoggedIn) {
+				return;
+			}
 			LibraryDataService.getAll(this.user.email)
 				.then(response => {
 					this.libraries = response.data;
@@ -51,13 +57,18 @@ export default {
 		},
 
 		logout() {
-            if(confirm("Se déconnecter ?")) {
-                this.$store.commit('logout');
-                this.$router.push('/');
-            }
-        }
+			if (confirm("Se déconnecter ?")) {
+				this.$store.commit('logout');
+				this.$router.push('/');
+			}
+		}
 	},
-	mounted() {
+	beforeCreate() {
+		if (!this.$store.getters.isLoggedIn) {
+			this.$router.push('/');
+		}
+	},
+	created() {
 		this.retrieveLibraries();
 	}
 };

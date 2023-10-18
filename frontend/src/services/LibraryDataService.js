@@ -9,8 +9,8 @@ class LibraryDataService {
 		return http.get(`/libraries/library/${id}`);
 	}
 
-	create(user_id, data) {
-		return http.post(`/libraries/${user_id}`, data);
+	create(data) {
+		return http.post(`/libraries`, data);
 	}
 
 	update(user_id, id, data) {

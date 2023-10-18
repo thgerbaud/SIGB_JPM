@@ -2,10 +2,10 @@
     <nav>
         <menu>
             <router-link :to="`/${library._id}/books`" class="nav-link">{{ library.name }}</router-link>
-            <router-link to="/" class="nav-link">Bibliothèques</router-link>
+            <router-link to="/home/libraries" class="nav-link">Bibliothèques</router-link>
         </menu>
         <div id="profile">
-            <span>{{ user.name }}</span>
+            <span id="profile-name">{{ user.name }}</span>
             <img id="profile-picture" :src="user.picture">
             <div v-if="toggle" id="profile-toggle">
                 <div id="email">{{ user.email }}</div>
@@ -32,17 +32,20 @@ export default {
                 this.$store.commit('logout');
                 this.$router.push('/');
             }
+        },
+        listener(e) {
+            if (document.getElementById('profile-name').contains(e.target)) {
+                this.toggle = !this.toggle;
+            } else if (this.toggle && !document.getElementById('profile-toggle').contains(e.target)) {
+                this.toggle = false;
+            }
         }
     },
     created() {
-        const self = this;
-        document.addEventListener('click', (e) => {
-            if (document.getElementById('profile').contains(e.target)) {
-                self.toggle = true;
-            } else {
-                self.toggle = false;
-            }
-        });
+        document.addEventListener('click', this.listener);
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this.listener);
     }
 }
 </script>

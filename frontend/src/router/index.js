@@ -1,28 +1,36 @@
-import { createWebHistory, createRouter, RouterView, RouterLink } from "vue-router";
+import { createMemoryHistory, createRouter, RouterView, RouterLink } from "vue-router";
 
 RouterView.compatConfig = { MODE: 3 }
 RouterLink.compatConfig = { MODE: 3 }
 
 export default createRouter({
-	history: createWebHistory(),
+	history: createMemoryHistory(),
 	routes: [
 		{
-			path: "/",
-			name: "home",
-			component: () => import("../views/HomeView"),
+			path: "/login",
+			alias: "/",
+			name: "login",
+			component: () => import("../views/LoginView"),
 			children: [
 				{
 					path: "",
 					name: "login",
 					component: () => import("../components/LoginForm")
-				},
+				}
+			]
+		},
+		{
+			path: "/home",
+			name: "home",
+			component: () => import("../views/HomeView"),
+			children: [
 				{
-					path: ":user/libraries",
+					path: "libraries",
 					name: "libraries",
 					component: () => import("../components/LibrariesList")
 				},
 				{
-					path: ":user/create",
+					path: "create",
 					name: "create-library",
 					component: () => import("../components/CreateLibrary")
 				}

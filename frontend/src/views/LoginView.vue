@@ -2,17 +2,7 @@
     <router-view id="home-container"></router-view>
 </template>
 
-<script>
-export default {
-    beforeCreate() {
-        if(!this.$store.getters.isLoggedIn) {
-            this.$router.push('/');
-        }
-    }
-}
-</script>
-
-<style scoped>
+<style>
 #home-container {
     background-color: var(--primary);
     /*background-image: url("../../public/img/library.jpg");*/
