@@ -1,34 +1,39 @@
 <template>
     <main class="center-content">
-            <GoogleLogin :callback="callback" />
+        <legend>Connectez-vous pour continuer</legend>
+        <GoogleLogin :callback="callback">
+            <button>Login</button>
+        </GoogleLogin>
     </main>
 </template>
 
 <script>
-import { decodeCredential } from 'vue3-google-login';
+import AuthService from "../services/AuthService";
 import { mapMutations } from "vuex";
 
 export default {
     name: "login-form",
     methods: {
         ...mapMutations(["setToken", "setUser"]),
-        callback(response) {
+        async callback(response) {
+            console.log("Handle the response", response.code);
+            AuthService.login(response.code)
+            .then(res => {
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+            /*
             const token = response.credential;
             const user = decodeCredential(token);
             this.setToken(token);
             this.setUser(user);
-            
-            this.$router.push(`/home/libraries`)
+
+            this.$router.push(`/home/libraries`);*/
         }
     }
 }
 </script>
 
-<style>
-#temp-login-form {
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-</style>
+<style></style>
