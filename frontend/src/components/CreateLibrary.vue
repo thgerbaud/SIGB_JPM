@@ -6,14 +6,14 @@
 				<h2>Créer une nouvelle bibliothèque</h2>
 
 				<div class="form-group">
-					<label for="name">Nom</label>
+					<label for="name">Choisissez un nom pour votre bibliothèque :</label>
 					<input type="text" id="name" required v-model="library.name" name="name"
 						placeholder="Nom de la bibliothèque" />
 				</div>
 
 				<menu id="form-menu">
 					<button @click="returnHome" class="btn-cancel">Annuler</button>
-					<button @click="saveLibrary">Ajouter</button>
+					<button @click="saveLibrary">Créer</button>
 				</menu>
 			</div>
 
@@ -75,3 +75,9 @@ export default {
 };
 
 </script>
+
+<style>
+section {
+    color: var(--white);
+}
+</style>

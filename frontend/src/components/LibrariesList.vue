@@ -1,7 +1,10 @@
 <template>
-	<main class="center-content">
+	<main>
 		<section v-if="user">
-			<h2 class="center-content">Bienvenue, {{ user.name }}</h2>
+			<div id="user-infos">
+				<img id="user-picture" :src="user.picture" alt="User picture">
+				<h2>Bienvenue, {{ user.name }}</h2>
+			</div>
 			<div id="libraries-view">
 				<h1>Mes bibliothèques :</h1>
 				<div v-if="libraries.length == 0"><i>Aucune bibliothèque pour le moment</i></div>
@@ -16,12 +19,12 @@
 					<button id="create-library-btn" class="secondary">+ créer une bibliothèque</button>
 				</router-link>
 			</div>
-			<router-link to="/" class="center-content">
+			<div class="center-content" id="logout-btn">
 				<button class="tertiary" @click="logout">Déconnexion</button>
-			</router-link>
+			</div>
 		</section>
 		<section v-else>
-			Seems your logged out...
+			Seems you're logged out...
 		</section>
 	</main>
 </template>
@@ -74,7 +77,23 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+section {
+    color: var(--white);
+}
+
+#user-infos {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 3rem;
+}
+
+#user-picture {
+	height: 4rem;
+	border-radius: 2rem;
+}
+
 #libraries-view {
 	min-width: 300px;
 }
@@ -83,21 +102,21 @@ export default {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	margin: 0 5rem;
 }
 
 .library-item {
-	font-size: 1.5rem;
-	padding: 0.5rem 1rem;
+	font-size: var(--medium3);
+	padding: 1rem 1.5rem;
 	border-radius: 5px;
-	background-color: rgba(228, 228, 228, 0.5);
-	border: 1px solid rgb(150, 150, 150);
-	color: black;
+	background-color: var(--primary-light);
+	color: white;
 	text-decoration: none;
 	display: flex;
 }
 
 .library-item:hover {
-	box-shadow: 0 2px 5px rgb(150, 150, 150);
+	opacity: 60%;
 }
 
 .library-name {
@@ -105,12 +124,18 @@ export default {
 }
 
 #create-library-section {
-	margin-top: 1rem;
+	margin: 1rem 5rem;
 	display: flex;
 	text-decoration: none;
 }
 
 #create-library-btn {
 	flex-grow: 1;
+    color: var(--white);
+	padding: 1rem 1.5rem;
+}
+
+#logout-btn {
+	margin-top: 3rem;
 }
 </style>
