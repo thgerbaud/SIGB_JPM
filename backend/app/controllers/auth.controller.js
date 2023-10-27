@@ -15,25 +15,21 @@ exports.login = async (req, res) => {
             })
         });
         const data = await response.json();
-        console.log(data);
-        //const accessToken = response.data.access_token;
-        //console.log('Access Token:', accessToken);
-        /*
+        const accessToken = data.access_token;
+
         // Fetch user details using the access token
-        const userResponse = await axios.get(
-            'https://www.googleapis.com/oauth2/v3/userinfo',
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
+        const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
-        );*/
-        //const userDetails = userResponse.data;
-        //console.log('User Details:', userDetails);
-        res.send("ok");
+        });
+        const userData = await userResponse.json();
+
+        res.status(200).send({accessToken: accessToken, userData: userData});
     } catch (error) {
         console.log(error);
-        res.send("error");
+        res.status(500).send("Failed to save code");
     }
 
 }
