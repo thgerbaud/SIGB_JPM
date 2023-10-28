@@ -1,7 +1,6 @@
 exports.login = async (req, res) => {
     try {
         const code = req.body.code;
-        console.log('Authorization Code:', code);
 
         // Exchange the authorization code for an access token
         const response = await fetch('https://oauth2.googleapis.com/token', {
