@@ -1,5 +1,5 @@
 :root {
-    font-size: 16px;
+    font-size: calc(16px);
     /* main colors */
     --primary: #091f11;
     --primary-light: #1d3e2b;

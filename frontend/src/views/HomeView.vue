@@ -4,19 +4,8 @@
 
 <script>
 export default {
-    beforeCreate() {
-        if(!this.$store.getters.isLoggedIn) {
-            this.$router.push('/');
-        }
+    created() {
+        document.body.id = 'dark';
     }
 }
 </script>
-
-<style scoped>
-#home-container {
-    background-color: var(--primary);
-    /*background-image: url("../../public/img/library.jpg");*/
-    background-size: cover;
-    height: calc(100vh - 2rem);
-}
-</style>

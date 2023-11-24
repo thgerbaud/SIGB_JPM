@@ -31,9 +31,8 @@ export default {
 
 	},
 	created() {
+		document.body.id = 'light';
 		this.retrieveLibrary();
 	}
 };
 </script>
-
-<style></style>

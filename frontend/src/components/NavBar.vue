@@ -5,7 +5,7 @@
         </menu>
         <div id="profile">
             <span id="profile-name">{{ user.name }}</span>
-            <img id="profile-picture" :src="user.picture">
+            <img id="profile-picture" :src="user.picture" referrerpolicy="no-referrer">
             <div v-if="toggle" id="profile-toggle">
                 <div id="email" class="toggle-item">{{ user.email }}</div>
                 <div id="libraries" class="nav-link toggle-item" @click="exitLibrary">Mes bibliothèques</div>
