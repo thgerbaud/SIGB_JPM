@@ -5,7 +5,9 @@ exports.create = (req, res) => {
 	const library = new Library({
 		name: req.body.name,
 		admin: req.body.admin,
-		books: req.body.books
+		books: req.body.books,
+		locations: req.body.locations,
+		categories: req.body.categories
 	});
 
 	library

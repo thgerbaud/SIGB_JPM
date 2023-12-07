@@ -48,6 +48,15 @@ menu {
     padding: 0;
 }
 
+.hidden {
+    display: none;
+}
+
+.empty-section {
+    font-style: italic;
+    color: var(--disabled-color);
+}
+
 a {
     text-decoration: none;
 }
@@ -61,6 +70,7 @@ button,
 input {
     font-size: 1rem;
     padding: 0.5rem 1rem;
+    margin: 0;
 }
 
 button {
@@ -77,7 +87,7 @@ button:hover {
 
 .secondary {
     background: none;
-    color: black;
+    color: var(--secondary);
 }
 
 .secondary:hover {
@@ -98,18 +108,24 @@ button:hover {
 }
 
 .btn-cancel {
-    color: red;
-    border: 3px solid red;
+    color: var(--red);
+    border: 3px solid var(--red);
     background: none;
 }
 
 .btn-cancel:hover {
-    background-color: red;
+    background-color: var(--red);
     color: white;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 80%;
 }
 
 .submit-form {
     margin: auto;
+    color: black;
 }
 
 .submit-form > div {

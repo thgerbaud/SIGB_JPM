@@ -7,7 +7,9 @@ module.exports = mongoose => {
 			{
 				name: String,
 				admin: [String],
-				books: [schemas.books]
+				books: [schemas.books],
+				locations: [String],
+				categories: [String] 
 			}
 		)
 	);
