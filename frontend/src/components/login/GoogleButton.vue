@@ -16,15 +16,15 @@ export default {
         async callback(response) {
             console.log("Handle the response", response.code);
             AuthService.login(response.code)
-                .then(res => {
-                    const token = res.data.accessToken;
-                    const user = res.data.userData;
+                .then(data => {
+                    const token = data.accessToken;
+                    const user = data.userData;
                     this.setToken(token);
                     this.setUser(user);
                     this.$router.push(`/home/libraries`);
                 })
                 .catch(err => {
-                    console.log(err);
+                    console.error(err);
                     alert("Something went wrong !");
                 });
         }

@@ -22,12 +22,23 @@ export default {
     },
     methods: {
         retrieveLibraries() {
-            LibraryDataService.getAll(this.user?.email)
+            LibraryDataService.getAll(this.$store.state.token)
                 .then(response => {
-                    this.libraries = response.data;
+                    if(response === undefined || response === null) {
+                        // TODO
+                    } else {
+                        this.libraries = response;
+                    }
                 })
-                .catch(e => {
-                    console.log(e);
+                .catch(err => {
+                    if (err.message.includes(401)) {
+                        alert("Votre session a expiré, veuillez vous reconnecter pour continuer !");
+                        this.$router.push('/login');
+                    } else if (err.message.includes(500)) {
+                        alert("Oups! Une erreur s'est produite du côté du serveur...");
+                    } else {
+                        alert("Oups! Une erreur inattendue s'est produite...");
+                    }
                 });
         }
     },

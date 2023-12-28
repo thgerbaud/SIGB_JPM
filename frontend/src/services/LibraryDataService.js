@@ -1,29 +1,63 @@
-import http from "../http-common";
+import store from "@/store";
+
+const BASE_URL = process.env.VUE_APP_BASE_URL_API + "libraries/";
+const HEADERS = {
+	"Authorization": store.getters.getToken,
+	"Content-type": "application/json"
+}
 
 class LibraryDataService {
-	async getAll(user_id) {
-		return http.get(`/libraries/${user_id}`);
+	async getAll() {
+		const libraries = await fetch(BASE_URL, {
+			method: 'GET',
+			headers: HEADERS
+		}).then(res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//401 invalid credentials
+				//500 internal error
+				throw new Error(res.status.toString());
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return libraries;
 	}
 
-	getLibrary(id) {
-		return http.get(`/libraries/library/${id}`);
+	//getLibrary(id) {}
+
+	async create(data) {
+		const library = await fetch(BASE_URL, {
+			method: 'POST',
+			headers: HEADERS,
+			body: data
+		}).then(res => {
+			if (res.status === 201) {
+				return res.json()
+			} else {
+				//400 name missing
+				//401 invalide credentials
+				//500 internal error
+				throw new Error(res.status.toString());
+			}
+		}).catch(err => {
+			console.error(err);
+		});
+
+		return library;
 	}
 
-	create(data) {
-		return http.post(`/libraries`, data);
-	}
+	//updateSettings(id, data) {}
 
-	update(user_id, id, data) {
-		return http.put(`/libraries/${user_id}/${id}`, data);
-	}
+	//addAdmin(id, newAdmin) {}
 
-	delete(user_id, id) {
-		return http.delete(`/libraries/${user_id}/${id}`);
-	}
+	//addUser(id, newUser) {}
 
-	deleteAll(user_id) {
-		return http.delete(`/libraries/${user_id}`);
-	}
+	//deleteUser(id, user) {}
+
+	//delete(id) {}
 
 }
 

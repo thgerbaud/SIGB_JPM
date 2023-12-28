@@ -32,6 +32,9 @@ export default createStore({
 		},
 		getUser(state) {
 			return state.user;
+		},
+		getToken(state) {
+			return state.token;
 		}
 	},
 });

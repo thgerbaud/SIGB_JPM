@@ -76,9 +76,18 @@ export default {
 					console.log(response.data);
 					this.created = true;
 				})
-				.catch(e => {
-					console.log(e);
-				});
+				.catch(err => {
+                    if (err.message.includes(401)) {
+                        alert("Votre session a expiré, veuillez vous reconnecter pour continuer !");
+                        this.$router.push('/login');
+                    } else if (err.message.includes(400)) {
+                        alert("Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer...");
+					} else if (err.message.includes(500)) {
+                        alert("Oups! Une erreur s'est produite du côté du serveur...");
+                    } else {
+                        alert("Oups! Une erreur inattendue s'est produite...");
+                    }
+                });
 		},
 		returnHome() {
 			if (confirm("Annuler la création ? Les données entrées seront perdues.")) {

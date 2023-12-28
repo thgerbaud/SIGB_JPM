@@ -7,7 +7,7 @@ import vue3GoogleLogin from 'vue3-google-login'
 const app = createApp(App);
 
 app.use(vue3GoogleLogin, {
-    clientId: '734745641942-tjt6k3hbvtsla35servfkae58rb7cura.apps.googleusercontent.com'
+    clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID
 });
 
 app.use(router);
