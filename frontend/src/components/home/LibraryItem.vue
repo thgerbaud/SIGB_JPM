@@ -1,5 +1,5 @@
 <template>
-    <router-link class="library-item" :to="`/${library._id}/books`">
+    <router-link class="library-item" :to="`/${library.id}/books`">
         <div class="library-name">{{ library.name }}</div>
         <div>></div>
     </router-link>

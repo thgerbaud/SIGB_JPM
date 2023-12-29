@@ -26,7 +26,24 @@ class LibraryDataService {
 		return libraries;
 	}
 
-	//getLibrary(id) {}
+	async getLibrary(id) {
+		const library = await fetch(BASE_URL + id, {
+			method: 'GET',
+			headers: HEADERS
+		}).then(res => {
+			if(res.status === 200) {
+				return res.json();
+			} else {
+				//401 invalid credentials
+				//500 internal error
+				throw new Error(res.status.toString());
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
 
 	async create(data) {
 		const library = await fetch(BASE_URL, {

@@ -1,7 +1,7 @@
 <template>
 	<div v-if="library">
 		<NavBar :library="library"/>
-		<router-view></router-view>
+		<router-view :library="library"></router-view>
 	</div>
 </template>
 
@@ -20,8 +20,8 @@ export default {
 	methods: {
 		retrieveLibrary() {
 			LibraryDataService.getLibrary(this.$route.params.library)
-				.then(res => {
-					this.library = res.data;
+				.then(data => {
+					this.library = data;
 					console.log(this.library);
 				})
 				.catch(e => {

@@ -4,21 +4,31 @@
 			<div v-if="!submitted">
 				<h2>Ajouter un livre</h2>
 				<div class="form-group">
-					<label for="isbn">ISBN</label>
+					<label for="isbn">ISBN :</label>
 					<input type="text" class="form-control" id="isbn" required v-model="book.isbn" name="isbn"
 						placeholder="N° ISBN à 10 ou 13 chiffres" />
 				</div>
 
 				<div class="form-group">
-					<label for="code">Code</label>
+					<label for="code">Code :</label>
 					<input type="text" class="form-control" id="code" required v-model="book.code" name="code"
 						placeholder="Identifiant unique" />
 				</div>
 
 				<div class="form-group">
-					<label for="location">Localisation</label>
-					<input class="form-control" id="location" required v-model="book.location" name="location"
-						placeholder="Localisation du livre" />
+					<label for="location">Localisation: </label>
+					<select class="from-control" id="location" required v-model="book.location" name="location">
+						<option value="">Non précisée</option>
+						<option v-for="(location, index) in library.locations" :key="index">{{ location }}</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="category">Catégorie :</label>
+					<select class="from-control" id="category" required v-model="book.category" name="category">
+						<option value="">Non précisée</option>
+						<option v-for="(category, index) in library.categories" :key="index">{{ category }}</option>
+					</select>
 				</div>
 
 				<menu id="form-menu">
@@ -40,13 +50,14 @@ import BookDataService from "../services/BookDataService";
 
 export default {
 	name: "add-book",
+	props: ["library"],
 	data() {
 		return {
-			library: this.$route.params.library,
 			book: {
 				isbn: null,
 				code: "",
-				location: ""
+				location: "",
+				category: ""
 			},
 			submitted: false
 		};
@@ -59,7 +70,7 @@ export default {
 				location: this.book.location
 			};
 
-			BookDataService.create(this.library, data)
+			BookDataService.create(this.library.id, data)
 				.then(response => {
 					this.book.id = response.data.id;
 					console.log(response.data);
@@ -76,7 +87,7 @@ export default {
 		},
 
 		cancel() {
-			this.$router.push(`/${this.library}/books/`);
+			this.$router.push(`/${this.library.id}/books/`);
 		}
 	}
 };

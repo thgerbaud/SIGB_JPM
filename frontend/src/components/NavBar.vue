@@ -1,7 +1,7 @@
 <template>
     <nav>
         <menu>
-            <router-link :to="`/${library._id}/books`" class="nav-link">{{ library.name }}</router-link>
+            <router-link :to="`/${library.id}/books`" class="nav-link">{{ library.name }}</router-link>
         </menu>
         <div id="profile">
             <span id="profile-name">{{ user.name }}</span>
