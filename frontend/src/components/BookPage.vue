@@ -54,7 +54,7 @@
 </template>
   
 <script>
-import BookDataService from "../services/BookDataService";
+import BookDataService from '@/services/BookDataService';
 
 export default {
 	name: "book-item",

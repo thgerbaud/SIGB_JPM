@@ -7,7 +7,7 @@
 </template>
 	
 <script>
-import BooksListItem from './BooksListItem.vue';
+import BooksListItem from '@/components/library/home/BooksListItem.vue';
 
 export default {
     name: "books-list",

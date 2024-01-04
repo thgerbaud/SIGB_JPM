@@ -43,13 +43,13 @@
 </template>
   
 <script>
-import BookDataService from "@/services/BookDataService";
-import { getBookFromIsbn } from "@/services/GoogleBookService";
-import NotFoundDialog from "@/components/library/add/NotFoundDialog";
-import FoundDialog from "@/components/library/add/FoundDialog";
-import ErrorDialog from "@/components/utils/ErrorDialog";
-import ConfirmDialog from "@/components/utils/ConfirmDialog";
-import AddSuccessDialog from "@/components/library/add/AddSuccessDialog"
+import BookDataService from '@/services/BookDataService';
+import { getBookFromIsbn } from '@/services/GoogleBookService';
+import NotFoundDialog from '@/components/library/add/NotFoundDialog';
+import FoundDialog from '@/components/library/add/FoundDialog';
+import ErrorDialog from '@/components/utils/ErrorDialog';
+import ConfirmDialog from '@/components/utils/ConfirmDialog';
+import AddSuccessDialog from '@/components/library/add/AddSuccessDialog';
 export default {
 	name: "add-book",
 	props: ["library"],

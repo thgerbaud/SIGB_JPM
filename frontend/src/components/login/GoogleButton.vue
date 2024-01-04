@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import AuthService from "@/services/AuthService";
+import AuthService from '@/services/AuthService';
 import { mapMutations } from "vuex";
 export default {
     methods: {

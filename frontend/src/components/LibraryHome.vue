@@ -25,8 +25,8 @@
 </template>
 	
 <script>
-import BooksList from "./BooksList.vue";
-import BookDataService from "../services/BookDataService";
+import BooksList from '@/components/library/home/BooksList.vue';
+import BookDataService from '@/services/BookDataService';
 
 export default {
 	name: "library-home",

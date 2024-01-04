@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter, RouterView, RouterLink } from "vue-router";
-import store from "../store";
+import store from "@/store";
 
 RouterView.compatConfig = { MODE: 3 }
 RouterLink.compatConfig = { MODE: 3 }
@@ -28,12 +28,12 @@ export default createRouter({
 				{
 					path: "libraries",
 					name: "libraries",
-					component: () => import("../components/LibrariesPage")
+					component: () => import("@/components/LibrariesPage")
 				},
 				{
 					path: "create",
 					name: "create-library",
-					component: () => import("../components/CreateLibrary")
+					component: () => import("@/components/CreateLibrary")
 				}
 			]
 		},
@@ -47,22 +47,22 @@ export default createRouter({
 					this.$router.push("/login");
 				}
 			},
-			component: () => import("../views/LibraryView"),
+			component: () => import("@/views/LibraryView"),
 			children: [
 				{
 					path: "books",
 					name: "books",
-					component: () => import("../components/LibraryHome")
+					component: () => import("@/components/LibraryHome")
 				},
 				{
 					path: "books/add",
 					name: "add",
-					component: () => import("../components/AddBook")
+					component: () => import("@/components/AddBook")
 				},
 				{
 					path: "books/:id",
 					name: "books-details",
-					component: () => import("../components/BookItem")
+					component: () => import("@/components/BookPage")
 				}
 			]
 		}

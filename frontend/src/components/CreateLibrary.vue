@@ -24,9 +24,9 @@
 <script>
 import LibraryDataService from '@/services/LibraryDataService';
 
-import NameStep from './libraries/NameStep.vue';
-import LocationStep from './libraries/LocationStep.vue';
-import CategoriesStep from './libraries/CategoriesStep.vue';
+import NameStep from '@/components/libraries/NameStep.vue';
+import LocationStep from '@/components/libraries/LocationStep.vue';
+import CategoriesStep from '@/components/libraries/CategoriesStep.vue';
 
 export default {
 	name: "create-library",

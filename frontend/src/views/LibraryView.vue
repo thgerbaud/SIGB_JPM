@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import LibraryDataService from "../services/LibraryDataService";
-import NavBar from "../components/NavBar.vue";
+import LibraryDataService from '@/services/LibraryDataService';
+import NavBar from '@/components/utils/NavBar.vue';
 
 export default {
 	name: "library-view",

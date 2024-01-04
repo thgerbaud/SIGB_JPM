@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import LibraryDataService from "@/services/LibraryDataService";
-import LibraryItem from "@/components/home/LibraryItem.vue";
+import LibraryDataService from '@/services/LibraryDataService';
+import LibraryItem from '@/components/home/LibraryItem.vue';
 export default {
     props: ["user"],
     data() {

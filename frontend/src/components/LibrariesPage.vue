@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import UserInfos from "@/components/home/UserInfos.vue";
-import LibrariesList from "@/components/home/LibrariesList.vue";
-import LogoutButton from "@/components/home/LogoutButton.vue";
+import UserInfos from '@/components/home/UserInfos.vue';
+import LibrariesList from '@/components/home/LibrariesList.vue';
+import LogoutButton from '@/components/home/LogoutButton.vue';
 export default {
 	data() {
 		return {
