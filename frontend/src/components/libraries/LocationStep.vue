@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import StepTemplate from '@/components/library/StepTemplate.vue';
-import LocationItem from '@/components/library/LocationItem.vue';
+import StepTemplate from '@/components/libraries/StepTemplate.vue';
+import LocationItem from '@/components/libraries/LocationItem.vue';
 export default {
     props: ["step", "currentLocations"],
     data() {

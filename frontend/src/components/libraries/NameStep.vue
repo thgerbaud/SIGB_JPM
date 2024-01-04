@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import StepTemplate from '@/components/library/StepTemplate.vue';
+import StepTemplate from '@/components/libraries/StepTemplate.vue';
 export default {
     props: ["step", "currentName"],
     data() {

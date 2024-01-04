@@ -1,51 +1,55 @@
-import http from "../http-common";
+import store from "@/store";
+
+const BASE_URL = process.env.VUE_APP_BASE_URL_API + "books/";
+const HEADERS = {
+	"Authorization": store.getters.getToken,
+	"Content-type": "application/json"
+}
 
 class BookDataService {
 	async getAll(library) {
-		return http.get(`/books/${library}/`);
+		return await fetch(`/books/${library}/`);
 	}
 
-	async get(library, id) {
+	/*async get(library, id) {
 		return http.get(`/books/${library}/${id}`);
-	}
+	}*/
 
-	create(library, data) {
-		return http.post(`/books/${library}/`, data);
-	}
-
-	update(library, id, data) {
-		return http.put(`/books/${library}/${id}`, data);
-	}
-
-	delete(library, id) {
-		return http.delete(`/books/${library}/${id}`);
-	}
-
-	deleteAll(library) {
-		return http.delete(`/books/${library}/`);
-	}
-
-
-	async getInfos(book) {
-		fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`, {
-			method: "GET"
-		}).then(response => {
-			if (!response.ok) {
-				return null
+	async create(data) {
+		const book = await fetch(BASE_URL, {
+			method: 'POST',
+			headers: HEADERS,
+			body: JSON.stringify(data)
+		}).then(async res => {
+			if(res.status === 201) {
+				return res.json();
 			} else {
-				return response.json();
+				//400 invalid/missing field
+				//401 invalide credentials
+				//403 unauthorized
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
 			}
-		}).then(datas => {
-			if (datas == null || datas.totalItems < 1) {
-				console.error("Aucun résultat");
-			} else {
-				console.log(datas);
-				book.title = "test"
-			}
-		}).catch(error => {
-			console.error(error);
+		}).catch(err => {
+			console.error(err);
+			throw err;
 		});
+		
+		return book;
 	}
+
+	/*update(library, id, data) {
+		return http.put(`/books/${library}/${id}`, data);
+	}*/
+
+	/*delete(library, id) {
+		return http.delete(`/books/${library}/${id}`);
+	}*/
+
+	/*deleteAll(library) {
+		return http.delete(`/books/${library}/`);
+	}*/
 }
 
 export default new BookDataService();

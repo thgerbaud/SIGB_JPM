@@ -1,0 +1,22 @@
+.v-btn {
+    text-transform: unset !important;
+    letter-spacing: normal !important;
+    padding: 0.75rem 1rem !important;
+    height: auto !important;
+}
+
+.v-btn--variant-outlined {
+    border-width: 2px !important;
+}
+
+.v-input__details {
+    margin-bottom: 1rem;
+}
+
+/*.v-progress-circular_overlay {
+    position: fixed !important; I don't understand
+}*/
+
+/*.v-btn--variant-outlined:hover {
+    background-color: currentColor !important;
+}*/

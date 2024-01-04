@@ -65,6 +65,7 @@ nav {
     font-size: var(--medium2);
     color: var(--white);
     gap: 1rem;
+    z-index: 3;
 }
 
 menu {

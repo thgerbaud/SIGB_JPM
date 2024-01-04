@@ -41,6 +41,7 @@ main {
 section {
     padding: 2rem;
     background-color: var(--white);
+    margin-bottom: 1rem;
 }
 
 menu {
@@ -66,6 +67,10 @@ h1 {
     margin-top: 0;
 }
 
+h2 {
+    margin-bottom: 1rem;
+}
+
 button,
 input,
 select {
@@ -82,9 +87,9 @@ button {
     border-radius: 5px;
 }
 
-button:hover {
+/*button:hover {
     opacity: 80%;
-}
+}*/
 
 .secondary {
     background: none;
@@ -125,15 +130,16 @@ button:disabled {
 }
 
 .submit-form {
-    margin: auto;
+    margin: auto !important;
+    max-width: 500px !important;
     color: black;
 }
 
-.submit-form > div {
+/*.submit-form > div {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
+}*/
 
 .form-group {
     display: flex;

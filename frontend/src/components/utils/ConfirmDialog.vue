@@ -1,0 +1,22 @@
+<template>
+    <v-dialog width="500" persistent>
+        <v-card :title="title">
+            <template v-slot:prepend>
+                <v-icon icon="mdi-alert-circle" color="warning"></v-icon>
+            </template>
+            <v-card-text>
+                {{ text }}
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="error" class="flex-grow-1" @click="$emit('cancel')">{{ cancelText }}</v-btn>
+                <v-btn class="flex-grow-1" @click="$emit('ok')">{{ okText }}</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+
+<script>
+export default {
+    props: ["title", "text", "cancelText", "okText"]
+}
+</script>

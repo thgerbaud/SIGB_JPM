@@ -3,76 +3,69 @@ const Book = db.books;
 const Library = db.library;
 
 // Create and Save a new Book
-exports.create = (req, res) => {
-	// Validate request
-	if (!req.body.isbn) {
-		res.status(400).send({ message: "Content can not be empty!" });
-		return;
+exports.create = async (req, res) => {
+	// vérification des paramètres et permissions
+	const libraryId = req.body.library;
+	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
+		return res.status(400).send("Missing or invalid library id.");
 	}
-
-	fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${req.body.isbn}`, {
-		method: "GET"
-	}).then(response => {
-		if (!response.ok) {
-			return null
-		} else {
-			return response.json();
+	try {
+		const doc = await Library.findOne({ _id: libraryId });
+		if (doc === null) {
+			return res.status(400).send("Invalid library id.");
 		}
-	}).then(datas => {
-		if (datas == null || datas.totalItems < 1) {
-			console.error("Aucun résultat");
-			return;
-		} else {
-			const infos = datas.items[0].volumeInfo;
-			const id = datas.items[0].id;
-
-			const book = new Book({
-				isbn: req.body.isbn,
-				code: req.body.code,
-				location: req.body.location,
-				title: infos.title,
-				author: infos.authors,
-				description: infos.description,
-				image: `https://books.google.com/books/content?id=${id}&printsec=frontcover&img=1&zoom=1&source=gbs_api`,
-				publication: (new Date(infos.publishedDate)).toDateString()
-			});
-
-			const library = req.params.library;
-
-			Library.findOneAndUpdate(
-				{ '_id': library },
-				{ $push: { 'books': book } },
-				{ new: true }
-			)
-				.then(data => {
-					res.send(data);
-				})
-				.catch(err => {
-					res.status(500).send({
-						message:
-							err.message || "Some error occurred while creating the book."
-					});
-				});
-
-			/*
-			book
-				.save(book)
-				.then(data => {
-					res.send(data);
-				})
-				.catch(err => {
-					res.status(500).send({
-						message:
-							err.message || "Some error occurred while creating the book."
-					});
-				});
-				*/
+		const library = doc.toJSON();
+		// vérification que l'utilisateur ait les droits d'administrateur
+		if (!library.admins.includes(req.user)) {
+			return res.sendStatus(403);
 		}
-	}).catch(error => {
-		console.error(error);
-	});
-
-};
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send("Internal server error.");
+	}
+	const isbn = req.body.isbn;
+	if (!isbn || !(/^[0-9]+$/.test(isbn)) || (isbn.length !== 10 && isbn.length !== 13)) {
+		return res.status(400).send("Missing or invalid isbn.");
+	}
+	const code = req.body.code?.trim();
+	if (!code || !(/^[a-zA-Z0-9]+$/.test(code)) || code.length > 10) {
+		return res.status(400).send("Missing or invalid code.");
+	}
+	try {
+		const doc = await Book.findOne({ library: libraryId, code: code });
+		if (doc !== null) {
+			return res.status(400).send("Duplicate book code.");
+		}
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send("Internal server error.");
+	}
+	const location = req.body.location ?? null;
+	if ((location !== null) && !(/^[0-9]+$/.test(location))) {
+		return res.status(400).send("Invalid location.");
+	}
+	const category = req.body.category ?? null;
+	if ((category !== null) && !(/^[0-2]$/.test(category))) {
+		return res.status(400).send("Invalid category.");
+	}
+	// création du livre 
+	const book = new Book({
+		library: new db.mongoose.Types.ObjectId(libraryId),
+		isbn: isbn,
+		code: code.toUpperCase(),
+		location: location,
+		category: category
+	})
+	// enregistrement
+	book.save()
+		.then(doc => {
+			res.status(201).send(doc.toJSON());
+		})
+		.catch(err => {
+			console.error(err);
+			res.status(500).send("Internal server error.");
+		});
+}
 
 // Retrieve all books from the database.
 exports.findAll = (req, res) => {
@@ -110,8 +103,8 @@ exports.findOne = (req, res) => {
 
 	Library.findOne({
 		$and: [
-			{'_id': library},
-			{'books._id': id}
+			{ '_id': library },
+			{ 'books._id': id }
 		]
 	}, {
 		_id: false,

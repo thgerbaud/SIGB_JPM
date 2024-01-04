@@ -14,11 +14,11 @@ export default {
     methods: {
         ...mapMutations(["setToken", "setUser"]),
         async callback(response) {
-            console.log("Handle the response", response.code);
             AuthService.login(response.code)
                 .then(data => {
                     const token = data.accessToken;
                     const user = data.userData;
+                    console.log(token); //! temp
                     this.setToken(token);
                     this.setUser(user);
                     this.$router.push(`/home/libraries`);

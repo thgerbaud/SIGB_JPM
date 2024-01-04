@@ -24,9 +24,9 @@
 <script>
 import LibraryDataService from '@/services/LibraryDataService';
 
-import NameStep from './library/NameStep.vue';
-import LocationStep from './library/LocationStep.vue';
-import CategoriesStep from './library/CategoriesStep.vue';
+import NameStep from './libraries/NameStep.vue';
+import LocationStep from './libraries/LocationStep.vue';
+import CategoriesStep from './libraries/CategoriesStep.vue';
 
 export default {
 	name: "create-library",
@@ -72,7 +72,7 @@ export default {
 			this.library.admin.push(this.user.email);
 			LibraryDataService.create(this.library)
 				.then(response => {
-					this.library.id = response.data._id;
+					this.library.id = response.data._id; // ? _id ou id à vérifier
 					console.log(response.data);
 					this.created = true;
 				})
