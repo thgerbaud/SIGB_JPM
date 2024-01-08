@@ -5,7 +5,6 @@ const librarySchema = new Schema({
 	name: String,
 	admins: [String],
 	users: [String],
-	books: [{ type: Schema.Types.ObjectId, ref: 'Book' }],
 	locations: [String],
 	categories: [String]
 });

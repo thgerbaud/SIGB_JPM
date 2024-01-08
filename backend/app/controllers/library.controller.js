@@ -12,7 +12,6 @@ exports.create = (req, res) => {
 		name: name.trim(),
 		admins: [req.user],
 		users: [],
-		books: [],
 		locations: req.body.locations || [],
 		categories: req.body.categories || []
 	});
@@ -23,7 +22,7 @@ exports.create = (req, res) => {
 		})
 		.catch(err => {
 			console.error(err);
-			res.sendStatus(500);
+			res.status(500).send("Internal server error.");
 		});
 }
 

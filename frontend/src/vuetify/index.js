@@ -31,19 +31,24 @@ export default createVuetify({
         VBtn: {
             color: 'secondary',
             variant: 'flat',
+            size: 'large',
             letterSpacing: '5px',
         },
         VBtnSecondary: {
             color: 'secondary',
             variant: 'outlined',
+            size: 'large',
         },
         VBtnTertiary: {
-            rounded: true,
+            color: 'secondary',
+            rounded: false,
             variant: 'text',
+            size: 'large',
         },
         VBtnCancel: {
             color: 'error',
             variant: 'outlined',
+            size: 'large',
         },
     },
 });

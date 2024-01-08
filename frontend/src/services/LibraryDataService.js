@@ -49,18 +49,19 @@ class LibraryDataService {
 		const library = await fetch(BASE_URL, {
 			method: 'POST',
 			headers: HEADERS,
-			body: data
-		}).then(res => {
+			body: JSON.stringify(data)
+		}).then(async res => {
 			if (res.status === 201) {
 				return res.json()
 			} else {
 				//400 name missing
 				//401 invalide credentials
 				//500 internal error
-				throw new Error(res.status.toString());
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
 			}
 		}).catch(err => {
-			console.error(err);
+			throw err;
 		});
 
 		return library;
