@@ -7,7 +7,7 @@ export default {
       'primary-lighten-1': '#1d3e2b',
       'primary-darken-1': '#091f11', // TODO
       secondary: '#a37e50',
-      'secondary-darken-1': '#018786', // TODO
+      'secondary-darken-1': '#8d6c44bf', // TODO
       error: '#931F1D',
       info: '#2196F3', //?
       success: '#4CAF50', //?

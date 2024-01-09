@@ -7,9 +7,12 @@ const vuexLocal = new VuexPersistence({
 
 export default createStore({
 	plugins: [vuexLocal.plugin],
-	state: {
-		user: null,
-		token: null,
+	state() {
+		return {
+			user: null,
+			token: null,
+			library: null
+		}
 	},
 	mutations: {
 		setUser(state, user) {
@@ -17,6 +20,9 @@ export default createStore({
 		},
 		setToken(state, token) {
 			state.token = token;
+		},
+		setLibrary(state, library) {
+			state.library = library;
 		},
 		logout(state) {
 			state.token = null;
@@ -35,6 +41,9 @@ export default createStore({
 		},
 		getToken(state) {
 			return state.token;
+		},
+		getLibrary(state) {
+			return state.library;
 		}
 	},
 });

@@ -4,6 +4,14 @@ import store from "@/store";
 RouterView.compatConfig = { MODE: 3 }
 RouterLink.compatConfig = { MODE: 3 }
 
+const checkAuth = (to, from, next) => {
+	if(store.getters.isLoggedIn) {
+		next();
+	} else {
+		next('/login');
+	}
+}
+
 export default createRouter({
 	history: createWebHistory(),
 	routes: [
@@ -23,6 +31,7 @@ export default createRouter({
 		{
 			path: "/home",
 			name: "home",
+			beforeEnter: checkAuth,
 			component: () => import("../views/HomeView"),
 			children: [
 				{
@@ -40,13 +49,7 @@ export default createRouter({
 		{
 			path: "/:library",
 			name: "library",
-			beforeEnter: (to, from, next) => {
-				if(store.getters.isLoggedIn) {
-					next();
-				} else {
-					this.$router.push("/login");
-				}
-			},
+			beforeEnter: checkAuth,
 			component: () => import("@/views/LibraryView"),
 			children: [
 				{

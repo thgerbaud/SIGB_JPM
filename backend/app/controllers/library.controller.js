@@ -32,12 +32,27 @@ exports.findAll = (req, res) => {
 		.then(docs => {
 			//? pas besoin de tout envoyer ?
 			// TODO indiquer si admin/user
-			const libraries = docs.map(doc => doc.toJSON());
+			const libraries = docs.map(doc => {
+				const obj = doc.toJSON();
+				const isAdmin = obj.admins.includes(user);
+				let library = {
+					id: obj.id,
+					name: obj.name,
+					locations: obj.locations,
+					categories: obj.categories,
+					isAdmin: isAdmin
+				}
+				if(isAdmin) {
+					library.admins = obj.admins;
+					library.users = obj.users;
+				}
+				return library;
+			});
 			res.status(200).send(libraries);
 		})
 		.catch(err => {
 			console.log(err);
-			res.sendStatus(500);
+			res.status(500).send("Internal server error.");
 		});
 }
 

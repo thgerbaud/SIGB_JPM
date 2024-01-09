@@ -1,24 +1,19 @@
 <template>
-    <div class="center-content" id="logout-btn">
-        <button class="tertiary" @click="logout">Déconnexion</button>
+    <LogoutConfirmDialog v-model="logoutDialog" @cancel="logoutDialog = false" />
+    <div class="center-content">
+        <v-btn-tertiary @click="logoutDialog = true" prepend-icon="mdi-logout">Déconnexion</v-btn-tertiary>
     </div>
 </template>
 
 <script>
+import LogoutConfirmDialog from '@/components/utils/LogoutConfirmDialog.vue';
+
 export default {
-    methods: {
-        logout() {
-			if (confirm("Se déconnecter ?")) {
-				this.$store.commit('logout');
-				this.$router.push('/');
-			}
-		}
-    }
+    data() {
+        return {
+            logoutDialog: false
+        }
+    },
+    components: { LogoutConfirmDialog }
 }
 </script>
-
-<style scoped>
-#logout-btn {
-	margin-top: 3rem;
-}
-</style>

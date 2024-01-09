@@ -52,7 +52,8 @@ export default {
         },
         setCategories() {
             if (this.isValid) {
-                this.categories.sort(this.sortFn);
+                // si les catégories ne sont que partiellement renseignées, pousse les "trous" à la fin de la liste
+                this.categories.sort(this.sortFn); 
                 this.$emit('next', this.categories.map((category) => category || ""));
             }
         },
