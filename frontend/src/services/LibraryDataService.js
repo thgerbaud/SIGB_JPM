@@ -1,16 +1,14 @@
 import store from "@/store";
 
 const BASE_URL = process.env.VUE_APP_BASE_URL_API + "libraries/";
-const HEADERS = {
-	"Authorization": store.getters.getToken,
-	"Content-type": "application/json"
-}
 
 class LibraryDataService {
 	async getAll() {
 		const libraries = await fetch(BASE_URL, {
 			method: 'GET',
-			headers: HEADERS
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
 		}).then(res => {
 			if (res.status === 200) {
 				return res.json();
@@ -29,7 +27,9 @@ class LibraryDataService {
 	async getLibrary(id) {
 		const library = await fetch(BASE_URL + id, {
 			method: 'GET',
-			headers: HEADERS
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
 		}).then(res => {
 			if(res.status === 200) {
 				return res.json();
@@ -48,7 +48,9 @@ class LibraryDataService {
 	async create(data) {
 		const library = await fetch(BASE_URL, {
 			method: 'POST',
-			headers: HEADERS,
+			headers: {
+				"Authorization": store.getters.getToken,
+			},
 			body: JSON.stringify(data)
 		}).then(async res => {
 			if (res.status === 201) {

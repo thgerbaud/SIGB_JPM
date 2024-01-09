@@ -1,10 +1,6 @@
 import store from "@/store";
 
 const BASE_URL = process.env.VUE_APP_BASE_URL_API + "books/";
-const HEADERS = {
-	"Authorization": store.getters.getToken,
-	"Content-type": "application/json"
-}
 
 class BookDataService {
 	async getAll(library) {
@@ -18,7 +14,10 @@ class BookDataService {
 	async create(data) {
 		const book = await fetch(BASE_URL, {
 			method: 'POST',
-			headers: HEADERS,
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
 			body: JSON.stringify(data)
 		}).then(async res => {
 			if(res.status === 201) {
