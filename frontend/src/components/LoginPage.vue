@@ -1,8 +1,8 @@
 <template>
-    <main class="center-content">
+    <v-container class="text-center mt-16">
         <AppInfo />
         <LoginOptions />
-    </main>
+    </v-container>
 </template>
 
 <script>

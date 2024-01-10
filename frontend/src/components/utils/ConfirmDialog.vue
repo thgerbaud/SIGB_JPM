@@ -4,7 +4,7 @@
             <template v-slot:prepend>
                 <v-icon icon="mdi-alert-circle" color="warning"></v-icon>
             </template>
-            <v-card-text>
+            <v-card-text v-if="text">
                 {{ text }}
             </v-card-text>
             <v-card-actions>

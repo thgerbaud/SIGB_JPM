@@ -1,45 +1,40 @@
 <template>
-	<main>
+	<NotFoundDialog :isbn="book.isbn" v-model="notFoundDialog" @close="notFoundDialog = false" />
 
-		<NotFoundDialog :isbn="book.isbn" v-model="notFoundDialog" @close="notFoundDialog = false" />
+	<ErrorDialog v-model="errorDialog" @close="errorDialog = false" :message="errorMessage" />
 
-		<ErrorDialog v-model="errorDialog" @close="errorDialog = false" :message="errorMessage" />
+	<FoundDialog :book="bookFound" v-model="foundDialog" @close="foundDialog = false" @add="saveBook" />
 
-		<FoundDialog :book="bookFound" v-model="foundDialog" @close="foundDialog = false" @add="saveBook" />
+	<ConfirmDialog title="Annuler l'ajout du livre"
+		text="Êtes-vous sûr de vouloir quitter la page ? Toutes les données entrées seront perdues."
+		okText="Continuer l'ajout" cancelText="Quitter" v-model="confirmDialog" @ok="confirmDialog = false"
+		@cancel="returnHome" />
 
-		<ConfirmDialog title="Annuler l'ajout du livre"
-			text="Êtes-vous sûr de vouloir quitter la page ? Toutes les données entrées seront perdues."
-			okText="Continuer l'ajout" cancelText="Quitter" v-model="confirmDialog" @ok="confirmDialog = false"
-			@cancel="returnHome" />
+	<AddSuccessDialog v-model="addSuccessDialog" :id="book.id" :code="book.code" :title="bookFound?.title"
+		@addAnother="resetForm" @seeBook="$router.push(`/${library.id}/books/${book.id}`)" @goHome="returnHome" />
 
-		<AddSuccessDialog v-model="addSuccessDialog" :id="book.id" :code="book.code" :title="bookFound?.title"
-			@addAnother="resetForm" @seeBook="$router.push(`/${library.id}/books/${book.id}`)" @goHome="returnHome" />
-
-		<section>
-			<v-form class="submit-form" @submit.prevent="searchBook" v-model="isFormValid" :disabled="submitted"
-				ref="addForm">
-				<h2>Ajouter un livre</h2>
-				<v-text-field label="N° ISBN" variant="outlined" v-model="book.isbn" clearable
-					hint="Code à 10 ou 13 chiffres, souvent situé en quatrième de couverture."
-					:rules="[rules.required, rules.isbn_format, rules.isbn_length]" persistent-hint @input="handleIsbnInput"
-					maxlength="13"></v-text-field>
-				<v-text-field label="Code" variant="outlined" v-model="book.code" clearable
-					hint="Choisissez un code unique pour identifier votre livre" :rules="[rules.required, rules.code]"
-					persistent-hint maxlength="10" @input="handleCodeInput"></v-text-field>
-				<v-select label="Localisation" variant="outlined"
-					:items="library.locations.map((title, value) => ({ title, value }))" v-model="book.location" clearable
-					hint="(optionnel)" persistent-hint></v-select>
-				<v-select label="Catégorie" variant="outlined"
-					:items="library.categories.map((title, value) => ({ title, value }))" v-model="book.category" clearable
-					hint="(optionnel)" persistent-hint></v-select>
-				<menu id="form-menu">
-					<v-btn-cancel class="btn" @click="confirmDialog = true">Annuler</v-btn-cancel>
-					<v-btn class="btn" type="submit" :loading="loading" :disabled="!isFormValid">Chercher</v-btn>
-				</menu>
-			</v-form>
-		</section>
-
-	</main>
+	<section>
+		<v-form class="submit-form" @submit.prevent="searchBook" v-model="isFormValid" :disabled="submitted" ref="addForm">
+			<h2>Ajouter un livre</h2>
+			<v-text-field label="N° ISBN" variant="outlined" v-model="book.isbn" clearable
+				hint="Code à 10 ou 13 chiffres, souvent situé en quatrième de couverture."
+				:rules="[rules.required, rules.isbn_format, rules.isbn_length]" persistent-hint @input="handleIsbnInput"
+				maxlength="13"></v-text-field>
+			<v-text-field label="Code" variant="outlined" v-model="book.code" clearable
+				hint="Choisissez un code unique pour identifier votre livre" :rules="[rules.required, rules.code]"
+				persistent-hint maxlength="10" @input="handleCodeInput"></v-text-field>
+			<v-select label="Localisation" variant="outlined"
+				:items="library.locations.map((title, value) => ({ title, value }))" v-model="book.location" clearable
+				hint="(optionnel)" persistent-hint></v-select>
+			<v-select label="Catégorie" variant="outlined"
+				:items="library.categories.map((title, value) => ({ title, value }))" v-model="book.category" clearable
+				hint="(optionnel)" persistent-hint></v-select>
+			<menu id="form-menu">
+				<v-btn-cancel class="btn" @click="confirmDialog = true">Annuler</v-btn-cancel>
+				<v-btn class="btn" type="submit" :loading="loading" :disabled="!isFormValid">Chercher</v-btn>
+			</menu>
+		</v-form>
+	</section>
 </template>
   
 <script>

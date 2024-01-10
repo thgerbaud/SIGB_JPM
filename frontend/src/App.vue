@@ -1,11 +1,18 @@
 <template>
-  <div id="app">
-      <router-view />
-  </div>
+	<v-app id="app">
+		<router-view />
+	</v-app>
 </template>
 
 <script>
 export default {
-  name: "app"
+	name: "app"
 };
 </script>
+
+<style>
+div.v-application__wrap {
+	/* avoid overflow due to v-app-bar */
+	min-height: unset!important;
+}
+</style>

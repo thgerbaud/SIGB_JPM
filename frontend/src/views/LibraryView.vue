@@ -1,8 +1,8 @@
 <template>
-	<div v-if="library">
-		<NavBar :library="library"/>
-		<router-view :library="library"></router-view>
-	</div>
+	<NavBar :library="library" v-if="library" />
+	<v-main class="ma-4">
+		<router-view :library="library" v-if="library"></router-view>
+	</v-main>
 </template>
 
 <script>
@@ -32,7 +32,8 @@ export default {
 	},
 	created() {
 		document.body.id = 'light';
-		this.retrieveLibrary();
+		//this.retrieveLibrary();
+		this.library = this.$store.getters.getLibrary;
 	}
 };
 </script>

@@ -1,9 +1,7 @@
 <template>
-	<main>
-		<UserInfos :user="user" />
-		<LibrariesList :user="user" />
-		<LogoutButton />
-	</main>
+	<UserInfos :user="user" />
+	<LibrariesList :user="user" />
+	<LogoutButton />
 </template>
 
 <script>

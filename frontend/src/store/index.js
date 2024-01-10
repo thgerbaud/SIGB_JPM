@@ -25,8 +25,12 @@ export default createStore({
 			state.library = library;
 		},
 		logout(state) {
+			state.library = null;
 			state.token = null;
 			state.user = null;
+		},
+		exitLibrary(state) {
+			state.library = null;
 		}
 	},
 	actions: {

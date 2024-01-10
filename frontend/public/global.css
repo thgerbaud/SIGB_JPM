@@ -5,10 +5,10 @@ html {
     color: var(--text-color);
 }
 
-#app {
+/*#app {
     width: 100vw;
     height: 100vh;
-}
+}*/
 
 body {
     margin: 0;
@@ -56,6 +56,10 @@ menu {
 .empty-section {
     font-style: italic;
     color: var(--disabled-color);
+}
+
+.pointer {
+    cursor: pointer;
 }
 
 a {
