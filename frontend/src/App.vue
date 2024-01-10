@@ -14,5 +14,6 @@ export default {
 div.v-application__wrap {
 	/* avoid overflow due to v-app-bar */
 	min-height: unset!important;
+	height: 100vh !important;
 }
 </style>
