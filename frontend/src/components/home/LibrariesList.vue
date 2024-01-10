@@ -7,7 +7,10 @@
         <h2 class="text-h2">Mes bibliothèques :</h2>
 
         <v-list class="pa-0 bg-transparent">
-            <v-progress-linear indeterminate color="primary-lighten-1" v-if="loading"></v-progress-linear>
+            <div v-if="loading">
+                <v-skeleton-loader class="bg-primary-lighten-1 mb-3 rounded-lg" type="list-item-two-line" v-for="n in 3"
+                    :key="n"></v-skeleton-loader>
+            </div>
             <div v-else-if="errorMet" class="empty-section ma-4 text-center">
                 <v-icon icon="mdi-server-off" size="x-large" class="mb-4"></v-icon>
                 <p>
@@ -71,7 +74,7 @@ export default {
                 });
         }
     },
-    created() {
+    async created() {
         this.loading = true;
         this.retrieveLibraries();
     }

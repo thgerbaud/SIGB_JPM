@@ -11,6 +11,7 @@
     margin-bottom: 4rem;
     gap: 1rem;
     align-items: center;
+    justify-content: center;
 }
 
 #app-logo {
