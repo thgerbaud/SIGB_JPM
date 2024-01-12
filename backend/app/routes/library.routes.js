@@ -14,7 +14,7 @@ module.exports = app => {
     router.post("/", getTokenInfos, library.create);
   
     /**
-     * Permet de retrouver toutes les bibliothèques d'un utilisateur.
+     * Permet de retrouver les informations de toutes les bibliothèques d'un utilisateur.
      * @sortie liste de bibliothèques
      * @auth token necessaire
      * @status 200
@@ -22,12 +22,20 @@ module.exports = app => {
     router.get("/", getTokenInfos, library.findAll);
   
     /**
-     * Permet de retrouver une bibliothèque.
+     * Permet de retrouver les informations d'une bibliothèque.
      * @sortie bibliothèque correspondant à l'id
-     * @auth token necessaire, admin ou invited
+     * @auth token necessaire, admin ou invité
      * @status 200
      */
     router.get("/:id", getTokenInfos, library.findOne);
+
+    /**
+     * Permet de retrouver les livres d'une bibliothèque.
+     * @sortie liste de livres
+     * @auth token necessaire, admin ou invité
+     * @status 200
+     */
+    router.get("/:id/books", getTokenInfos, library.getBooks);
   
     /**
      * Permet de mettre à jour les paramètres d'une bibliothèque.

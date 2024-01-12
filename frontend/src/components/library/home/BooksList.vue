@@ -1,24 +1,16 @@
 <template>
-	<div id="books-list">
-		<router-link v-for="(book, index) in books" :key="index" :to="`/${library}/books/${book._id}`">
-			<BooksListItem :book="book"/>
-		</router-link>
+	<p class="font-weight-bold mt-4">{{ books.title }} ({{ books.items.length }})</p>
+	<v-divider class="border-opacity-25"></v-divider>
+	<div id="books-list" class="my-4 d-flex flex-wrap" v-if="books.items && books.items.length > 0">
+		<BooksListItem v-for="book in books.items" :key="book.id" :book="book" :libraryId="libraryId" />
 	</div>
+	<p class="my-4 text-center empty-section" v-else>Aucun livre correspondant</p>
 </template>
 	
 <script>
 import BooksListItem from '@/components/library/home/BooksListItem.vue';
-
 export default {
-    name: "books-list",
 	components: { BooksListItem },
-    props: ["books", "library"]
+	props: ["libraryId", "books"],
 };
 </script>
-	
-<style scoped>
-#books-list {
-	display: flex;
-	gap: 1rem;
-}
-</style>

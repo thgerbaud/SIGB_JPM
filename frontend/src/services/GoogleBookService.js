@@ -1,5 +1,7 @@
+const API_KEY = process.env.VUE_APP_API_KEY;
+
 export async function getBookFromIsbn(isbn) {
-    const infos = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`, {
+    const infos = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${API_KEY}`, {
         method: "GET"
     }).then(response => {
         if (!response.ok) {

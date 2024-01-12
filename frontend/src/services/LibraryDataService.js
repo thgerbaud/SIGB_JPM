@@ -9,13 +9,14 @@ class LibraryDataService {
 			headers: {
 				"Authorization": store.getters.getToken,
 			}
-		}).then(res => {
+		}).then(async res => {
 			if (res.status === 200) {
 				return res.json();
 			} else {
 				//401 invalid credentials
 				//500 internal error
-				throw new Error(res.status.toString());
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
 			}
 		}).catch(err => {
 			throw err;
@@ -30,19 +31,46 @@ class LibraryDataService {
 			headers: {
 				"Authorization": store.getters.getToken,
 			}
-		}).then(res => {
+		}).then(async res => {
 			if(res.status === 200) {
 				return res.json();
 			} else {
 				//401 invalid credentials
+				//403 access denied
+				//404 not found
 				//500 internal error
-				throw new Error(res.status.toString());
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
 			}
 		}).catch(err => {
 			throw err;
 		});
 
 		return library;
+	}
+
+	async getBooks(id) {
+		const books = await fetch(BASE_URL + id + '/books', {
+			method: 'GET',
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
+		}).then(async res => {
+			if(res.status === 200) {
+				return res.json();
+			} else {
+				//401 invalid credentials
+				//403 access denied
+				//404 library not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return books;
 	}
 
 	async create(data) {

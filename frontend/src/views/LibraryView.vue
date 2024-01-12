@@ -12,31 +12,26 @@ export default {
 	components: { NavBar },
 	data() {
 		return {
-			library: null
+			library: this.$store.getters.getLibrary
 		};
 	},
 	methods: {
-		retrieveLibrary() {
-			const currentLibrary = this.$store.getters.getLibrary;
-			console.log(currentLibrary);
-			if (currentLibrary.id !== this.$route.params.library) {
+		async retrieveLibrary() {
+			if (this.library?.id !== this.$route.params.library) {
 				alert("Fetching library");
-				LibraryDataService.getLibrary(this.$route.params.library)
+				await LibraryDataService.getLibrary(this.$route.params.library)
 					.then(data => {
 						this.library = data;
 						console.log(this.library);
 					})
 					.catch(e => {
-						console.log(e);
+						console.log(e); //TODO
 					});
-			} else {
-				this.library = currentLibrary;
 			}
-		}
+		},
 	},
-	created() {
-		this.retrieveLibrary();
-		//this.library = this.$store.getters.getLibrary;
+	async created() {
+		await this.retrieveLibrary();
 	}
 };
 </script>
