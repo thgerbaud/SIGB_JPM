@@ -5,7 +5,7 @@
                 <v-icon icon="mdi-timer-alert" color="error"></v-icon>
             </template>
             <v-card-text>
-                "Votre session a expirée, veuillez vous reconnecter pour continuer !"
+                Votre session a expirée, veuillez vous reconnecter pour continuer !
             </v-card-text>
             <v-card-actions>
                 <v-btn block @click="$router.push('/login')">Ok</v-btn>

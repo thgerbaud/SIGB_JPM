@@ -65,7 +65,7 @@ export default {
             expiredSessionDialog: false,
             accessDeniedDialog: false,
             notFoundDialog: false,
-            snackbar: true
+            snackbar: false
         }
     },
     computed: {
@@ -119,7 +119,6 @@ export default {
                         }
                     })
                 );
-                this.books.push({id: 1});
             } catch (err) {
                 if (err.message.includes(401)) {
                     this.expiredSessionDialog = true;

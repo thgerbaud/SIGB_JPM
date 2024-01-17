@@ -60,7 +60,7 @@ exports.findOne = (req, res) => {
 	// vérification de l'id
 	const libraryId = req.params.id;
 	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
+		return res.status(400).send('Invalid library id.');
 	}
 	// recherche de la bibliothèque
 	Library.findOne({ '_id': libraryId })

@@ -1,142 +1,131 @@
 <template>
-	<main>
-		<section v-if="book" class="edit-form">
+	<ExpiredSessionDialog v-model="expiredSessionDialog" />
 
-			<header>
-				<div id="header-infos">
-					<h1>{{ book.title }}</h1>
-					<legend id="authors">{{ book.author.join(" ") }}</legend>
-					<p id="description">{{ book.description }}</p>
-				</div>
-				<img id="cover-image" :src="book.image">
-			</header>
+	<ErrorDialog v-model="errorDialog" :message="errorMessage" @close="errorDialog = false" />
 
+	<NotFoundDialog v-model="notFoundDialog" @ok="notFoundDialog = false" /> <!-- redirection ? -->
 
-			<span class="label">Date de publication :</span> {{ book.publication }}
-			<br>
-			<span class="label">ISBN :</span> {{ book.isbn }}
-			<br>
-			<span class="label">Code :</span> {{ book.code }}
-			<br>
-			<span class="label">Localisation :</span> {{ book.location }}
+	<AccessDeniedDialog v-model="accessDeniedDialog" @ok="accessDeniedDialog = false" /> <!-- redirection ? -->
 
-			<!--
-			<form>
-				<div class="form-group">
-					<label for="isbn">ISBN</label>
-					<input type="text" class="form-control" id="isbn" v-model="book.isbn" />
-				</div>
-				<div class="form-group">
-					<label for="code">Code</label>
-					<input type="text" class="form-control" id="code" v-model="book.code" />
-				</div>
-				<div class="form-group">
-					<label for="location">Location</label>
-					<input type="text" class="form-control" id="location" v-model="book.location" />
-				</div>
+	<InfoDialog v-model="infoDialog" @ok="$router.push(`/${library.id}/books`)" title="Livre supprimé"
+		message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
+	<v-snackbar v-model="successSnackbar" color="primary" timeout="3000">Livre mis à jour.</v-snackbar>
 
-			</form>
-		-->
-		</section>
+	<div v-if="!loaded">
+		<v-skeleton-loader type="card"></v-skeleton-loader>
+	</div>
 
-		<menu>
-			<button class="btn-cancel" @click="deleteBook">
-				Supprimer
-			</button>
+	<div v-else-if="errorMet" class="text-center empty-section ma-4">
+		<v-icon icon="mdi-book-alert-outline" size="x-large" class="mb-4"></v-icon>
+		<p>
+			Impossible de récupérer les informations du livre.<br>
+			Essayez de rafaîchir la page, si l'erreur persiste veuillez réessayer plus tard.
+		</p>
+	</div>
 
-			<button type="submit" class="badge badge-success" @click="updateBook">
-				Modifier
-			</button>
-			</menu>
+	<div v-else>
+		<BookCard :book="book" :library="library" />
 
-	</main>
+		<BookToolBar :book="book" :library="library" v-if="library.isAdmin" @update="updateBook" @delete="deleteBook" />
+	</div>
 </template>
   
 <script>
+import BookCard from '@/components/book/BookCard.vue';
+import BookToolBar from '@/components/book/BookToolBar.vue';
+import ExpiredSessionDialog from '@/components/utils/ExpiredSessionDialog.vue';
+import ErrorDialog from '@/components/utils/ErrorDialog.vue';
+import NotFoundDialog from '@/components/utils/NotFoundDialog.vue';
+import AccessDeniedDialog from '@/components/utils/AccessDeniedDialog.vue';
+import InfoDialog from '@/components/utils/InfoDialog.vue';
+import { getBookFromIsbn } from '@/services/GoogleBookService';
 import BookDataService from '@/services/BookDataService';
-
 export default {
-	name: "book-item",
+	props: ["library"],
 	data() {
 		return {
 			id: this.$route.params.id,
-			library: this.$route.params.library,
 			book: null,
-			message: ''
+			loaded: false,
+			errorMet: false,
+			expiredSessionDialog: false,
+			errorDialog: false,
+			notFoundDialog: false,
+			accessDeniedDialog: false,
+			errorMessage: "Oups, une erreur s'est produite...",
+			successSnackbar: false,
+			infoDialog: false,
 		};
 	},
+	components: {
+		BookCard,
+		BookToolBar,
+		ExpiredSessionDialog,
+		ErrorDialog,
+		NotFoundDialog,
+		AccessDeniedDialog,
+		InfoDialog,
+	},
 	methods: {
-		getBook(library, id) {
-			BookDataService.get(library, id)
-				.then(response => {
-					this.book = response.data.books[0];
+		getBook() {
+			BookDataService.get(this.id)
+				.then(book => {
+					this.book = book;
+					return getBookFromIsbn(book.isbn);
 				})
-				.catch(e => {
-					console.log(e);
+				.then(details => {
+					this.book.details = details;
+				})
+				.catch(err => {
+					this.processError(err);
+					this.errorMet = true;
+				})
+				.finally(() => {
+					this.loaded = true;
 				});
 		},
 
-		updateBook() {
-			BookDataService.update(this.book.id, this.book)
-				.then(response => {
-					console.log(response.data);
-					this.message = 'The book was updated successfully!';
+		updateBook(data) {
+			BookDataService.update(this.book.id, data)
+				.then(book => {
+					book.details = this.book.details;
+					this.book = book;
+					this.successSnackbar = true;
 				})
-				.catch(e => {
-					console.log(e);
+				.catch(err => {
+					this.processError(err);
 				});
 		},
 
 		deleteBook() {
 			BookDataService.delete(this.book.id)
-				.then(response => {
-					console.log(response.data);
-					this.$router.push({ name: "book" });
+				.then(() => {
+					this.infoDialog = true;
 				})
-				.catch(e => {
-					console.log(e);
+				.catch(err => {
+					this.processError(err);
 				});
-		}
+		},
+
+		processError(err) {
+			if (err.message.includes(401)) {
+				this.expiredSessionDialog = true;
+			} else if (err.message.includes(403)) {
+				this.accessDeniedDialog = true;
+			} else if (err.message.includes(404)) {
+				this.notFoundDialog = true;
+			} else if (err.message.includes(500)) {
+				this.errorMessage = "Oups! Une erreur s'est produite du côté du serveur...";
+				this.errorDialog = true;
+			} else {
+				this.errorMessage = "Oups! Une erreur inattendue s'est produite...";
+				this.errorDialog = true;
+			}
+		},
 	},
-	mounted() {
-		this.getBook(this.library, this.id);
-	}
+	created() {
+		this.getBook();
+	},
 };
 </script>
-  
-<style scoped>
-header {
-	display: flex;
-	gap: 1rem;
-}
-
-h1 {
-	margin: 0;
-}
-
-#header-infos {
-	flex-grow: 1;
-}
-
-#authors {
-	font-size: var(--medium3);
-	color: var(--label-color);
-}
-
-#description {
-	text-align: justify;
-}
-
-#cover-image {
-	height: 300px;
-}
-
-.label {
-	font-weight: bold;
-}
-
-menu {
-	justify-content: right;
-}
-</style>

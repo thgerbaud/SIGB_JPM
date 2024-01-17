@@ -1,14 +1,14 @@
 <template>
     <v-dialog width="500" persistent>
-        <v-card title="Accès refusé">
+        <v-card :title=title>
             <template v-slot:prepend>
-                <v-icon icon="mdi-lock" color="error"></v-icon>
+                <v-icon icon="mdi-information" color="primary"></v-icon>
             </template>
             <v-card-text>
-                Oups... Il semblerait que vous n'ayez pas les permissions nécessaires pour accéder à cette ressource ou effectuer cette opération.
+                {{ message }}
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$emit('ok')">Ok</v-btn>
+                <v-btn block @click="$emit('ok')">{{ btnText || "Ok" }}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -16,6 +16,7 @@
 
 <script>
 export default {
+    props: ["title", "message", "btnText"],
     emits: ["ok"],
 }
 </script>

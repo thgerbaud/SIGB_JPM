@@ -17,6 +17,7 @@
 
 <script>
 export default {
-    props: ["title", "text", "cancelText", "okText"]
+    props: ["title", "text", "cancelText", "okText"],
+    emits: ["ok", "cancel"]
 }
 </script>

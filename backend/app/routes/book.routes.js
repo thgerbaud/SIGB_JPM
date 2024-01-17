@@ -14,21 +14,32 @@ module.exports = app => {
 	 */
 	router.post("/", getTokenInfos, book.create);
 
-	// Retrieve all book
-	router.get("/:library/", book.findAll);
+	/**
+	 * Permet de récupérer les informations d'un livre.
+	 * @param id id du livre
+	 * @sortie livre
+	 * @auth token necessaire, admin ou invite
+	 * @status 200
+	 */
+	router.get("/:id", getTokenInfos, book.findOne);
 
+	/**
+	 * Permet de modifier un livre.
+	 * @param id id du livre
+	 * @entree paramètres à modifier {[code,] [location,] [category]}
+	 * @sortie livre modifié
+	 * @auth token necessaire, admin
+	 * @status 200
+	 */
+	router.put("/:id", getTokenInfos, book.update);
 
-	// Retrieve a single book with code
-	router.get("/:library/:code", book.findOne);
-
-	// Update a book with code
-	router.put("/:library/:code", book.update);
-
-	// Delete a book with code
-	router.delete("/:library/:code", book.delete);
-
-	// Delete all books
-	router.delete("/:library/", book.deleteAll);
+	/**
+	 * Permet de supprimer un livre.
+	 * @param id id du livre
+	 * @auth token necessaire, admin
+	 * @status 204
+	 */
+	router.delete("/:id", getTokenInfos, book.delete);
 
 	app.use('/api/books', router);
 };

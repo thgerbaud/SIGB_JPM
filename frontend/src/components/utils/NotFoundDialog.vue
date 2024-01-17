@@ -5,7 +5,7 @@
                 <v-icon icon="mdi-help" color="error"></v-icon>
             </template>
             <v-card-text>
-                "Oups... Il semblerait que la ressource à laquelle vous essayez d'accéder n'existe pas."
+                Oups... Il semblerait que la ressource à laquelle vous essayez d'accéder n'existe pas.
             </v-card-text>
             <v-card-actions>
                 <v-btn block @click="$emit('ok')">Ok</v-btn>
