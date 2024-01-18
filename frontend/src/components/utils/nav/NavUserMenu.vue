@@ -25,8 +25,8 @@
 
 <script>
 import NavUserInfos from '@/components/utils/nav/NavUserInfos.vue';
-import LogoutConfirmDialog from '@/components/utils/LogoutConfirmDialog.vue';
-import ConfirmDialog from '@/components/utils/ConfirmDialog.vue';
+import LogoutConfirmDialog from '@/components/utils/dialogs/LogoutConfirmDialog.vue';
+import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 export default {
     props: ["user", "libraryName"],
     data() {

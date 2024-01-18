@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import LogoutConfirmDialog from '@/components/utils/LogoutConfirmDialog.vue';
+import LogoutConfirmDialog from '@/components/utils/dialogs/LogoutConfirmDialog.vue';
 
 export default {
     data() {

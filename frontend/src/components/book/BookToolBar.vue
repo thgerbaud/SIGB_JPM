@@ -16,7 +16,7 @@
 
 <script>
 import EditBookModal from '@/components/book/EditBookModal.vue';
-import ConfirmDialog from '@/components/utils/ConfirmDialog.vue';
+import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 export default {
     props: ["book", "library"],
     data() {

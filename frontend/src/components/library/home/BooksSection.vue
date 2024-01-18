@@ -40,10 +40,10 @@
 
 <script>
 import BooksList from '@/components/library/home/BooksList.vue';
-import ExpiredSessionDialog from '@/components/utils/ExpiredSessionDialog.vue';
-import ErrorDialog from '@/components/utils/ErrorDialog';
-import NotFoundDialog from '@/components/utils/NotFoundDialog.vue';
-import AccessDeniedDialog from '@/components/utils/AccessDeniedDialog.vue';
+import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
+import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
+import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
 import LibraryDataService from '@/services/LibraryDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 export default {

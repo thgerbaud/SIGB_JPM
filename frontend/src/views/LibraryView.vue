@@ -7,7 +7,7 @@
 
 <script>
 import LibraryDataService from '@/services/LibraryDataService';
-import NavBar from '@/components/utils/NavBar.vue';
+import NavBar from '@/components/utils/nav/NavBar.vue';
 export default {
 	components: { NavBar },
 	data() {

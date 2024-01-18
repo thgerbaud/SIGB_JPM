@@ -34,11 +34,11 @@
 <script>
 import BookCard from '@/components/book/BookCard.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
-import ExpiredSessionDialog from '@/components/utils/ExpiredSessionDialog.vue';
-import ErrorDialog from '@/components/utils/ErrorDialog.vue';
-import NotFoundDialog from '@/components/utils/NotFoundDialog.vue';
-import AccessDeniedDialog from '@/components/utils/AccessDeniedDialog.vue';
-import InfoDialog from '@/components/utils/InfoDialog.vue';
+import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
+import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
+import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
+import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import BookDataService from '@/services/BookDataService';
 export default {

@@ -32,8 +32,8 @@
 import LibraryDataService from '@/services/LibraryDataService';
 import LibraryListItem from '@/components/home/LibraryListItem.vue';
 import CreateButton from '@/components/home/CreateButton.vue';
-import ExpiredSessionDialog from '@/components/utils/ExpiredSessionDialog.vue';
-import ErrorDialog from '@/components/utils/ErrorDialog';
+import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
 export default {
     props: ["user"],
     data() {

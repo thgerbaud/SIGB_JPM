@@ -36,9 +36,9 @@ import NameStep from '@/components/home/create/NameStep.vue';
 import LocationsStep from '@/components/home/create/LocationsStep.vue';
 import CategoriesStep from '@/components/home/create/CategoriesStep.vue';
 import CircleNumber from '@/components/utils/CircleNumber.vue';
-import ConfirmDialog from '@/components/utils/ConfirmDialog.vue';
+import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import CreateSuccessDialog from '@/components/home/create/CreateSuccessDialog.vue';
-import ErrorDialog from '@/components/utils/ErrorDialog';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
 export default {
     data() {
         return {

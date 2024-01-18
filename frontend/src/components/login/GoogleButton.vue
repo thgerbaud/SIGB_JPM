@@ -12,7 +12,7 @@
 
 <script>
 import AuthService from '@/services/AuthService';
-import ErrorDialog from '@/components/utils/ErrorDialog.vue';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 export default {
     data() {
         return {

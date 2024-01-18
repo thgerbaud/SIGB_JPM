@@ -42,8 +42,8 @@ import BookDataService from '@/services/BookDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import NotFoundDialog from '@/components/library/add/NotFoundDialog';
 import FoundDialog from '@/components/library/add/FoundDialog';
-import ErrorDialog from '@/components/utils/ErrorDialog';
-import ConfirmDialog from '@/components/utils/ConfirmDialog';
+import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
+import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog';
 import AddSuccessDialog from '@/components/library/add/AddSuccessDialog';
 export default {
 	name: "add-book",
