@@ -8,7 +8,7 @@
 
                     <p class="text-justify mb-4">{{ book.details.description }}</p>
 
-                    <legend><span class="font-weight-bold">Date de publication :</span> {{ publicationToString }}
+                    <legend><span class="font-weight-bold">Date de publication :</span> {{ book.details.publication }}
                     </legend>
                     <legend><span class="font-weight-bold">N° ISBN :</span> {{ book.isbn }}</legend>
                     <legend><span class="font-weight-bold">Code :</span> {{ book.code }}</legend>
@@ -44,10 +44,10 @@ export default {
 				return this.library.categories[categoryIndex];
 			}
 		},
-        publicationToString() {
+        /*publicationToString() {
             const date = new Date(this.book.details.publication);
             return date?.getFullYear();
-        }
+        }*/
 	},
 }
 </script>
