@@ -1,16 +1,8 @@
 <template>
-	<ExpiredSessionDialog v-model="expiredSessionDialog" />
-
-	<ErrorDialog v-model="errorDialog" :message="errorMessage" @close="errorDialog = false" />
-
-	<NotFoundDialog v-model="notFoundDialog" @ok="notFoundDialog = false" /> <!-- redirection ? -->
-
-	<AccessDeniedDialog v-model="accessDeniedDialog" @ok="accessDeniedDialog = false" /> <!-- redirection ? -->
-
-	<InfoDialog v-model="infoDialog" @ok="$router.push(`/${library.id}/books`)" title="Livre supprimé"
-		message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
-
-	<v-snackbar v-model="successSnackbar" color="primary" timeout="3000">Livre mis à jour.</v-snackbar>
+	<v-snackbar v-model="successSnackbar" color="primary" timeout="3000">
+		<v-icon icon="mdi-check-circle-outline"></v-icon>
+		Livre mis à jour.
+	</v-snackbar>
 
 	<div v-if="!loaded">
 		<v-skeleton-loader type="card"></v-skeleton-loader>
@@ -25,20 +17,15 @@
 	</div>
 
 	<div v-else>
-		<BookCard :book="book" :library="library" />
+		<BookCard :book="book" :library="library" @update="updateBook" />
 
-		<BookToolBar :book="book" :library="library" v-if="library.isAdmin" @update="updateBook" @delete="deleteBook" />
+		<BookToolBar :book="book" :library="library" v-if="library.isAdmin" @update="updateBook" />
 	</div>
 </template>
   
 <script>
 import BookCard from '@/components/book/BookCard.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
-import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
-import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
-import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
-import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
-import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import BookDataService from '@/services/BookDataService';
 export default {
@@ -49,23 +36,13 @@ export default {
 			book: null,
 			loaded: false,
 			errorMet: false,
-			expiredSessionDialog: false,
-			errorDialog: false,
-			notFoundDialog: false,
-			accessDeniedDialog: false,
-			errorMessage: "Oups, une erreur s'est produite...",
 			successSnackbar: false,
-			infoDialog: false,
+			infoDialog: false
 		};
 	},
 	components: {
 		BookCard,
 		BookToolBar,
-		ExpiredSessionDialog,
-		ErrorDialog,
-		NotFoundDialog,
-		AccessDeniedDialog,
-		InfoDialog,
 	},
 	methods: {
 		getBook() {
@@ -78,51 +55,28 @@ export default {
 					this.book.details = details;
 				})
 				.catch(err => {
-					this.processError(err);
+					if (err.message.includes(401)) {
+						this.globalEmitter.emit('401');
+					} else if (err.message.includes(403)) {
+						this.globalEmitter.emit('403');
+					} else if (err.message.includes(404)) {
+						this.globalEmitter.emit('404');
+					} else if (err.message.includes(500)) {
+						this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+					} else {
+						this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+					}
 					this.errorMet = true;
 				})
 				.finally(() => {
 					this.loaded = true;
 				});
 		},
-
-		updateBook(data) {
-			BookDataService.update(this.book.id, data)
-				.then(book => {
-					book.details = this.book.details;
-					this.book = book;
-					this.successSnackbar = true;
-				})
-				.catch(err => {
-					this.processError(err);
-				});
-		},
-
-		deleteBook() {
-			BookDataService.delete(this.book.id)
-				.then(() => {
-					this.infoDialog = true;
-				})
-				.catch(err => {
-					this.processError(err);
-				});
-		},
-
-		processError(err) {
-			if (err.message.includes(401)) {
-				this.expiredSessionDialog = true;
-			} else if (err.message.includes(403)) {
-				this.accessDeniedDialog = true;
-			} else if (err.message.includes(404)) {
-				this.notFoundDialog = true;
-			} else if (err.message.includes(500)) {
-				this.errorMessage = "Oups! Une erreur s'est produite du côté du serveur...";
-				this.errorDialog = true;
-			} else {
-				this.errorMessage = "Oups! Une erreur inattendue s'est produite...";
-				this.errorDialog = true;
-			}
-		},
+		updateBook(updatedBook) {
+			updatedBook.details = this.book.details;
+			this.book = updatedBook;
+			this.successSnackbar = true;
+		}
 	},
 	created() {
 		this.getBook();

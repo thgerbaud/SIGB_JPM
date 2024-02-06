@@ -2,10 +2,10 @@
     <v-dialog persistent width="800">
         <v-card title="Livre ajouté">
             <template v-slot:prepend>
-                <v-icon icon="mdi-check-circle" color="primay"></v-icon>
+                <v-icon icon="mdi-check-circle" color="primary"></v-icon>
             </template>
             <v-card-text>
-                Votre livre <b>"[{{ code }}] {{ title }}"</b> a bien été ajouté à votre bibliothèque !
+                Votre livre <b>"{{ title }}"</b> a bien été ajouté à votre bibliothèque ({{ nbCopies }}  exemplaire(s) au total) !
                 Que voulez-vous faire maintenant ?
             </v-card-text>
             <v-card-actions>
@@ -19,6 +19,6 @@
 
 <script>
 export default {
-    props: ["code", "title"]
+    props: ["nbCopies", "title"]
 }
 </script>

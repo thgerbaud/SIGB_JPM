@@ -78,6 +78,7 @@ class LibraryDataService {
 			method: 'POST',
 			headers: {
 				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
 			},
 			body: JSON.stringify(data)
 		}).then(async res => {

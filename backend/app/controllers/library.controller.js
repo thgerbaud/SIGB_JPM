@@ -4,13 +4,13 @@ const Book = db.book;
 
 exports.create = (req, res) => {
 	// vérification du nom
-	const name = req.body.name;
-	if (!name || name.trim() === '') {
+	const name = req.body.name?.trim();
+	if (!name || name === "") {
 		return res.status(400).send('Missing library name.');
 	}
 	// création de la bibliothèque
 	const library = new Library({
-		name: name.trim(),
+		name: name,
 		admins: [req.user],
 		users: [],
 		locations: req.body.locations || [],

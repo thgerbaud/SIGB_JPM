@@ -60,7 +60,7 @@ export default createRouter({
 				{
 					path: "books/add",
 					name: "add",
-					component: () => import("@/components/AddBook")
+					component: () => import("@/components/AddBookPage")
 				},
 				{
 					path: "books/:id",

@@ -1,13 +1,6 @@
 <template>
-    <ExpiredSessionDialog v-model="expiredSessionDialog" />
-
-    <ErrorDialog v-model="errorDialog" @close="errorDialog = false" :message="errorMessage" />
-
-    <AccessDeniedDialog v-model="accessDeniedDialog" @ok="exitLibrary" />
-
-    <NotFoundDialog v-model="notFoundDialog" @ok="exitLibrary" />
-
-    <v-snackbar v-model="snackbar" timeout="5000" color="error">Les détails d'un ou plusieurs livres n'ont pas pu être chargés.</v-snackbar>
+    <v-snackbar v-model="snackbar" timeout="5000" color="error">Les détails d'un ou plusieurs livres n'ont pas pu être
+        chargés.</v-snackbar>
 
     <v-toolbar class="bg-transparent overflow-visible">
         <v-responsive :max-width="500" class="overflow-visible">
@@ -40,10 +33,6 @@
 
 <script>
 import BooksList from '@/components/library/home/BooksList.vue';
-import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
-import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
-import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
-import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
 import LibraryDataService from '@/services/LibraryDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 export default {
@@ -59,12 +48,7 @@ export default {
             ],
             sortOption: null,
             searchValue: "",
-            errorMessage: "Oups! Une erreur s'est produite...",
             errorMet: false,
-            errorDialog: false,
-            expiredSessionDialog: false,
-            accessDeniedDialog: false,
-            notFoundDialog: false,
             snackbar: false
         }
     },
@@ -81,10 +65,7 @@ export default {
         },*/
         sortedBooks() {
             switch (this.sortOption) {
-                case "TIT": return [{
-                    title: "Tous",
-                    items: this.filteredBooks.toSorted(this.alphabeticalCompareFn),
-                }];
+                case "TIT": return this.sortBooksByTitle();
                 case "EMP": return this.sortBooksByLocations();
                 case "CAT": return this.sortBooksByCategories();
                 default: return [{
@@ -96,10 +77,6 @@ export default {
     },
     components: {
         BooksList,
-        ErrorDialog,
-        ExpiredSessionDialog,
-        NotFoundDialog,
-        AccessDeniedDialog
     },
     methods: {
         async loadBooks() {
@@ -121,48 +98,70 @@ export default {
                 );
             } catch (err) {
                 if (err.message.includes(401)) {
-                    this.expiredSessionDialog = true;
+                    this.globalEmitter.emit('401');
                 } else if (err.message.includes(403)) {
-                    this.accessDeniedDialog = true;
+                    this.globalEmitter.emit('403');
                 } else if (err.message.includes(404)) {
-                    this.notFoundDialog = true;
+                    this.globalEmitter.emit('404');
                 } else if (err.message.includes(500)) {
-                    this.errorMessage = "Oups! Une erreur s'est produite du côté du serveur...";
-                    this.errorDialog = true;
+                    this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
                 } else {
-                    this.errorMessage = "Oups! Une erreur inattendue s'est produite...";
-                    this.errorDialog = true;
+                    this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
                 }
                 this.errorMet = true;
             } finally {
                 this.loaded = true;
             }
         },
-        alphabeticalCompareFn(book1, book2) {
-            const title1 = book1.details.title.toLowerCase();
-            const title2 = book2.details.title.toLowerCase();
-            if (title1 < title2) {
-                return -1;
-            } else if (title1 > title2) {
-                return 1;
-            } else {
-                return 0;
-            }
+        /**
+         * 
+         */
+        sortBooksByTitle() {
+            // regroupement par première lettre
+            const groups = this.filteredBooks.reduce((result, book) => {
+                const firstLetter = book.details.title.charAt(0).toUpperCase();
+                const existingGroup = result.find(g => g.title === firstLetter);
+                if (existingGroup) {
+                    existingGroup.items.push(book);
+                } else {
+                    result.push({ title: firstLetter, items: [book] });
+                }
+                return result;
+            }, []);
+            // tri par ordre alphabétique à l'intérieur de chaque groupe
+            groups.forEach(groupe => {
+                groupe.items.sort((a, b) => a.details.title.toLowerCase().localeCompare(b.details.title.toLowerCase()));
+            });
+            // tri de la liste principale par ordre alphabétique
+            groups.sort((a, b) => a.title.localeCompare(b.title));
+            return groups;
         },
+        /**
+         * 
+         */
         sortBooksByLocations() {
             let res = this.library.locations.map(location => ({ title: location, items: [] }));
             let others = { title: "Autres", items: [] };
             this.filteredBooks.map(book => {
-                const locationIndex = book.location ?? -1;
-                if (locationIndex > this.library.locations.length || locationIndex < 0) {
-                    others.items.push(book);
-                } else {
-                    res[locationIndex].items.push(book);
-                }
+                book.copies.map(copy => {
+                    const locationIndex = copy.location ?? -1;
+                    if (locationIndex > this.library.locations.length || locationIndex < 0) {
+                        if(!others.items.includes(book)) {
+                            others.items.push(book);
+                        }
+                    } else {
+                        if(!res[locationIndex].items.includes(book)) {
+                            res[locationIndex].items.push(book);
+                        }
+                    }
+                });
             });
             res.push(others);
             return res;
         },
+        /**
+         * 
+         */
         sortBooksByCategories() {
             let res = this.library.categories.map(category => ((category) ? { title: category, items: [] } : null));
             let others = { title: "Autres", items: [] };

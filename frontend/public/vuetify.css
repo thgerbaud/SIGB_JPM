@@ -6,10 +6,6 @@
     height: auto !important;*/
 }
 
-.v-btn--variant-outlined {
-    border-width: 2px !important;
-}
-
 .v-input__details {
     margin-bottom: 1rem;
 }
