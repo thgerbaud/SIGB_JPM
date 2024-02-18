@@ -16,7 +16,7 @@ copySchema.set('toJSON', {
 const bookSchema = new Schema({
 	isbn: String,
 	library: { type: Schema.Types.ObjectId, ref: 'Library' },
-	category: { type: Number, default: null },
+	categories: [Schema.Types.ObjectId],
 	copies: [copySchema],
 	comments: [Object] //? plus tard
 });

@@ -65,7 +65,7 @@ export default {
                     name: "Catégories",
                     component: shallowRef(CategoriesStep),
                     legends: [
-                        "Vous pouvez choisir jusqu'à 3 catégories pour classer vos livres.",
+                        "Vous pouvez indiquer des catégories et sous-catégories (jusqu'à 3 niveaux) pour classer vos livres.",
                         "(Vous pourrez modifier les catégories plus tard dans les paramètres de la bibliothèque.)"
                     ],
                     prev: this.prevStep,

@@ -5,16 +5,28 @@ const Book = db.book;
 exports.create = (req, res) => {
 	// vérification du nom
 	const name = req.body.name?.trim();
-	if (!name || name === "") {
+	if (!name) {
 		return res.status(400).send('Missing library name.');
 	}
+
+	// vérification des categories
+	const categories = req.body.categories;
+	if(categories !== undefined) {
+		if(!Array.isArray(categories)) {
+			return res.status(400).send('Invalid categories.')
+		}
+		//TODO verif
+	}
+
+	//TODO verif locations
+
 	// création de la bibliothèque
 	const library = new Library({
 		name: name,
 		admins: [req.user],
 		users: [],
 		locations: req.body.locations || [],
-		categories: req.body.categories || []
+		categories: categories || []
 	});
 	// enregistrement
 	library.save()

@@ -12,9 +12,21 @@
         <h4 class="text-h4">{{ book.title }}</h4>
         <h5 class="text-h5">{{ book.authors?.join(', ') }}</h5>
         <v-form class="my-4" v-model="isFormValid" ref="addForm" @submit.prevent="saveBook">
-            <v-select label="Catégorie" variant="outlined"
-                :items="library.categories?.map((title, value) => ({ title, value }))" v-model="category" clearable
-                hint="(optionnel)" persistent-hint></v-select>
+
+            <v-select label="Catégories" variant="outlined" multiple clearable hint="(optionnel)" persistent-hint
+                :items="categoriesSelectItems" v-model="categories">
+                <template #item="data">
+                    <v-divider v-if="data.props.depth === 0"></v-divider>
+                    <v-list-item v-bind="data.props">
+                        <template v-slot:prepend="{ isActive }">
+                            <v-list-item-action start :class="`ml-${data.props.depth * 8}`">
+                                <v-checkbox-btn :model-value="isActive"
+                                    @change="isActive ? addParents(data.props.parents) : removeChildrens(data.item.value)"></v-checkbox-btn>
+                            </v-list-item-action>
+                        </template>
+                    </v-list-item>
+                </template>
+            </v-select>
 
             <p>
                 Pour chaque exemplaire du livre, indiquez un code unique pour le référencer.<br>
@@ -58,7 +70,7 @@ export default {
     props: ["library", "book"],
     data() {
         return {
-            category: null,
+            categories: [],
             copies: [{ code: "", location: null }],
             rules: {
                 required: (value) => !!value || "Champ obligatoire.",
@@ -69,7 +81,28 @@ export default {
             loading: false,
             createdBook: null,
             addSuccessDialog: false,
-            confirmCancelDialog: false
+            confirmCancelDialog: false,
+        }
+    },
+    computed: {
+        //TODO setup réutiliser bout de code pour editBook
+        categoriesSelectItems() {
+            const flattenCategories = (categories, depth, parents) => {
+                let result = [];
+
+                categories.forEach(category => {
+                    result.push({ value: category.id, title: category.name, props: { depth, parents } });
+
+                    if (category.subcategories) {
+                        let parentsCopy = [...parents];
+                        parentsCopy.push(category.id);
+                        result = result.concat(flattenCategories(category.subcategories, depth + 1, parentsCopy));
+                    }
+                });
+
+                return result;
+            }
+            return flattenCategories(this.library.categories, 0, []);
         }
     },
     watch: {
@@ -102,12 +135,27 @@ export default {
                 return index === i || !copy.code || copy.code?.trim().toUpperCase() !== value;
             });
         },
+        /* ----- v-select catégories ----- */
+        addParents(parents) {
+            parents.forEach(id => {
+                if (!this.categories.includes(id)) {
+                    this.categories.push(id);
+                }
+            });
+        },
+        removeChildrens(id) {
+            const childrens = this.categoriesSelectItems
+                .filter(category => category.props.parents?.includes(id))
+                .map(category => category.value);
+            this.categories = this.categories.filter(id => !childrens.includes(id));
+        },
+        /* ---------- */
         async saveBook() {
             this.loading = true;
             const payload = {
                 isbn: this.book.isbn,
                 library: this.library.id,
-                category: this.category,
+                categories: this.categories,
                 copies: this.copies
             }
             BookDataService.create(payload)
@@ -134,7 +182,7 @@ export default {
                 .finally(() => {
                     this.loading = false;
                 });
-        }
+        },
     },
     emits: ["previous", "cancel"]
 }

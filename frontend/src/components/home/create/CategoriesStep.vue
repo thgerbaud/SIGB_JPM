@@ -1,14 +1,81 @@
 <template>
-    <v-text-field v-model="categories[0]" label="Catégorie 1" variant="outlined" hint="(Optionnel) Ex.: ???" persistent-hint
-        :rules="[rules.duplicate(0)]" clearable ref="input1" @input="validateInputs"></v-text-field>
-    <v-text-field v-model="categories[1]" label="Catégorie 2" variant="outlined" hint="(Optionnel) Ex.: ???" persistent-hint
-        :rules="[rules.duplicate(1)]" clearable ref="input2" @input="validateInputs"></v-text-field>
-    <v-text-field v-model="categories[2]" label="Catégorie 3" variant="outlined" hint="(Optionnel) Ex.: ???" persistent-hint
-        :rules="[rules.duplicate(2)]" clearable ref="input3" @input="validateInputs"></v-text-field>
+    <v-form class="pb-4" v-model="isFormValid" ref="categoriesForm">
+        <div v-for="(category, i) in categories" :key="category">
+            <!-- Catégorie principale (niv. 1) -->
+            <v-row class="mt-4">
+                <v-col class="py-0">
+                    <v-text-field v-model="category.name" :label="`Catégorie ${i + 1}`" variant="outlined" clearable
+                        density="compact" placeholder="Ex: Fiction"
+                        :rules="[rules.required, rules.duplicate(category)]"></v-text-field>
+                </v-col>
+                <v-col cols="1" class="py-0">
+                    <v-btn variant="plain" icon="mdi-close-circle" color="error" @click="removeCategory(i)"></v-btn>
+                </v-col>
+            </v-row>
+            <!-- Sous-catégories (niv. 2) -->
+            <div v-for="(subcategory, j) in category.subcategories" :key="subcategory">
+                <v-row :class="{ 'mt-4' : j > 0}">
+                    <v-col cols="1">
+                        <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
+                    </v-col>
+                    <v-col class="py-0">
+                        <v-text-field v-model="subcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}`"
+                            variant="outlined" clearable density="compact" placeholder="Ex: Roman"
+                            :rules="[rules.required, rules.duplicate(subcategory)]"></v-text-field>
+                    </v-col>
+                    <v-col cols="1" class="py-0">
+                        <v-btn variant="plain" icon="mdi-close-circle" color="error"
+                            @click="removeSubcategory(i, j)"></v-btn>
+                    </v-col>
+                </v-row>
+                <!-- Sous-catégories (niv. 3)-->
+                <div v-for="(subsubcategory, k) in subcategory.subcategories" :key="subsubcategory">
+                    <v-row>
+                        <v-col cols="2" class="text-right">
+                            <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
+                        </v-col>
+                        <v-col class="py-0">
+                            <v-text-field v-model="subsubcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}.${k + 1}`"
+                                variant="outlined" clearable density="compact" placeholder="Ex: Roman policier"
+                                :rules="[rules.required, rules.duplicate(subsubcategory)]"></v-text-field>
+                        </v-col>
+                        <v-col cols="1" class="py-0">
+                            <v-btn variant="plain" icon="mdi-close-circle" color="error"
+                                @click="removeSubsubcategory(i, j, k)"></v-btn>
+                        </v-col>
+                    </v-row>
+                </div>
+                <v-row>
+                    <v-col cols="2" class="py-0"></v-col>
+                    <v-col class="py-0">
+                        <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubsubcategory(i, j)" class="mb-4"
+                            density="compact">ajouter
+                            une
+                            sous-catégorie</v-btn>
+                    </v-col>
+                </v-row>
+
+            </div>
+            <!-- Fin sous-catégories niv. 3 -->
+            <v-row>
+                <v-col cols="1" class="py-0"></v-col>
+                <v-col class="py-0">
+                    <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubcategory(i)" class="mb-4"
+                        density="compact">ajouter une
+                        sous-catégorie</v-btn>
+                </v-col>
+            </v-row>
+            <!-- Fin sous-catégories niv. 2 -->
+        </div>
+        <v-btn variant="plain" prepend-icon="mdi-plus" @click="addCategory" class="pl-0 mt-4" density="compact">ajouter une
+            catégorie</v-btn>
+        <!-- Fin catégories niv. 1 -->
+    </v-form>
+
     <div class="d-flex justify-space-between">
-        <v-btn-secondary @click="prev" prepend-icon="mdi-chevron-left" :disabled="!isValid">Précédent</v-btn-secondary>
+        <v-btn-secondary @click="prev" prepend-icon="mdi-chevron-left" :disabled="!isFormValid">Précédent</v-btn-secondary>
         <v-btn-tertiary color="error" @click="$emit('cancel')">Annuler</v-btn-tertiary>
-        <v-btn @click="setCategories" prepend-icon="mdi-check" :disabled="!isValid">Terminer</v-btn>
+        <v-btn @click="setCategories" prepend-icon="mdi-check" :disabled="!isFormValid">Terminer</v-btn>
     </div>
 </template>
 
@@ -16,49 +83,62 @@
 export default {
     data() {
         return {
-            categories: ["", "", ""],
+            categories: [],
             rules: {
-                duplicate: (index) => (value) => (!this.isDuplicate(value, index)) || "Vous avez plusieurs catégories avec le même nom."
-            }
+                required: (value) => (!!value?.trim()) || "Le nom ne doit pas être vide.",
+                duplicate: (category) => (value) => this.isNameUnique(value, category) || "Vous avez plusieurs catégories avec le même nom.",
+                //TODO regex / length ?
+            },
+            isFormValid: true
         }
     },
-    computed: {
-        isValid() {
-            return !this.isDuplicate(this.categories[0], 0) && !this.isDuplicate(this.categories[1], 1);
+    watch: {
+        categories: {
+            handler() {
+                this.$refs.categoriesForm.validate();
+            },
+            deep: true
         }
     },
     methods: {
-        isDuplicate(v, i) {
-            const value = v?.trim().toLowerCase();
-            return (value) && (
-                (value === this.categories[this.mod3(i - 1)]?.trim().toLowerCase())
-                || (value === this.categories[this.mod3(i + 1)]?.trim().toLowerCase())
-            );
+        addCategory() {
+            this.categories.push({ name: "", subcategories: [] });
         },
-        mod3(i) {
-            return (i % 3 + 3) % 3
+        addSubcategory(i) {
+            this.categories[i]?.subcategories.push({ name: "", subcategories: [] });
         },
-        validateInputs() {
-            this.$refs.input1.validate();
-            this.$refs.input2.validate();
-            this.$refs.input3.validate();
+        addSubsubcategory(i, j) {
+            this.categories[i]?.subcategories[j]?.subcategories.push({ name: "" });
         },
-        sortFn(a, b) {
-            if (b) {
-                return 0
-            } else {
-                return -1
-            }
+        removeCategory(i) {
+            this.categories.splice(i, 1);
+        },
+        removeSubcategory(i, j) {
+            this.categories[i]?.subcategories.splice(j, 1);
+        },
+        removeSubsubcategory(i, j, k) {
+            this.categories[i]?.subcategories[j]?.subcategories.splice(k, 1);
+        },
+        isNameUnique(value, currentCategory) {
+            const testValue = value?.trim().toLowerCase();
+            const checkUnique = (category) => {
+                if (category.name?.trim().toLowerCase() === testValue && category !== currentCategory) {
+                    return false;
+                }
+                if (category.subcategories) {
+                    return category.subcategories.every(checkUnique);
+                }
+                return true;
+            };
+            return this.categories.every(checkUnique);
         },
         setCategories() {
-            if (this.isValid) {
-                // si les catégories ne sont que partiellement renseignées, pousse les "trous" à la fin de la liste
-                this.categories.sort(this.sortFn); 
-                this.$emit('next', this.categories.map((category) => category || ""));
+            if (this.isFormValid) {
+                this.$emit('next', this.categories);
             }
         },
         prev() {
-            if (this.isValid) {
+            if (this.isFormValid) {
                 this.$emit('prev');
             }
         }

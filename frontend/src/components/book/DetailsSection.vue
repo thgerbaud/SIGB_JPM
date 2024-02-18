@@ -8,7 +8,7 @@
         book.details?.publication }}
     </legend>
     <legend><span class="font-weight-bold">N° ISBN :</span> {{ book.isbn }}</legend>
-    <legend><span class="font-weight-bold">Catégorie :</span> {{ categoryToString }}</legend>
+    <legend><span class="font-weight-bold">Catégorie(s) :</span> {{ categoriesToString }}</legend>
     <legend><span class="font-weight-bold">Exemplaires :</span> {{ book.copies?.length }}</legend>
 </template>
 
@@ -16,14 +16,28 @@
 export default {
     props: ["book", "library"],
     computed: {
-        categoryToString() {
-            const categoryIndex = this.book.category ?? -1;
-            if (categoryIndex > this.library.categories.length || categoryIndex < 0) {
-                return "Aucune"
+        categoriesToString() {
+            const categoriesNames = this.findCategoriesName(this.library.categories);
+            if(categoriesNames.length > 0) {
+                return categoriesNames.join(', ');
             } else {
-                return this.library.categories[categoryIndex];
+                return "Aucune";
             }
         }
     },
+    methods: {
+        findCategoriesName(categories) {
+            let res = [];
+            categories.forEach(category => {
+                if(this.book.categories?.includes(category.id)) {
+                    res.push(category.name);
+                }
+                if(category.subcategories) {
+                    res = res.concat(this.findCategoriesName(category.subcategories));
+                }
+            });
+            return res;
+        }
+    }
 }
 </script>

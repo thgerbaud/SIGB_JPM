@@ -74,11 +74,9 @@ exports.create = async (req, res) => {
 			return res.status(400).send("Missing or invalid isbn.");
 		}
 
-		// categorie
-		const category = req.body.category ?? null;
-		if ((category !== null) && !(/^[0-2]$/.test(category))) {
-			return res.status(400).send("Invalid category.");
-		}
+		// categories
+		const categories = req.body.categories ?? [];
+		//TODO verif
 
 		// -- vérification des exemplaires --
 		const copies = req.body.copies;
@@ -119,16 +117,16 @@ exports.create = async (req, res) => {
 		// TODO équivalence isbn10/13
 		if (book !== null) {
 			// màj des exemplaires si livre déjà existant
-			if (book.category !== category) {
+			/*if (book.category !== category) {
 				return res.status(400).send(`Book with ISBN ${isbn} already in library with different category.`)
-			}
+			}*/ //TODO
 			book.copies = book.copies.concat(verifiedCopies);
 		} else {
 			// création d'un nouveau livre sinon
 			book = new Book({
 				library: new db.mongoose.Types.ObjectId(libraryId),
 				isbn: isbn,
-				category: category,
+				categories: categories,
 				copies: verifiedCopies,
 				comments: []
 			});
@@ -213,15 +211,16 @@ exports.update = async (req, res) => {
 
 		// -- vérifications et màj des nouveaux paramètres --
 		// categorie
-		const newCategory = req.body.category;
-		if (newCategory !== undefined) {
-			if(newCategory === null) {
+		const newCategories = req.body.categories;
+		if (newCategories !== undefined) {
+			/*if(newCategory === null) {
 				doc.category = null;
 			} else if (!(/^[0-2]$/.test(newCategory))) {
 				return res.status(400).send("Invalid category.");
 			} else {
 				doc.category = parseInt(newCategory);
-			}
+			}*/ //TODO
+			doc.categories = newCategories;
 		}
 
 		// -- enregistrement --
