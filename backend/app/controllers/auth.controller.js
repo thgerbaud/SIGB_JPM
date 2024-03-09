@@ -33,14 +33,14 @@ exports.login = async (req, res) => {
 
 }
 
-exports.getTokenInfos = (req, res, next) => {
+exports.getTokenInfos = async (req, res, next) => {
     const accessToken = req.headers['authorization'];
 
     if(!accessToken) {
-        return res.sendStatus(401);
+        return res.status(401).send('Missing token.');
     }
 
-    fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -60,6 +60,6 @@ exports.getTokenInfos = (req, res, next) => {
         if(err.message.includes('401')) {
             return res.status(401).send('Invalid credentials');
         }
-        return res.sendStatus(500);
+        return res.status(500).send('Internal server error.');
     });
 }

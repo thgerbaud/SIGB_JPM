@@ -31,14 +31,31 @@ const categorySchema = new Schema({
 
 categorySchema.set('toJSON', toJsonOptions);
 
+/* ----- users ----- */
+
+const userSchema = new Schema({
+    email: String,
+    pending: Boolean,
+});
+
+userSchema.set('toJSON', toJsonOptions);
+
+/* ----- locations ----- */
+
+const locationSchema = new Schema({
+    name: String,
+});
+
+locationSchema.set('toJSON', toJsonOptions);
+
 /* ----- library ----- */
 
 const librarySchema = new Schema({
     name: String,
-    admins: [String],
-    users: [String],
-    locations: [String],
-    categories: [categorySchema]
+    admins: [userSchema],
+    users: [userSchema],
+    locations: [locationSchema],
+    categories: [categorySchema],
 });
 
 librarySchema.set('toJSON', toJsonOptions);

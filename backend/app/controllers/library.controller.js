@@ -1,302 +1,321 @@
 const db = require("../models");
+const { inviteAdmin, inviteGuest } = require("../services/email.service");
+
 const Library = db.library;
 const Book = db.book;
 
-exports.create = (req, res) => {
-	// vérification du nom
-	const name = req.body.name?.trim();
-	if (!name) {
-		return res.status(400).send('Missing library name.');
+//TODO uniformiser message erreur
+
+function formatLibrary(raw, user) {
+	const isAdmin = raw.admins.some(admin => admin.email === user);
+	const library = {
+		id: raw.id,
+		name: raw.name,
+		locations: raw.locations,
+		categories: raw.categories,
+		isAdmin: isAdmin
 	}
-
-	// vérification des categories
-	const categories = req.body.categories;
-	if(categories !== undefined) {
-		if(!Array.isArray(categories)) {
-			return res.status(400).send('Invalid categories.')
-		}
-		//TODO verif
+	if (isAdmin) {
+		library.admins = raw.admins;
+		library.users = raw.users;
 	}
-
-	//TODO verif locations
-
-	// création de la bibliothèque
-	const library = new Library({
-		name: name,
-		admins: [req.user],
-		users: [],
-		locations: req.body.locations || [],
-		categories: categories || []
-	});
-	// enregistrement
-	library.save()
-		.then(doc => {
-			res.status(201).send(doc.toJSON());
-		})
-		.catch(err => {
-			console.error(err);
-			res.status(500).send("Internal server error.");
-		});
+	return library;
 }
 
-exports.findAll = (req, res) => {
-	const user = req.user;
-	Library.find({ $or: [{ 'admins': user }, { 'users': user }] })
-		.then(docs => {
-			const libraries = docs.map(doc => {
-				const obj = doc.toJSON();
-				const isAdmin = obj.admins.includes(user);
-				let library = {
-					id: obj.id,
-					name: obj.name,
-					locations: obj.locations,
-					categories: obj.categories,
-					isAdmin: isAdmin
-				}
-				if (isAdmin) {
-					library.admins = obj.admins;
-					library.users = obj.users;
-				}
-				return library;
-			});
-			res.status(200).send(libraries);
-		})
-		.catch(err => {
-			console.log(err);
-			res.status(500).send("Internal server error.");
+function hasDuplicates(arr) {
+	return new Set(arr).size !== arr.length; 
+}
+
+exports.searchLibrary = async (req, res, next) => {
+	try {
+		const id = req.params.id;
+		const library = await Library.findOne({ _id: id });
+		if (library === null) {
+			return res.status(404).send('Library not found.');
+		}
+		req.library = library;
+		next();
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.verifyAdminPermissions = async (req, res, next) => {
+	try {
+		const library = req.library;
+		if (!library.admins.some(admin => admin.email === req.user)) {
+			return res.status(403).send('Insufficient permissions.');
+		}
+		next();
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.verifyGlobalPermissions = async (req, res, next) => {
+	try {
+		const library = req.library;
+		if (!library.admins.some(admin => admin.email === req.user) && !library.users.some(user => user.email === req.user)) {
+			return res.status(403).send('Insufficient permissions.');
+		}
+		next();
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.create = async (req, res) => {
+	try {
+		const name = req.body.name;
+		const categories = req.body.categories || [];
+		const locations = req.body.locations || [];
+		
+		if(hasDuplicates(locations)) {
+			return res.status(409).send('Duplicate names in locations.')
+		}
+
+		const library = new Library({
+			name: name,
+			admins: [{ email: req.user, pending: false }],
+			users: [],
+			locations: locations.map(name => ({ name })),
+			categories: categories
 		});
+
+		const doc = await library.save();
+		res.status(201).send(doc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.findAll = async (req, res) => {
+	try {
+		const user = req.user;
+
+		const docs = await Library.find({ $or: [{ 'admins.email': user }, { 'users.email': user }] });
+		const libraries = docs?.map(doc => formatLibrary(doc.toJSON(), user)) || [];
+
+		return res.status(200).send(libraries);
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
 }
 
 exports.findOne = (req, res) => {
-	const user = req.user;
-	// vérification de l'id
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id.');
+	try {
+		const library = formatLibrary(req.library.toJSON(), req.user);
+		return res.status(200).send(library);
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
 	}
-	// recherche de la bibliothèque
-	Library.findOne({ '_id': libraryId })
-		.then(doc => {
-			if (doc === null) {
-				return res.status(404).send("Library not found.");
-			}
-			const obj = doc.toJSON();
-			const isAdmin = obj.admins.includes(user);
-			// vérification que l'utilisateur ait bien de le droit d'accès à la bibliothèque
-			if (!(isAdmin || obj.users.includes(user))) {
-				return res.status(403).send("Access denied.");
-			}
-			let library = {
-				id: obj.id,
-				name: obj.name,
-				locations: obj.locations,
-				categories: obj.categories,
-				isAdmin: isAdmin
-			}
-			if (isAdmin) {
-				library.admins = obj.admins;
-				library.users = obj.users;
-			}
-			res.status(200).send(library);
-		})
-		.catch(err => {
-			console.error(err);
-			res.status(500).send("Internal server error.");
-		});
 }
 
 exports.getBooks = async (req, res) => {
-	const user = req.user;
-	// vérification de l'id et des permissions
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
-	}
 	try {
-		const doc = await Library.findOne({ _id: libraryId });
-		if (doc === null) {
-			return res.status(404).send("Library not found.");
-		}
-		const library = doc.toJSON();
-		// vérification que l'utilisateur ait les droits d'administrateur
-		if (!library.admins.includes(user) && !library.users.includes(user)) {
-			return res.status(403).send("Access denied.");
-		}
+		const docs = await Book.find({ 'library': req.params.id });
+		const books = docs?.map(doc => doc.toJSON()) || [];
+		return res.status(200).send(books);
+
 	} catch (err) {
 		console.error(err);
-		return res.status(500).send("Internal server error.");
+		return res.status(500).send('Internal server error.');
 	}
-	Book.find({ 'library': libraryId })
-		.then(docs => {
-			const books = docs.map(doc => doc.toJSON());
-			res.status(200).send(books);
-		})
-		.catch(err => {
-			console.log(err);
-			res.status(500).send("Internal server error.");
-		});
 }
 
-exports.updateSettings = (req, res) => { }
+/* ========== PARAMETRES GLOBAUX ========== */
 
-exports.addAdmin = (req, res) => {
-	const user = req.user;
-	// vérification de l'id
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
+/* ----- emplacements ----- */
+
+exports.addLocation = async (req, res) => {
+	try {
+		const library = req.library;
+		const name = req.body.name;
+
+		if(library.locations.some(location => location.name === name)) {
+			return res.status(409).send('A location already exists with this name.');
+		}
+
+		library.locations.push({ name });
+		const updatedDoc = await library.save();
+		return res.status(201).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
 	}
-	// vérification du corps de la requête
-	const newAdmin = req.body.admin;
-	if (!newAdmin || !/^[a-zA-Z0-9._-]+@gmail\.com$/.test(newAdmin)) {
-		return res.status(400).send('Missing or invalid admin email.');
-	}
-	// recherche de la bibliothèque
-	Library.findOne({ _id: libraryId }, { admins: true })
-		.then(async doc => {
-			if (doc === null) {
-				return res.sendStatus(404);
-			}
-			const library = doc.toJSON();
-			// vérification que l'utilisateur y ait les droits d'administrateur
-			if (!library.admins.includes(user)) {
-				return res.sendStatus(403);
-			}
-			// vérification que l'administrateur à ajouter n'y soit pas déjà
-			if (library.admins.includes(newAdmin)) {
-				return res.status(400).send('Admin already added');
-			}
-			// mise à jour
-			Library.findOneAndUpdate({ _id: libraryId }, { $push: { admins: newAdmin } }, { new: true })
-				.then(doc => {
-					res.status(200).send(doc.toJSON());
-				})
-				.catch(err => {
-					console.error(err);
-					res.sendStatus(500);
-				});
-		})
-		.catch(err => {
-			console.error(err);
-			res.sendStatus(500);
-		});
 }
 
-exports.addUser = (req, res) => {
-	const user = req.user;
-	// vérification de l'id
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
+exports.editLocation = async (req, res) => {
+	try {
+		const library = req.library;
+		const locationId = req.params.locationId;
+
+		const index = library.locations.findIndex(location => location._id.toString() === locationId);
+		if (index < 0) {
+			return res.status(404).send('Location not found.');
+		}
+
+		const name = req.body.name;
+		if(library.locations.some(location => location.name === name && location._id.toString() !== locationId)) {
+			return res.status(409).send('An other location already exists with this name.');
+		}
+
+		library.locations[index].name = name;
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
 	}
-	// vérification du corps de la requête
-	const newUser = req.body.user;
-	if (!newUser || !/^[a-zA-Z0-9._-]+@gmail\.com$/.test(newUser)) {
-		return res.status(400).send('Missing or invalid user email.');
-	}
-	// recherche de la bibliothèque
-	Library.findOne({ _id: libraryId }, { admins: true, users: true })
-		.then(async doc => {
-			if (doc === null) {
-				return res.sendStatus(404);
-			}
-			const library = doc.toJSON();
-			// vérification que l'utilisateur y ait les droits d'administrateur
-			if (!library.admins.includes(user)) {
-				return res.sendStatus(403);
-			}
-			// vérification que l'utilisateur à ajouter n'y soit pas déjà
-			if (library.users.includes(newUser)) {
-				return res.status(400).send('User already invited');
-			}
-			// mise à jour
-			Library.findOneAndUpdate({ _id: libraryId }, { $push: { users: newUser } }, { new: true })
-				.then(doc => {
-					res.status(200).send(doc.toJSON());
-				})
-				.catch(err => {
-					console.error(err);
-					res.sendStatus(500);
-				});
-		})
-		.catch(err => {
-			console.error(err);
-			res.sendStatus(500);
-		});
 }
 
-exports.deleteUser = (req, res) => {
-	const user = req.user;
-	// vérification de l'id
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
+exports.deleteLocation = async (req, res) => {
+	try {
+		const library = req.library;
+		const locationId = req.params.locationId;
+
+		const index = library.locations.findIndex(location => location._id.toString() === locationId);
+		if (index < 0) {
+			return res.status(404).send('Location not found.')
+		}
+
+		library.locations.splice(index, 1);
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
 	}
-	// vérification du corps de la requête
-	const userToRemove = req.body.user;
-	if (!userToRemove || !/^[a-zA-Z0-9._-]+@gmail\.com$/.test(userToRemove)) {
-		return res.status(400).send('Missing or invalid user email.');
-	}
-	// recherche de la bibliothèque
-	Library.findOne({ _id: libraryId }, { admins: true, users: true })
-		.then(async doc => {
-			if (doc === null) {
-				return res.sendStatus(404);
-			}
-			const library = doc.toJSON();
-			// vérification que l'utilisateur y ait les droits d'administrateur
-			if (!library.admins.includes(user)) {
-				return res.sendStatus(403);
-			}
-			// vérification que l'utilisateur à supprimer y soit
-			if (!library.users.includes(userToRemove)) {
-				return res.status(400).send('Can\'t find user');
-			}
-			// mise à jour
-			Library.findOneAndUpdate({ _id: libraryId }, { $pull: { users: userToRemove } }, { new: true })
-				.then(doc => {
-					res.status(200).send(doc.toJSON());
-				})
-				.catch(err => {
-					console.error(err);
-					res.sendStatus(500);
-				});
-		})
-		.catch(err => {
-			console.error(err);
-			res.sendStatus(500);
-		});
 }
 
-exports.delete = (req, res) => {
-	const user = req.user;
-	// vérification de l'id
-	const libraryId = req.params.id;
-	if (!db.mongoose.Types.ObjectId.isValid(libraryId)) {
-		return res.status(400).send('Invalid library id');
+/* ========== UTILISATEURS ========== */
+
+/* ----- admins ----- */
+
+exports.inviteAdmin = async (req, res) => {
+	try {
+		const user = req.user;
+		const library = req.library;
+		const email = req.body.email;
+
+		if (library.admins.some(admin => admin.email === email)) {
+			return res.status(409).send('Admin already added.');
+		}
+		const index = library.users.findIndex(guest => guest.email === email);
+
+		const info = await inviteAdmin(email, user, library.name);
+
+		const newAdmin = {
+			email: email,
+			pending: true
+		}
+
+		library.admins.push(newAdmin);
+		if (index >= 0) {
+			library.users.splice(index, 1);
+		}
+
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
 	}
-	Library.findOne({ _id: libraryId }, { admins: true })
-		.then(async doc => {
-			if (doc === null) {
-				return res.sendStatus(404);
-			}
-			const library = doc.toJSON();
-			// vérification que l'utilisateur y ait les droits d'administrateur
-			if (!library.admins.includes(user)) {
-				return res.sendStatus(403);
-			}
-			// suppression
-			Library.deleteOne({ _id: libraryId })
-				.then(() => {
-					res.sendStatus(204);
-				})
-				.catch(err => {
-					console.error(err);
-					res.sendStatus(500);
-				});
-		})
-		.catch(err => {
-			console.error(err);
-			res.sendStatus(500);
-		});
+}
+
+exports.deleteAdmin = async (req, res) => {
+	try {
+		const library = req.library;
+
+		const index = library.admins.findIndex(admin => admin._id.toString() === req.params.adminId)
+		if (index < 0) {
+			return res.status(404).send('Admin not found.');
+		}
+
+		library.admins.splice(index, 1);
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+/* ----- invités ----- */
+
+exports.inviteUser = async (req, res) => {
+	try {
+		const user = req.user;
+		const library = req.library;
+		const email = req.body.email;
+
+		if (library.users.some(guest => guest.email === email) || library.admins.some(admin => admin.email === email)) {
+			return res.status(409).send('User already added.');
+		}
+
+		const info = await inviteGuest(email, user, library.name);
+
+		const newGuest = {
+			email: email,
+			pending: true
+		}
+		
+		library.users.push(newGuest);
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.deleteUser = async (req, res) => {
+	try {
+		const library = req.library;
+
+		const index = library.users.findIndex(guest => guest._id.toString() === req.params.userId);
+		if (index < 0) {
+			return res.status(404).send('User not found.');
+		}
+
+		library.users.splice(index, 1);
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+/* ========== ========== */
+
+exports.delete = async (req, res) => {
+	try {
+		const library = req.library;
+		await library.deleteOne();
+		return res.sendStatus(204);
+
+	} catch(err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
 }

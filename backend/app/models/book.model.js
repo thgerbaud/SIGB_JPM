@@ -3,7 +3,7 @@ const { Schema } = require('mongoose');
 
 const copySchema = new Schema({
 	code: String,
-	location: { type: Number, default: null }
+	location: { type: Schema.Types.ObjectId, default: null }
 });
 
 copySchema.set('toJSON', {
