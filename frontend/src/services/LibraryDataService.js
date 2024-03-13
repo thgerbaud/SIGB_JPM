@@ -32,7 +32,7 @@ class LibraryDataService {
 				"Authorization": store.getters.getToken,
 			}
 		}).then(async res => {
-			if(res.status === 200) {
+			if (res.status === 200) {
 				return res.json();
 			} else {
 				//401 invalid credentials
@@ -56,7 +56,7 @@ class LibraryDataService {
 				"Authorization": store.getters.getToken,
 			}
 		}).then(async res => {
-			if(res.status === 200) {
+			if (res.status === 200) {
 				return res.json();
 			} else {
 				//401 invalid credentials
@@ -98,15 +98,298 @@ class LibraryDataService {
 		return library;
 	}
 
-	//updateSettings(id, data) {}
+	async addAdmin(id, adminEmail) {
+		const library = await fetch(BASE_URL + `${id}/admins`, {
+			method: 'POST',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({ email: adminEmail })
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters/already exists
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
 
-	//addAdmin(id, newAdmin) {}
+		return library;
+	}
 
-	//addUser(id, newUser) {}
+	async deleteAdmin(id, adminId) {
+		const library = await fetch(BASE_URL + `${id}/admins/${adminId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 already exists
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
 
-	//deleteUser(id, user) {}
+		return library;
+	}
 
-	//delete(id) {}
+	async addGuest(id, guestEmail) {
+		const library = await fetch(BASE_URL + `${id}/users`, {
+			method: 'POST',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({ email: guestEmail })
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 already exists
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async deleteGuest(id, guestId) {
+		const library = await fetch(BASE_URL + `${id}/users/${guestId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async addLocation(id, name) {
+		const library = await fetch(BASE_URL + `${id}/locations`, {
+			method: 'POST',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({ name })
+		}).then(async res => {
+			if (res.status === 201) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 duplicate location name
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async editLocation(id, locationId, name) {
+		const library = await fetch(BASE_URL + `${id}/locations/${locationId}`, {
+			method: 'PUT',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({ name })
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 duplicate location name
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async deleteLocation(id, locationId) {
+		const library = await fetch(BASE_URL + `${id}/locations/${locationId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": store.getters.getToken,
+			}
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async addCategory(id, name, parent = undefined) {
+		const library = await fetch(BASE_URL + `${id}/categories`, {
+			method: 'POST',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify((parent) ? { name, parent } : { name })
+		}).then(async res => {
+			if (res.status === 201) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 duplicate category name
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async editCategory(id, categoryId, name) {
+		const library = await fetch(BASE_URL + `${id}/categories/${categoryId}`, {
+			method: 'PUT',
+			headers: {
+				"Authorization": store.getters.getToken,
+				"Content-type": "application/json"
+			},
+			body: JSON.stringify({ name })
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//409 duplicate category name
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async deleteCategory(id, categoryId) {
+		const library = await fetch(BASE_URL + `${id}/categories/${categoryId}`, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": store.getters.getToken,
+			},
+		}).then(async res => {
+			if (res.status === 200) {
+				return res.json();
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return library;
+	}
+
+	async delete(id) {
+		await fetch(BASE_URL + id, {
+			method: 'DELETE',
+			headers: {
+				"Authorization": store.getters.getToken,
+			},
+		}).then(async res => {
+			if (res.status === 204) {
+				return;
+			} else {
+				//400 invalid parameters
+				//401 invalid credentials
+				//403 access denied
+				//404 not found
+				//500 internal error
+				const message = await res.text();
+				throw new Error(`[${res.status.toString()}] ${message}`);
+			}
+		}).catch(err => {
+			throw err;
+		});
+
+		return;
+	}
 
 }
 

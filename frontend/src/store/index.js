@@ -11,7 +11,7 @@ export default createStore({
 		return {
 			user: null,
 			token: null,
-			library: null
+			library: null,
 		}
 	},
 	mutations: {
@@ -22,6 +22,7 @@ export default createStore({
 			state.token = token;
 		},
 		setLibrary(state, library) {
+			library.isAdmin = !!library?.admins?.find(admin => admin.email === state.user?.email);
 			state.library = library;
 		},
 		logout(state) {
@@ -48,6 +49,6 @@ export default createStore({
 		},
 		getLibrary(state) {
 			return state.library;
-		}
+		},
 	},
 });

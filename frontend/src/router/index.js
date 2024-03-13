@@ -66,6 +66,11 @@ export default createRouter({
 					path: "books/:id",
 					name: "books-details",
 					component: () => import("@/components/BookPage")
+				},
+				{
+					path: "settings",
+					name: "settings",
+					component: () => import("@/components/SettingsPage")
 				}
 			]
 		}

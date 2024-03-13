@@ -1,8 +1,11 @@
+const jwt = require('jsonwebtoken');
 const db = require("../models");
 const { inviteAdmin, inviteGuest } = require("../services/email.service");
 
 const Library = db.library;
 const Book = db.book;
+
+const INVITATION_CODE_EXP = '10d';
 
 //TODO uniformiser message erreur
 
@@ -23,7 +26,7 @@ function formatLibrary(raw, user) {
 }
 
 function hasDuplicates(arr) {
-	return new Set(arr).size !== arr.length; 
+	return new Set(arr).size !== arr.length;
 }
 
 exports.searchLibrary = async (req, res, next) => {
@@ -45,7 +48,7 @@ exports.searchLibrary = async (req, res, next) => {
 exports.verifyAdminPermissions = async (req, res, next) => {
 	try {
 		const library = req.library;
-		if (!library.admins.some(admin => admin.email === req.user)) {
+		if (!library.admins.some(admin => admin.email === req.user && !admin.pending)) {
 			return res.status(403).send('Insufficient permissions.');
 		}
 		next();
@@ -59,7 +62,8 @@ exports.verifyAdminPermissions = async (req, res, next) => {
 exports.verifyGlobalPermissions = async (req, res, next) => {
 	try {
 		const library = req.library;
-		if (!library.admins.some(admin => admin.email === req.user) && !library.users.some(user => user.email === req.user)) {
+		if (!library.admins.some(admin => admin.email === req.user && !admin.pending)
+			&& !library.users.some(user => user.email === req.user && !user.pending)) {
 			return res.status(403).send('Insufficient permissions.');
 		}
 		next();
@@ -75,8 +79,8 @@ exports.create = async (req, res) => {
 		const name = req.body.name;
 		const categories = req.body.categories || [];
 		const locations = req.body.locations || [];
-		
-		if(hasDuplicates(locations)) {
+
+		if (hasDuplicates(locations)) {
 			return res.status(409).send('Duplicate names in locations.')
 		}
 
@@ -137,14 +141,14 @@ exports.getBooks = async (req, res) => {
 
 /* ========== PARAMETRES GLOBAUX ========== */
 
-/* ----- emplacements ----- */
+/* ---------- emplacements ---------- */
 
 exports.addLocation = async (req, res) => {
 	try {
 		const library = req.library;
 		const name = req.body.name;
 
-		if(library.locations.some(location => location.name === name)) {
+		if (library.locations.some(location => location.name === name)) {
 			return res.status(409).send('A location already exists with this name.');
 		}
 
@@ -169,7 +173,7 @@ exports.editLocation = async (req, res) => {
 		}
 
 		const name = req.body.name;
-		if(library.locations.some(location => location.name === name && location._id.toString() !== locationId)) {
+		if (library.locations.some(location => location.name === name && location._id.toString() !== locationId)) {
 			return res.status(409).send('An other location already exists with this name.');
 		}
 
@@ -203,9 +207,205 @@ exports.deleteLocation = async (req, res) => {
 	}
 }
 
+/* ---------- catégories ---------- */
+
+function addSubcategory(categories, parent, name) {
+	for (const category of categories) {
+		if (category._id.toString() === parent) {
+			category.subcategories.push({
+				name: name,
+				subcategories: []
+			});
+			return categories;
+		} else if (category.subcategories) {
+			for (const subcategory of category.subcategories) {
+				if (subcategory._id.toString() === parent) {
+					subcategory.subcategories.push({
+						name: name,
+						subcategories: []
+					});
+					return categories;
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function updateCategories(categories, id, newName) {
+	for (const category of categories) {
+		if (category._id.toString() === id) {
+			category.name = newName;
+			return categories;
+		} else if (category.subcategories) {
+			for (const subcategory of category.subcategories) {
+				if (subcategory._id.toString() === id) {
+					subcategory.name = newName;
+					return categories;
+				} else if (subcategory.subcategories) {
+					for (const subsubcategory of subcategory.subcategories) {
+						if (subsubcategory._id.toString() === id) {
+							subsubcategory.name = newName;
+							return categories;
+						}
+					}
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function deleteCategory(categories, id) {
+	for (let i = 0; i < categories.length; i++) {
+		const category = categories[i];
+		if (category._id.toString() === id) {
+			categories.splice(i, 1);
+			return categories;
+		} else if (category.subcategories) {
+			for (let j = 0; j < category.subcategories.length; j++) {
+				const subcategory = category.subcategories[j];
+				if (subcategory._id.toString() === id) {
+					category.subcategories.splice(j, 1);
+					return categories;
+				} else if (subcategory.subcategories) {
+					for (let k = 0; k < subcategory.subcategories.length; k++) {
+						const subsubcategory = subcategory.subcategories[k];
+						if (subsubcategory._id.toString() === id) {
+							subcategory.subcategories.splice(k, 1);
+							return categories;
+						}
+					}
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function flattenCategories(categories) {
+	const flattenedCategories = [];
+
+	function flatten(category) {
+		flattenedCategories.push({ name: category.name, id: category._id.toString() });
+
+		if (category.subcategories) {
+			category.subcategories.forEach(subcategory => {
+				flatten(subcategory);
+			});
+		}
+	}
+
+	categories.forEach(category => {
+		flatten(category);
+	});
+
+	return flattenedCategories;
+}
+
+exports.addCategory = async (req, res) => {
+	try {
+		const library = req.library;
+
+		const name = req.body.name;
+		const parent = req.body.parent;
+
+		if (flattenCategories(library.categories).some((category => category.name === name))) {
+			return res.status(409).send('Duplicate category name.');
+		}
+
+		if (parent) {
+			const updatedCategories = addSubcategory(library.categories, parent, name);
+			if (!updatedCategories) {
+				return res.status(404).send('Parent category not found.');
+			}
+			library.categories = updatedCategories;
+		} else {
+			library.categories.push({
+				name: name,
+				subcategories: []
+			});
+		}
+
+		const updatedDoc = await library.save();
+		return res.status(201).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.editCategory = async (req, res) => {
+	try {
+		const library = req.library;
+
+		const name = req.body.name;
+		const categoryId = req.params.categoryId;
+
+		const updatedCategories = updateCategories(library.categories, categoryId, name);
+
+		if (!updatedCategories) {
+			return res.status(404).send('Category not found.');
+		}
+
+		if (flattenCategories(library.categories).some((category => category.name === name && category.id !== categoryId))) {
+			return res.status(409).send('Duplicate category name.');
+		}
+
+		library.categories = updatedCategories;
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.deleteCategory = async (req, res) => {
+	try {
+		const library = req.library;
+
+		const categoryId = req.params.categoryId;
+		const updatedCategories = deleteCategory(library.categories, categoryId);
+
+		if (!updatedCategories) {
+			return res.status(404).send('Category not found.');
+		}
+
+		library.categories = updatedCategories;
+		const updatedDoc = await library.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
 /* ========== UTILISATEURS ========== */
 
-/* ----- admins ----- */
+exports.verifyInvitationCode = async (req, res, next) => {
+	try {
+		const token = req.query.code;
+
+		if (!token) {
+			return res.status(400).send('Missing invitation code.');
+		}
+
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+		req.user = decoded.email;
+		next();
+
+	} catch (err) {
+		console.error(err);
+		return res.status(400).send('Invalid invitation code. The code may have expired.')
+	}
+}
+
+/* ---------- admins ---------- */
 
 exports.inviteAdmin = async (req, res) => {
 	try {
@@ -218,7 +418,12 @@ exports.inviteAdmin = async (req, res) => {
 		}
 		const index = library.users.findIndex(guest => guest.email === email);
 
-		const info = await inviteAdmin(email, user, library.name);
+		const code = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: INVITATION_CODE_EXP });
+
+		const infos = await inviteAdmin(email, user, library, code);
+		if (!infos) {
+			return res.status(500).send('Coulnd\'t send email.');
+		}
 
 		const newAdmin = {
 			email: email,
@@ -232,6 +437,26 @@ exports.inviteAdmin = async (req, res) => {
 
 		const updatedDoc = await library.save();
 		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.acceptAdminInvitation = async (req, res) => {
+	try {
+		const library = req.library;
+		const user = req.user;
+
+		const index = library.admins.findIndex(admin => admin.email === user)
+		if (index < 0) {
+			return res.status(404).send('Admin not found.');
+		}
+
+		library.admins[index].pending = false;
+		const updatedDoc = await library.save();
+		return res.status(200).send('Invitation accepted.');
 
 	} catch (err) {
 		console.error(err);
@@ -258,7 +483,7 @@ exports.deleteAdmin = async (req, res) => {
 	}
 }
 
-/* ----- invités ----- */
+/* ---------- invités ---------- */
 
 exports.inviteUser = async (req, res) => {
 	try {
@@ -270,16 +495,41 @@ exports.inviteUser = async (req, res) => {
 			return res.status(409).send('User already added.');
 		}
 
-		const info = await inviteGuest(email, user, library.name);
+		const code = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: INVITATION_CODE_EXP });
+
+		const infos = await inviteGuest(email, user, library, code);
+		if (!infos) {
+			return res.status(500).send('Coulnd\'t send email.');
+		}
 
 		const newGuest = {
 			email: email,
 			pending: true
 		}
-		
+
 		library.users.push(newGuest);
 		const updatedDoc = await library.save();
 		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.acceptUserInvitation = async (req, res) => {
+	try {
+		const library = req.library;
+		const user = req.user;
+
+		const index = library.users.findIndex(guest => guest.email === user)
+		if (index < 0) {
+			return res.status(404).send('User not found.');
+		}
+
+		library.admins[index].pending = false;
+		const updatedDoc = await library.save();
+		return res.status(200).send('Invitation accepted.');
 
 	} catch (err) {
 		console.error(err);
@@ -314,7 +564,7 @@ exports.delete = async (req, res) => {
 		await library.deleteOne();
 		return res.sendStatus(204);
 
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 		return res.status(500).send('Internal server error.');
 	}

@@ -25,7 +25,6 @@ export default {
 	components: { NavBar, ExpiredSessionDialog, NotFoundDialog, AccessDeniedDialog, ErrorDialog },
 	data() {
 		return {
-			library: this.$store.getters.getLibrary,
 			/* ----- dialogs ----- */
 			expiredSessionDialog: false,
 			notFoundDialog: false,
@@ -35,13 +34,17 @@ export default {
 			/* ---------- */
 		};
 	},
+	computed: {
+		library() {
+			return this.$store.getters.getLibrary;
+		},
+	},
 	methods: {
 		async retrieveLibrary() {
 			if (this.library?.id !== this.$route.params.library) {
 				await LibraryDataService.getLibrary(this.$route.params.library)
-					.then(data => {
-						this.library = data;
-						console.log(this.library);
+					.then(library => {
+						this.$store.commit('setLibrary', library)
 					})
 					.catch(e => {
 						console.log(e); //TODO

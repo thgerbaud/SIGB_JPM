@@ -1,9 +1,9 @@
 module.exports = {
-    text: (sender, libraryName) => `
-	${sender} vous invite à rejoindre sa bibliothèque ${libraryName} en tant qu'administrateur !
-	http://google.com
+    text: (sender, library, code) => `
+	${sender} vous invite à rejoindre sa bibliothèque ${library.name} en tant qu'administrateur !
+	${process.env.SERVER_URL}/api/libraries/${library.id}/admins?code=${code}
 	`,
-    html: (sender, libraryName) => `
+    html: (sender, library, code) => `
     <!DOCTYPE html>
 
     <head>
@@ -39,8 +39,8 @@ module.exports = {
     
     <body>
         <div id="main">
-            <p>${sender} vous invite à rejoindre sa bibliothèque <b>${libraryName}</b> en tant qu'administrateur !</p>
-            <a href="http://google.com">
+            <p>${sender} vous invite à rejoindre sa bibliothèque <b>${library.name}</b> en tant qu'administrateur !</p>
+            <a href="${process.env.SERVER_URL}/api/libraries/${library.id}/admins?code=${code}">
                 <button>Accepter l'invitation</button>
             </a>
             <div>

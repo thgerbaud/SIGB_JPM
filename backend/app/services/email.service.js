@@ -14,26 +14,36 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-exports.inviteAdmin = async (receiver, sender, libraryName) => {
-    const info = await transporter.sendMail({
-        from: "sigbjpm@gmail.com",
-        to: receiver,
-        subject: "Invitation à administrer une bibliothèque",
-        text: inviteAdminTemplate.text(sender, libraryName),
-        html: inviteAdminTemplate.html(sender, libraryName),
-    });
-    console.log("Message sent: %s", info.messageId);
-    return info;
+exports.inviteAdmin = async (receiver, sender, library, code) => {
+    try {
+        const info = await transporter.sendMail({
+            from: "sigbjpm@gmail.com",
+            to: receiver,
+            subject: "Invitation à administrer une bibliothèque",
+            text: inviteAdminTemplate.text(sender, library, code),
+            html: inviteAdminTemplate.html(sender, library, code),
+        });
+        console.log("Message sent: %s", info.messageId);
+        return info;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
 }
 
-exports.inviteGuest = async (receiver, sender, libraryName) => {
-    const info = await transporter.sendMail({
-        from: "sigbjpm@gmail.com",
-        to: receiver,
-        subject: "Invitation à rejoindre une bibliothèque",
-        text: inviteGuestTemplate.text(sender, libraryName),
-        html: inviteGuestTemplate.html(sender, libraryName),
-    });
-    console.log("Message sent: %s", info.messageId);
-    return info;
+exports.inviteGuest = async (receiver, sender, library, code) => {
+    try {
+        const info = await transporter.sendMail({
+            from: "sigbjpm@gmail.com",
+            to: receiver,
+            subject: "Invitation à rejoindre une bibliothèque",
+            text: inviteGuestTemplate.text(sender, library, code),
+            html: inviteGuestTemplate.html(sender, library, code),
+        });
+        console.log("Message sent: %s", info.messageId);
+        return info;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
 }

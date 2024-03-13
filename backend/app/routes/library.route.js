@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, param, validationResult, query } = require('express-validator');
 const { getTokenInfos } = require("../controllers/auth.controller.js");
 const library = require("../controllers/library.controller.js");
 
@@ -130,6 +130,40 @@ module.exports = app => {
 		library.deleteLocation
 	);
 
+	router.post("/:id/categories",
+		getTokenInfos,
+		param('id').isMongoId().withMessage('Invalid library id.'),
+		body('name').isString().bail().withMessage('Missing or invalid category name.')
+			.trim().notEmpty().withMessage('Category name must not be empty.'),
+		body('parent').optional().isMongoId().withMessage('Invalid parent category id.'),
+		handleValidationResult,
+		library.searchLibrary,
+		library.verifyAdminPermissions,
+		library.addCategory
+	);
+
+	router.put("/:id/categories/:categoryId",
+		getTokenInfos,
+		param('id').isMongoId().withMessage('Invalid library id.'),
+		param('categoryId').isMongoId().withMessage('Invalid category id.'),
+		body('name').isString().bail().withMessage('Missing or invalid new category name.')
+			.trim().notEmpty().withMessage('New category name must not be empty.'),
+		handleValidationResult,
+		library.searchLibrary,
+		library.verifyAdminPermissions,
+		library.editCategory
+	);
+
+	router.delete("/:id/categories/:categoryId",
+		getTokenInfos,
+		param('id').isMongoId().withMessage('Invalid library id.'),
+		param('categoryId').isMongoId().withMessage('Invalid category id.'),
+		handleValidationResult,
+		library.searchLibrary,
+		library.verifyAdminPermissions,
+		library.deleteCategory
+	);
+
 	/**
 	 * Permet d'inviter un administrateur.
 	 * @sortie bibliothèque modifiée
@@ -144,6 +178,14 @@ module.exports = app => {
 		library.searchLibrary,
 		library.verifyAdminPermissions,
 		library.inviteAdmin
+	);
+
+	router.get("/:id/admins",
+		query('code').isJWT().withMessage('Missing or invalid invitation code.'),
+		handleValidationResult,
+		library.searchLibrary,
+		library.verifyInvitationCode,
+		library.acceptAdminInvitation
 	);
 
 	/**
@@ -176,6 +218,14 @@ module.exports = app => {
 		library.searchLibrary,
 		library.verifyAdminPermissions,
 		library.inviteUser
+	);
+
+	router.get("/:id/users",
+		query('code').isJWT().withMessage('Missing or invalid invitation code.'),
+		handleValidationResult,
+		library.searchLibrary,
+		library.verifyInvitationCode,
+		library.acceptUserInvitation
 	);
 
 	/**

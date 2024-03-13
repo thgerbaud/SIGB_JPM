@@ -2,7 +2,7 @@
     <v-dialog width="500" persistent>
         <v-card :title="title">
             <template v-slot:prepend>
-                <v-icon icon="mdi-alert-circle" color="warning"></v-icon>
+                <v-icon :icon="icon || 'mdi-alert-circle'" color="warning"></v-icon>
             </template>
             <v-card-text v-if="text">
                 {{ text }}
@@ -17,7 +17,7 @@
 
 <script>
 export default {
-    props: ["title", "text", "cancelText", "okText"],
+    props: ["title", "icon", "text", "cancelText", "okText"],
     emits: ["ok", "cancel"]
 }
 </script>

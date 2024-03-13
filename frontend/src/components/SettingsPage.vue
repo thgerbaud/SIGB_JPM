@@ -1,0 +1,37 @@
+<template>
+    <section>
+        <h2 class="text-h2">Paramètres</h2>
+
+        <v-tabs v-model="tab" fixed-tabs>
+            <v-tab :value="0" class="text-h6">Bibliothèque</v-tab>
+            <v-tab :value="1" class="text-h6">Utilisateurs</v-tab>
+        </v-tabs>
+
+        <v-window v-model="tab" class="mt-4">
+            <v-window-item :value="0">
+                <LibraryTab :library="library" />
+            </v-window-item>
+
+            <v-window-item :value="1">
+                <UsersTab :library="library" />
+            </v-window-item>
+        </v-window>
+    </section>
+</template>
+
+<script>
+import LibraryTab from '@/components/settings/LibraryTab.vue';
+import UsersTab from '@/components/settings/UsersTab.vue';
+export default {
+    props: ["library"],
+    data() {
+        return {
+            tab: 0
+        }
+    },
+    components: {
+        LibraryTab,
+        UsersTab
+    }
+}
+</script>
