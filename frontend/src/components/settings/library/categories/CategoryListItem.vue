@@ -22,7 +22,7 @@
 <script>
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import EditCategoryModal from '@/components/settings/library/categories/EditCategoryModal.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { deleteCategory } from '@/services/LibraryDataService';
 export default {
     props: ["library", "category"],
     emits: ["update"],
@@ -56,7 +56,7 @@ export default {
         deleteCategory() {
             this.confirmDialog = false;
             this.loading = true;
-            LibraryDataService.deleteCategory(this.library.id, this.category.id)
+            deleteCategory(this.library.id, this.category.id)
                 .then(library => {
                     this.$emit('update', library);
                     this.loading = false;

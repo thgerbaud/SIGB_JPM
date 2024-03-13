@@ -5,7 +5,7 @@
 		<ExpiredSessionDialog v-model="expiredSessionDialog" />
 		<NotFoundDialog v-model="notFoundDialog" @ok="notFoundDialog = false" /> <!--? redirection ?-->
 		<AccessDeniedDialog v-model="accessDeniedDialog" @ok="accessDeniedDialog = false" /> <!--? redirection ?-->
-		<ErrorDialog v-model="errorDialog" :message="errorMessage" @close="errorDialog = false"/>
+		<ErrorDialog v-model="errorDialog" :message="errorMessage" @close="errorDialog = false" />
 		<!-- view -->
 		<router-view :library="library" v-if="library"></router-view>
 	</v-main>
@@ -19,7 +19,7 @@ import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
 import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 /* ----- services ----- */
-import LibraryDataService from '@/services/LibraryDataService';
+import { getLibrary } from '@/services/LibraryDataService';
 /* ---------- */
 export default {
 	components: { NavBar, ExpiredSessionDialog, NotFoundDialog, AccessDeniedDialog, ErrorDialog },
@@ -42,7 +42,7 @@ export default {
 	methods: {
 		async retrieveLibrary() {
 			if (this.library?.id !== this.$route.params.library) {
-				await LibraryDataService.getLibrary(this.$route.params.library)
+				await getLibrary(this.$route.params.library)
 					.then(library => {
 						this.$store.commit('setLibrary', library)
 					})
@@ -63,7 +63,7 @@ export default {
 		this.globalEmitter.on('404', () => {
 			this.notFoundDialog = true;
 		});
-		this.globalEmitter.on('error', ({message}) => {
+		this.globalEmitter.on('error', ({ message }) => {
 			this.errorMessage = message || "Oups! Une erreur s'est produite"
 			this.errorDialog = true;
 		});

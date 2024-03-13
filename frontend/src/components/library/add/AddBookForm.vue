@@ -65,7 +65,7 @@
 <script>
 import AddSuccessDialog from '@/components/library/add/AddSuccessDialog';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog';
-import BookDataService from '@/services/BookDataService';
+import { create } from '@/services/BookDataService';
 export default {
     props: ["library", "book"],
     data() {
@@ -158,7 +158,7 @@ export default {
                 categories: this.categories,
                 copies: this.copies
             }
-            BookDataService.create(payload)
+            create(payload)
                 .then(response => {
                     this.createdBook = response;
                     this.addSuccessDialog = true;

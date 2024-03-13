@@ -22,7 +22,7 @@
 <script>
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import EditLocationModal from '@/components/settings/library/locations/EditLocationModal.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { deleteLocation } from '@/services/LibraryDataService';
 export default {
     props: ["location", "library"],
     emits: ["update"],
@@ -56,7 +56,7 @@ export default {
         deleteLocation() {
             this.confirmDialog = false;
             this.loading = true;
-            LibraryDataService.deleteLocation(this.library.id, this.location.id)
+            deleteLocation(this.library.id, this.location.id)
                 .then(library => {
                     this.$emit('update', library);
                     this.loading = false;

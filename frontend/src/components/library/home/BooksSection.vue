@@ -33,7 +33,7 @@
 
 <script>
 import BooksList from '@/components/library/home/BooksList.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { getBooks } from '@/services/LibraryDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import flattenCategories from '@/utils/flattenCategories';
 export default {
@@ -85,7 +85,7 @@ export default {
     methods: {
         async loadBooks() {
             try {
-                const books = await LibraryDataService.getBooks(this.library.id) ?? [];
+                const books = await getBooks(this.library.id) ?? [];
                 this.books = await Promise.all(
                     books.map(async (book) => {
                         try {
@@ -145,12 +145,12 @@ export default {
             console.log(dict);
             this.filteredBooks.forEach(book => {
                 book.copies.forEach(copy => {
-                    if(copy.location && dict[copy.location]) {
-                        if(!dict[copy.location].items.includes(book)){
+                    if (copy.location && dict[copy.location]) {
+                        if (!dict[copy.location].items.includes(book)) {
                             dict[copy.location].items.push(book)
                         }
                     } else {
-                        if(!dict.others.items.includes(book)){
+                        if (!dict.others.items.includes(book)) {
                             dict.others.items.push(book)
                         }
                     }
@@ -158,7 +158,7 @@ export default {
             });
 
             const res = [];
-            for(const location in dict) {
+            for (const location in dict) {
                 res.push(dict[location]);
             }
             return res;
@@ -171,9 +171,9 @@ export default {
             dict.others = { title: "Non précisée", items: [] };
 
             this.filteredBooks.map(book => {
-                if(book.categories?.length > 0) {
+                if (book.categories?.length > 0) {
                     book.categories.forEach(category => {
-                        if(dict[category]) {
+                        if (dict[category]) {
                             dict[category].items.push(book);
                         }
                     });
@@ -181,9 +181,9 @@ export default {
                     dict.others.items.push(book);
                 }
             });
-            
+
             const res = [];
-            for(const location in dict) {
+            for (const location in dict) {
                 res.push(dict[location]);
             }
             return res;

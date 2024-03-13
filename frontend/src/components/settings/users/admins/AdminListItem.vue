@@ -20,7 +20,7 @@
 
 <script>
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { deleteAdmin } from '@/services/LibraryDataService';
 export default {
     props: ["admin"],
     data() {
@@ -54,7 +54,7 @@ export default {
     methods: {
         removeAdmin() {
             this.loading = true;
-            LibraryDataService.deleteAdmin(this.libraryId, this.admin.id)
+            deleteAdmin(this.libraryId, this.admin.id)
                 .then(library => {
                     this.$emit('deleted', library);
                     this.$store.commit('setLibrary', library); //?

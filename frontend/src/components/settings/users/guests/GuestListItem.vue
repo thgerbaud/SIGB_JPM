@@ -19,7 +19,7 @@
 
 <script>
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { deleteGuest } from '@/services/LibraryDataService';
 export default {
     props: ["guest"],
     data() {
@@ -50,8 +50,8 @@ export default {
     methods: {
         removeGuest() {
             this.loading = true;
-            LibraryDataService.deleteGuest(this.libraryId, this.guest.id)
-            .then(library => {
+            deleteGuest(this.libraryId, this.guest.id)
+                .then(library => {
                     this.$emit('deleted', library);
                     this.$store.commit('setLibrary', library);
                     this.loading = false;

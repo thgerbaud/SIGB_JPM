@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import AuthService from '@/services/AuthService';
+import { login } from '@/services/AuthService';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 export default {
     data() {
@@ -21,7 +21,7 @@ export default {
     },
     methods: {
         async callback(response) {
-            AuthService.login(response.code)
+            login(response.code)
                 .then(data => {
                     const token = data.accessToken;
                     const user = data.userData;
@@ -30,9 +30,8 @@ export default {
                     this.$store.commit('setUser', user);
                     this.$router.push(`/home/libraries`);
                 })
-                .catch(err => {
-                    console.error(err); //?
-                    this.errorDialog = false;
+                .catch(() => {
+                    this.errorDialog = true;
                 });
         }
     },

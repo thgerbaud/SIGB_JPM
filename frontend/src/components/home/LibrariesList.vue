@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import LibraryDataService from '@/services/LibraryDataService';
+import { getAll } from '@/services/LibraryDataService';
 import LibraryListItem from '@/components/home/LibraryListItem.vue';
 import CreateButton from '@/components/home/CreateButton.vue';
 import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         retrieveLibraries() {
-            LibraryDataService.getAll()
+            getAll()
                 .then(response => {
                     this.libraries = response ?? [];
                     this.loading = false;

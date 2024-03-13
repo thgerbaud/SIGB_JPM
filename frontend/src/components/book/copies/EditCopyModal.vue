@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import BookDataService from '@/services/BookDataService';
+import { updateCopy } from '@/services/BookDataService';
 export default {
     props: ["copy", "library", "bookId"],
     data() {
@@ -39,7 +39,7 @@ export default {
     },
     computed: {
         locationItems() {
-            let items = this.library.locations.map(({name, id}) => ({ title : name, value: id }));
+            let items = this.library.locations.map(({ name, id }) => ({ title: name, value: id }));
             items.unshift({ title: "Non précisé", value: null });
             return items;
         },
@@ -73,7 +73,7 @@ export default {
             if (this.newLocation !== this.copy?.location) {
                 payload.location = this.newLocation;
             }
-            BookDataService.updateCopy(this.bookId, this.copy.id, payload)
+            updateCopy(this.bookId, this.copy.id, payload)
                 .then(updatedBook => {
                     this.$emit('update', updatedBook);
                 })

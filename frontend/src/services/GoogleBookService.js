@@ -1,5 +1,12 @@
 const API_KEY = process.env.VUE_APP_API_KEY;
 
+/**
+ * Permet de retrouver les informations d'un livre à partir de son numéro ISBN.
+ * Stocke l'information dans le stockage local.
+ * @param {String} isbn numéro ISBN à 10 ou 13 chiffres
+ * @returns {Promise<Object>} détails du livre
+ * @throws
+ */
 export async function getBookFromIsbn(isbn) {
     try {
         if (sessionStorage.getItem(isbn)) {

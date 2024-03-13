@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import LibraryDataService from '@/services/LibraryDataService';
+import { addGuest } from '@/services/LibraryDataService';
 export default {
     emits: ["cancel", "update"],
     props: ["library"],
@@ -68,7 +68,7 @@ export default {
         },
         send() {
             this.sending = true;
-            LibraryDataService.addGuest(this.library.id, this.email + "@gmail.com")
+            addGuest(this.library.id, this.email + "@gmail.com")
                 .then(library => {
                     this.updatedLibrary = library;
                     this.sent = true;

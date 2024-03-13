@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import BookDataService from '@/services/BookDataService';
+import { addCopy } from '@/services/BookDataService';
 export default {
     props: ["library", "bookId"],
     data() {
@@ -58,7 +58,7 @@ export default {
         saveCopy() {
             this.loading = true;
             const payload = { code: this.code, location: this.location };
-            BookDataService.addCopy(this.bookId, payload)
+            addCopy(this.bookId, payload)
                 .then(book => {
                     this.$emit('update', book);
                 })

@@ -1,5 +1,5 @@
 <template>
-    <DeleteModal v-model="deleteModal" :name="library.name" @cancel="deleteModal = false" @delete="deleteLibrary"/>
+    <DeleteModal v-model="deleteModal" :name="library.name" @cancel="deleteModal = false" @delete="confirmDeletion" />
     <SuccessDialog v-model="successDialog" />
 
     <div class="text-right mt-4">
@@ -10,7 +10,7 @@
 <script>
 import DeleteModal from '@/components/settings/library/delete/DeleteModal.vue';
 import SuccessDialog from '@/components/settings/library/delete/SucessDialog.vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { deleteLibrary } from '@/services/LibraryDataService';
 export default {
     props: ["library"],
     data() {
@@ -24,8 +24,8 @@ export default {
         SuccessDialog,
     },
     methods: {
-        deleteLibrary() {
-            LibraryDataService.delete(this.library.id)
+        confirmDeletion() {
+            deleteLibrary(this.library.id)
                 .then(() => {
                     this.deleteModal = false;
                     this.successDialog = true;

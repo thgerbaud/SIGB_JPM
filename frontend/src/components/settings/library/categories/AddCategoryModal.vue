@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import LibraryDataService from '@/services/LibraryDataService';
+import { addCategory } from '@/services/LibraryDataService';
 import flattenCategories from '@/utils/flattenCategories';
 export default {
     props: ["library", "parent"],
@@ -50,7 +50,7 @@ export default {
         },
         add() {
             this.loading = true;
-            LibraryDataService.addCategory(this.library.id, this.name, this.parent?.id)
+            addCategory(this.library.id, this.name, this.parent?.id)
                 .then(library => {
                     this.$emit('update', library);
                     this.name = "";

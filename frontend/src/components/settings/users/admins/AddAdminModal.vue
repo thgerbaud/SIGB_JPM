@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import LibraryDataService from '@/services/LibraryDataService';
+import { addAdmin } from '@/services/LibraryDataService';
 export default {
     emits: ["cancel", "update"],
     props: ["library"],
@@ -69,7 +69,7 @@ export default {
         },
         send() {
             this.sending = true;
-            LibraryDataService.addAdmin(this.library.id, this.email + "@gmail.com")
+            addAdmin(this.library.id, this.email + "@gmail.com")
                 .then(library => {
                     this.updatedLibrary = library;
                     this.sent = true;

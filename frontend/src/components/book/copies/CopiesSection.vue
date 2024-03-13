@@ -7,7 +7,7 @@
 
     <ConfirmDialog v-model="confirmDeleteDialog" title="Supprimer l'exemplaire" okText="Supprimer" cancelText="Annuler"
         :text="`Êtes-vous sûr(e) de vouloir supprimer l'exemplaire de «${book.details.title}» avec le code ${selectedCopy?.code} ? (supprimer le dernier exemplaire d'un livre supprimera entièrement le livre)`"
-        @cancel="confirmDeleteDialog = false" @ok="deleteCopy" />
+        @cancel="confirmDeleteDialog = false" @ok="confirmDeletion" />
 
     <span class="d-flex mt-4">
         <v-table density="compact">
@@ -33,7 +33,7 @@ import CopyRaw from '@/components/book/copies/CopyRaw.vue';
 import AddCopyModal from '@/components/book/AddCopyModal.vue';
 import EditCopyModal from '@/components/book/copies/EditCopyModal.vue';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
-import BookDataService from '@/services/BookDataService';
+import {deleteCopy } from '@/services/BookDataService';
 export default {
     props: ["book", "library"],
     data() {
@@ -59,9 +59,9 @@ export default {
             this.selectedCopy = this.book.copies[i];
             this.confirmDeleteDialog = true;
         },
-        deleteCopy() {
+        confirmDeletion() {
             this.confirmDeleteDialog = false;
-            BookDataService.deleteCopy(this.book.id, this.selectedCopy.id)
+            deleteCopy(this.book.id, this.selectedCopy.id)
                 .then(updatedBook => {
                     this.$emit('update', updatedBook);
                 })

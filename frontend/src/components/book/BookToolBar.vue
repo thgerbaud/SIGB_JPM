@@ -2,11 +2,12 @@
     <InfoDialog v-model="infoDialog" @ok="$router.push(`/${library.id}/books`)" title="Livre supprimé"
         message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
-    <EditBookModal :book="book" :library="library" v-model="editBookModal" @cancel="editBookModal = false" @save="editBook" />
+    <EditBookModal :book="book" :library="library" v-model="editBookModal" @cancel="editBookModal = false"
+        @save="editBook" />
 
     <ConfirmDialog title="Supprimer le livre ?" cancelText="Annuler" okText="Supprimer" v-model="deleteDialog"
         :text='`Etes-vous sûr de vouloir supprimer le livre "${book.details.title}" ? Tous les exemplaires seront retirés de la bibliothèques.`'
-        @cancel="deleteDialog = false" @ok="deleteBook" />
+        @cancel="deleteDialog = false" @ok="confirmDeletion" />
 
     <v-toolbar density="compact" class="my-2">
         <v-spacer></v-spacer>
@@ -20,7 +21,7 @@
 import EditBookModal from '@/components/book/EditBookModal.vue';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
-import BookDataService from '@/services/BookDataService';
+import { update, deleteBook } from '@/services/BookDataService';
 export default {
     props: ["book", "library"],
     data() {
@@ -37,18 +38,18 @@ export default {
     },
     methods: {
         editBook(data) {
-			BookDataService.update(this.book.id, data)
-				.then(updatedBook => {
+            update(this.book.id, data)
+                .then(updatedBook => {
                     this.editBookModal = false;
                     this.$emit('update', updatedBook);
-				})
-				.catch(err => {
-					this.processError(err);
-				});
-		},
-        deleteBook() {
+                })
+                .catch(err => {
+                    this.processError(err);
+                });
+        },
+        confirmDeletion() {
             this.deleteDialog = false;
-            BookDataService.delete(this.book.id)
+            deleteBook(this.book.id)
                 .then(() => {
                     this.infoDialog = true;
                 })

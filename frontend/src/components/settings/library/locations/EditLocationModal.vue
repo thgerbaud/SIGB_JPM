@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import LibraryDataService from '@/services/LibraryDataService';
+import { editLocation } from '@/services/LibraryDataService';
 export default {
     props: ["library", "location"],
     data() {
@@ -41,7 +41,7 @@ export default {
         },
         add() {
             this.loading = true;
-            LibraryDataService.editLocation(this.library.id, this.location.id, this.name)
+            editLocation(this.library.id, this.location.id, this.name)
                 .then(library => {
                     this.$emit('update', library)
                     this.loading = false;

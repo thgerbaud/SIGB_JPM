@@ -27,7 +27,7 @@
 import BookCard from '@/components/book/BookCard.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
-import BookDataService from '@/services/BookDataService';
+import { getBook } from '@/services/BookDataService';
 export default {
 	props: ["library"],
 	data() {
@@ -45,8 +45,8 @@ export default {
 		BookToolBar,
 	},
 	methods: {
-		getBook() {
-			BookDataService.get(this.id)
+		retreiveBook() {
+			getBook(this.id)
 				.then(book => {
 					this.book = book;
 					return getBookFromIsbn(book.isbn);
@@ -79,7 +79,7 @@ export default {
 		}
 	},
 	created() {
-		this.getBook();
+		this.retreiveBook();
 	},
 };
 </script>

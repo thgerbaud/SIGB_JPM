@@ -31,7 +31,7 @@
   
 <script>
 import { shallowRef } from 'vue';
-import LibraryDataService from '@/services/LibraryDataService';
+import { create } from '@/services/LibraryDataService';
 import NameStep from '@/components/home/create/NameStep.vue';
 import LocationsStep from '@/components/home/create/LocationsStep.vue';
 import CategoriesStep from '@/components/home/create/CategoriesStep.vue';
@@ -115,7 +115,7 @@ export default {
             this.saveLibrary();
         },
         saveLibrary() {
-            LibraryDataService.create(this.library)
+            create(this.library)
                 .then(response => {
                     this.id = response.id;
                     console.log(response);
