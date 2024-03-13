@@ -14,12 +14,12 @@ export default {
     props: ["copy", "library"],
     emits: ["edit", "delete"],
     methods: {
-        locationToString(i) {
-            const locationIndex = i ?? -1;
-            if (locationIndex > this.library.locations.length || locationIndex < 0) {
-                return "Non précisé"
+        locationToString(id) {
+            const location = id ? this.library.locations?.find(location => location.id === id) : null
+            if (location) {
+                return location.name;
             } else {
-                return this.library.locations[locationIndex];
+                return "Non précisé"
             }
         }
     }

@@ -39,7 +39,7 @@ export default {
     },
     computed: {
         locationItems() {
-            let items = this.library.locations.map((title, value) => ({ title, value }));
+            let items = this.library.locations.map(({name, id}) => ({ title : name, value: id }));
             items.unshift({ title: "Non précisé", value: null });
             return items;
         },

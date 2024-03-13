@@ -43,7 +43,7 @@
                     </v-col>
                     <v-col class="pb-0">
                         <v-select label="Emplacement" variant="outlined"
-                            :items="library.locations?.map((title, value) => ({ title, value }))" v-model="copy.location"
+                            :items="library.locations?.map(({name, id}) => ({ title : name, value: id }))" v-model="copy.location"
                             clearable hint="(optionnel)" persistent-hint></v-select>
                     </v-col>
                     <v-col cols="1" class="pb-0" v-if="copies.length > 1">

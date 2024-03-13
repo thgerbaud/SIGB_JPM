@@ -35,6 +35,7 @@
 import BooksList from '@/components/library/home/BooksList.vue';
 import LibraryDataService from '@/services/LibraryDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
+import flattenCategories from '@/utils/flattenCategories';
 export default {
     props: ["library"],
     data() {
@@ -74,6 +75,9 @@ export default {
                 }]
             }
         },
+        flattenedCategories() {
+            return flattenCategories(this.library.categories);
+        },
     },
     components: {
         BooksList,
@@ -89,8 +93,7 @@ export default {
                             book.details = details;
                             return book;
                         } catch (err) {
-                            //429 quota dépassé
-                            console.error(err);
+                            //TODO 429 quota dépassé
                             this.snackbar = true;
                             return book;
                         }
@@ -113,9 +116,6 @@ export default {
                 this.loaded = true;
             }
         },
-        /**
-         * 
-         */
         sortBooksByTitle() {
             // regroupement par première lettre
             const groups = this.filteredBooks.reduce((result, book) => {
@@ -136,45 +136,57 @@ export default {
             groups.sort((a, b) => a.title.localeCompare(b.title));
             return groups;
         },
-        /**
-         * 
-         */
         sortBooksByLocations() {
-            let res = this.library.locations.map(location => ({ title: location, items: [] }));
-            let others = { title: "Autres", items: [] };
-            this.filteredBooks.map(book => {
-                book.copies.map(copy => {
-                    const locationIndex = copy.location ?? -1;
-                    if (locationIndex > this.library.locations.length || locationIndex < 0) {
-                        if(!others.items.includes(book)) {
-                            others.items.push(book);
+            const dict = {};
+            this.library.locations?.forEach(location => {
+                dict[location.id] = { title: location.name, items: [] }
+            });
+            dict.others = { title: "Autres", items: [] };
+            console.log(dict);
+            this.filteredBooks.forEach(book => {
+                book.copies.forEach(copy => {
+                    if(copy.location && dict[copy.location]) {
+                        if(!dict[copy.location].items.includes(book)){
+                            dict[copy.location].items.push(book)
                         }
                     } else {
-                        if(!res[locationIndex].items.includes(book)) {
-                            res[locationIndex].items.push(book);
+                        if(!dict.others.items.includes(book)){
+                            dict.others.items.push(book)
                         }
                     }
                 });
             });
-            res.push(others);
+
+            const res = [];
+            for(const location in dict) {
+                res.push(dict[location]);
+            }
             return res;
         },
-        /**
-         * 
-         */
         sortBooksByCategories() {
-            let res = this.library.categories.map(category => ((category) ? { title: category, items: [] } : null));
-            let others = { title: "Autres", items: [] };
+            const dict = {};
+            this.flattenedCategories.forEach(category => {
+                dict[category.id] = { title: category.name, items: [] }
+            });
+            dict.others = { title: "Non précisée", items: [] };
+
             this.filteredBooks.map(book => {
-                const categoryIndex = book.category ?? -1;
-                if (categoryIndex > this.library.categories.length || categoryIndex < 0 || res[categoryIndex] === null) {
-                    others.items.push(book);
+                if(book.categories?.length > 0) {
+                    book.categories.forEach(category => {
+                        if(dict[category]) {
+                            dict[category].items.push(book);
+                        }
+                    });
                 } else {
-                    res[categoryIndex].items.push(book);
+                    dict.others.items.push(book);
                 }
             });
-            res.push(others);
-            return res.filter(e => e !== null);
+            
+            const res = [];
+            for(const location in dict) {
+                res.push(dict[location]);
+            }
+            return res;
         },
         exitLibrary() {
             this.$store.commit('exitLibrary');
