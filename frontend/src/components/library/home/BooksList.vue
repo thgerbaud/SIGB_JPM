@@ -7,10 +7,8 @@
 	<p class="my-4 text-center empty-section" v-else>Aucun livre correspondant</p>
 </template>
 	
-<script>
+<script setup>
 import BooksListItem from '@/components/library/home/BooksListItem.vue';
-export default {
-	components: { BooksListItem },
-	props: ["libraryId", "books"],
-};
+
+defineProps(["libraryId", "books"]);
 </script>

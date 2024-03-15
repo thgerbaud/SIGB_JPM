@@ -23,28 +23,25 @@
     </v-menu>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import NavUserInfos from '@/components/utils/nav/NavUserInfos.vue';
 import LogoutConfirmDialog from '@/components/utils/dialogs/LogoutConfirmDialog.vue';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
-export default {
-    props: ["user", "libraryName"],
-    data() {
-        return {
-            logoutDialog: false,
-            exitDialog: false,
-        }
-    },
-    components: {
-        NavUserInfos,
-        LogoutConfirmDialog,
-        ConfirmDialog
-    },
-    methods: {
-        exitLibrary() {
-            this.$store.commit('exitLibrary');
-            this.$router.push('/home/libraries');
-        }
-    }
+
+defineProps(["user", "libraryName"]);
+
+const router = useRouter();
+const store = useStore();
+
+const logoutDialog = ref(false);
+const exitDialog = ref(false);
+
+
+function exitLibrary() {
+    store.commit('exitLibrary');
+    router.push('/home/libraries');
 }
 </script>

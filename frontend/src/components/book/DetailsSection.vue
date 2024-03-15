@@ -12,32 +12,30 @@
     <legend><span class="font-weight-bold">Exemplaires :</span> {{ book.copies?.length }}</legend>
 </template>
 
-<script>
-export default {
-    props: ["book", "library"],
-    computed: {
-        categoriesToString() {
-            const categoriesNames = this.findCategoriesName(this.library.categories);
-            if(categoriesNames.length > 0) {
-                return categoriesNames.join(', ');
-            } else {
-                return "Aucune";
-            }
-        }
-    },
-    methods: {
-        findCategoriesName(categories) {
-            let res = [];
-            categories.forEach(category => {
-                if(this.book.categories?.includes(category.id)) {
-                    res.push(category.name);
-                }
-                if(category.subcategories) {
-                    res = res.concat(this.findCategoriesName(category.subcategories));
-                }
-            });
-            return res;
-        }
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps(["book", "library"]);
+
+const categoriesToString = computed(() => {
+    const categoriesNames = findCategoriesName(props.library.categories);
+    if (categoriesNames.length > 0) {
+        return categoriesNames.join(', ');
+    } else {
+        return "Aucune";
     }
+});
+
+function findCategoriesName(categories) {
+    let res = [];
+    categories.forEach(category => {
+        if (props.book.categories?.includes(category.id)) {
+            res.push(category.name);
+        }
+        if (category.subcategories) {
+            res = res.concat(findCategoriesName(category.subcategories));
+        }
+    });
+    return res;
 }
 </script>

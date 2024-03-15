@@ -43,49 +43,39 @@
 
         <template #actions>
             <v-btn prepend-icon="mdi-plus" class="mt-2" @click="openModal()">Ajouter une catégorie</v-btn>
-            <AddCategoryModal v-model="addCategoryModal" :library="library" :parent="parent" @cancel="closeModal"
+            <AddCategoryModal v-model="addCategoryModal" :library="library" :parent="parentCategory" @cancel="closeModal"
                 @update="(library) => { closeModal(); update(library) }" />
         </template>
     </SettingsSectionTemplate>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import CategoryListItem from '@/components/settings/library/categories/CategoryListItem.vue';
 import AddCategoryModal from '@/components/settings/library/categories/AddCategoryModal.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            addCategoryModal: false,
-            parent: null,
-            updatedSnackbar: false,
-        }
-    },
-    methods: {
-        editCategory(id) {
-            alert("Edit " + id);
-        },
-        deleteCategory(id) {
-            alert("Delete " + id);
-        },
-        openModal(parent = null) {
-            this.parent = parent;
-            this.addCategoryModal = true;
-        },
-        closeModal() {
-            this.addCategoryModal = false;
-        },
-        update(library) {
-            this.$store.commit('setLibrary', library);
-            this.updatedSnackbar = true;
-        },
-    },
-    components: {
-        SettingsSectionTemplate,
-        CategoryListItem,
-        AddCategoryModal,
-    },
+
+defineProps(["library"]);
+
+const store = useStore();
+
+const addCategoryModal = ref(false);
+const parentCategory = ref(null);
+const updatedSnackbar = ref(false);
+
+function openModal(parent = null) {
+    parentCategory.value = parent;
+    addCategoryModal.value = true;
+}
+
+function closeModal() {
+    addCategoryModal.value = false;
+}
+
+function update(library) {
+    store.commit('setLibrary', library);
+    updatedSnackbar.value = true;
 }
 </script>
 

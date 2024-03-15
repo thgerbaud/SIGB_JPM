@@ -4,12 +4,6 @@
 	</v-app>
 </template>
 
-<script>
-export default {
-	name: "app"
-};
-</script>
-
 <style>
 div.v-application__wrap {
 	/* avoid overflow due to v-app-bar */

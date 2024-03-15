@@ -41,70 +41,71 @@
     </v-dialog>
 </template>
 
-<script>
+<script setup>
+import { ref, inject } from 'vue';
 import { addGuest } from '@/services/LibraryDataService';
-export default {
-    emits: ["cancel", "update"],
-    props: ["library"],
-    data() {
-        return {
-            email: "",
-            sent: false,
-            sending: false,
-            isFormValid: false,
-            rules: {
-                required: (value) => !!value?.trim() || "L'adresse ne doit pas être vide.",
-                isValid: (value) => /^[a-zA-Z0-9.]+$/.test(value) || "Adresse invalide.",
-                duplicateInUsers: (value) => !this.library.users?.some(guest => guest.email === value + "@gmail.com") || "L'utilisateur est déjà ajouté.",
-                duplicateInAdmins: (value) => !this.library.admins?.some(guest => guest.email === value + "@gmail.com") || "L'utilisateur est déjà ajouté en tant qu'administrateur.",
-                length: (value) => (value?.length > 5 && value?.length < 31) || "L'adresse doit contenir entre 6 et 30 caractères",
-            },
-            updatedLibrary: null,
-        }
-    },
-    methods: {
-        handleEmailInput() {
-            this.email = this.email.replace(/[^a-zA-Z0-9.]/g, '');
-        },
-        send() {
-            this.sending = true;
-            addGuest(this.library.id, this.email + "@gmail.com")
-                .then(library => {
-                    this.updatedLibrary = library;
-                    this.sent = true;
-                })
-                .catch(err => {
-                    this.sending = false;
-                    if (err.message.includes('[401]')) {
-                        this.globalEmitter.emit('401');
-                    } else if (err.message.includes('[403]')) {
-                        this.globalEmitter.emit('403');
-                    } else if (err.message.includes('[404]')) {
-                        this.globalEmitter.emit('404');
-                    } else if (err.message.includes('[400]')) {
-                        this.globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
-                    } else if (err.message.includes('[409]')) {
-                        this.globalEmitter.emit('error', { message: "Il semblerait que l'utilisateur soit déjà ajouté." });
-                    } else if (err.message.includes('[500]')) {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
-                    } else {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
-                    }
-                });
-        },
-        reset() {
-            this.email = "";
-            this.sending = false;
-            this.sent = false;
-        },
-        cancel() {
-            this.reset();
-            this.$emit('cancel');
-        },
-        update() {
-            this.reset();
-            this.$emit('update', this.updatedLibrary);
-        },
-    },
+
+const props = defineProps(["library"]);
+const emit = defineEmits(["cancel", "update"]);
+const globalEmitter = inject('globalEmitter');
+
+const email = ref("");
+const updatedLibrary = ref(null);
+const sent = ref(false);
+const sending = ref(false);
+const isFormValid = ref(false);
+const rules = {
+    required: (value) => !!value?.trim() || "L'adresse ne doit pas être vide.",
+    isValid: (value) => /^[a-zA-Z0-9.]+$/.test(value) || "Adresse invalide.",
+    duplicateInUsers: (value) => !props.library.users?.some(guest => guest.email === value + "@gmail.com") || "L'utilisateur est déjà ajouté.",
+    duplicateInAdmins: (value) => !props.library.admins?.some(guest => guest.email === value + "@gmail.com") || "L'utilisateur est déjà ajouté en tant qu'administrateur.",
+    length: (value) => (value?.length > 5 && value?.length < 31) || "L'adresse doit contenir entre 6 et 30 caractères",
+}
+
+function handleEmailInput() { //TODO reuse
+    email.value = email.value.replace(/[^a-zA-Z0-9.]/g, '');
+}
+
+function send() {
+    sending.value = true;
+    addGuest(props.library.id, email.value + "@gmail.com")
+        .then(library => {
+            updatedLibrary.value = library;
+            sent.value = true;
+        })
+        .catch(err => {
+            sending.value = false;
+            if (err.message.includes('[401]')) {
+                globalEmitter.emit('401');
+            } else if (err.message.includes('[403]')) {
+                globalEmitter.emit('403');
+            } else if (err.message.includes('[404]')) {
+                globalEmitter.emit('404');
+            } else if (err.message.includes('[400]')) {
+                globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
+            } else if (err.message.includes('[409]')) {
+                globalEmitter.emit('error', { message: "Il semblerait que l'utilisateur soit déjà ajouté." });
+            } else if (err.message.includes('[500]')) {
+                globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+            } else {
+                globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+            }
+        });
+}
+
+function reset() {
+    email.value = "";
+    sending.value = false;
+    sent.value = false;
+}
+
+function cancel() {
+    reset();
+    emit('cancel');
+}
+
+function update() {
+    reset();
+    emit('update', updatedLibrary.value);
 }
 </script>

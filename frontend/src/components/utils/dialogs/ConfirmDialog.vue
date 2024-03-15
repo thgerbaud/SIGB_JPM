@@ -8,16 +8,14 @@
                 {{ text }}
             </v-card-text>
             <v-card-actions>
-                <v-btn color="error" class="flex-grow-1" @click="$emit('cancel')">{{ cancelText }}</v-btn>
-                <v-btn class="flex-grow-1" @click="$emit('ok')">{{ okText }}</v-btn>
+                <v-btn color="error" class="flex-grow-1" @click="emit('cancel')">{{ cancelText }}</v-btn>
+                <v-btn class="flex-grow-1" @click="emit('ok')">{{ okText }}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["title", "icon", "text", "cancelText", "okText"],
-    emits: ["ok", "cancel"]
-}
+<script setup>
+defineProps(["title", "icon", "text", "cancelText", "okText"]);
+const emit = defineEmits(["ok", "cancel"]);
 </script>

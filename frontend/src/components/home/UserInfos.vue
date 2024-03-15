@@ -6,22 +6,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: ["user"]
-}
+<script setup>
+defineProps(["user"]);
 </script>
-<!---
-<style scoped>
-#user-infos {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-bottom: 3rem;
-}
-#user-picture {
-	height: 4rem;
-	border-radius: 2rem;
-}
-</style>
--->

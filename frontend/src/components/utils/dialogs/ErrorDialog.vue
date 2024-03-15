@@ -8,15 +8,13 @@
                 {{ message || "Oups ! Une erreur s'est produite..." }}
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$emit('close')">Fermer</v-btn>
+                <v-btn block @click="emit('close')">Fermer</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["message"],
-    emits: ["close"],
-}
+<script setup>
+defineProps(["message"]);
+const emit = defineEmits(["close"]);
 </script>

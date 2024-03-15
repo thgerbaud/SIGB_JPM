@@ -23,64 +23,60 @@
                 </v-form>
             </v-card-item>
             <v-card-actions>
-                <v-btn-secondary @click="$emit('cancel')" color="error" class="flex-grow-1">Annuler</v-btn-secondary>
+                <v-btn-secondary @click="emit('cancel')" color="error" class="flex-grow-1">Annuler</v-btn-secondary>
                 <v-btn variant="flat" @click="save" class="flex-grow-1" :disabled="!isFormValid">Enregistrer</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["book", "library"],
-    data() {
-        return {
-            isFormValid: false,
-            newCategories: this.book.categories
-        };
-    },
-    computed: {
-        //TODO setup réutiliser bout de code pour editBook
-        categoriesSelectItems() {
-            const flattenCategories = (categories, depth, parents) => {
-                let result = [];
+<script setup>
+import { computed, ref } from 'vue';
 
-                categories.forEach(category => {
-                    result.push({ value: category.id, title: category.name, props: { depth, parents } });
+const props = defineProps(["book", "library"]);
+const emit = defineEmits(["cancel", "save"]);
 
-                    if (category.subcategories) {
-                        let parentsCopy = [...parents];
-                        parentsCopy.push(category.id);
-                        result = result.concat(flattenCategories(category.subcategories, depth + 1, parentsCopy));
-                    }
-                });
+const isFormValid = ref(false);
+const newCategories = ref(props.book.categories);
 
-                return result;
+const categoriesSelectItems = computed(() => { //TODO reuse this editBook
+    const flattenCategories = (categories, depth, parents) => { //TODO compare with utils
+        let result = [];
+
+        categories.forEach(category => {
+            result.push({ value: category.id, title: category.name, props: { depth, parents } });
+
+            if (category.subcategories) {
+                let parentsCopy = [...parents];
+                parentsCopy.push(category.id);
+                result = result.concat(flattenCategories(category.subcategories, depth + 1, parentsCopy));
             }
-            return flattenCategories(this.library.categories, 0, []);
+        });
+
+        return result;
+    }
+    return flattenCategories(props.library.categories, 0, []);
+});
+
+function save() {
+    if (isFormValid.value) {
+        const data = { categories: newCategories.value };
+        emit('save', data);
+    }
+}
+
+function addParents(parents) {
+    parents.forEach(id => {
+        if (!newCategories.value.includes(id)) {
+            newCategories.value.push(id);
         }
-    },
-    methods: {
-        save() {
-            if (this.isFormValid) {
-                const data = { categories: this.newCategories };
-                this.$emit('save', data);
-            }
-        },
-        addParents(parents) {
-            parents.forEach(id => {
-                if (!this.newCategories.includes(id)) {
-                    this.newCategories.push(id);
-                }
-            });
-        },
-        removeChildrens(id) {
-            const childrens = this.categoriesSelectItems
-                .filter(category => category.props.parents?.includes(id))
-                .map(category => category.value);
-            this.newCategories = this.newCategories.filter(id => !childrens.includes(id));
-        },
-    },
-    emits: ["cancel", "save"]
+    });
+}
+
+function removeChildrens(id) {
+    const childrens = categoriesSelectItems.value
+        .filter(category => category.props.parents?.includes(id))
+        .map(category => category.value);
+    newCategories.value = newCategories.value.filter(id => !childrens.includes(id));
 }
 </script>

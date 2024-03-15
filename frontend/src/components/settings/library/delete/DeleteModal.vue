@@ -14,7 +14,7 @@
                 </v-form>
             </v-card-text>
             <v-card-actions>
-                <v-btn class="flex-grow-1" @click="$emit('cancel')" :disabled="loading">Annuler</v-btn>
+                <v-btn class="flex-grow-1" @click="emit('cancel')" :disabled="loading">Annuler</v-btn>
                 <v-btn class="flex-grow-1" color="error" @click="confirm" :disabled="!isFormValid"
                     :loading="loading">Supprimer</v-btn>
             </v-card-actions>
@@ -22,24 +22,21 @@
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["name"],
-    data() {
-        return {
-            isFormValid: false,
-            loading: false,
-            rules: {
-                matches: (value) => value === this.name || "",
-            },
-        }
-    },
-    methods: {
-        confirm() {
-            this.loading = true;
-            this.$emit('delete');
-        },
-    },
-    emits: ["cancel", "delete"],
+<script setup>
+import { ref } from 'vue';
+
+const props = defineProps(["name"]);
+const emit = defineEmits(["cancel", "delete"]);
+
+const isFormValid = ref(false);
+const loading = ref(false);
+
+const rules = {
+    matches: (value) => value === props.name || "",
+}
+
+function confirm() {
+    loading.value = true;
+    emit('delete');
 }
 </script>

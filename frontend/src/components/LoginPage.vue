@@ -5,15 +5,9 @@
     </v-container>
 </template>
 
-<script>
+<script setup>
 import AppInfo from '@/components/login/AppInfo.vue';
 import LoginOptions from '@/components/login/LoginOptions.vue';
-export default {
-    components: {
-        AppInfo,
-        LoginOptions
-    }
-};
 </script>
 
 <style scoped>

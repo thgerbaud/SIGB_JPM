@@ -4,28 +4,26 @@
             <v-tooltip text="Paramètres" location="bottom">
                 <template v-slot:activator="{ props }">
                     <v-icon v-bind="props" icon="mdi-cog" class="pointer"
-                        @click="$router.push(`/${library.id}/settings`)"></v-icon>
+                        @click="router.push(`/${library.id}/settings`)"></v-icon>
                 </template>
             </v-tooltip>
         </template>
-        <v-app-bar-title @click="$router.push(`/${library.id}/books`)" class="pointer">{{ library.name }}</v-app-bar-title>
+        <v-app-bar-title @click="router.push(`/${library.id}/books`)" class="pointer">{{ library.name }}</v-app-bar-title>
         <template v-slot:append>
             <NavUserMenu :user="user" :libraryName="library.name" />
         </template>
     </v-app-bar>
 </template>
 
-<script>
+<script setup>
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import NavUserMenu from '@/components/utils/nav/NavUserMenu.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            user: this.$store.state.user,
-        };
-    },
-    components: {
-        NavUserMenu
-    },
-}
+
+defineProps(["library"]);
+
+const router = useRouter();
+const store = useStore();
+
+const user = store.state.user;
 </script>

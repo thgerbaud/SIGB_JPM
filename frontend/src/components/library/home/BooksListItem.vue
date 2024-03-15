@@ -16,8 +16,6 @@
     </v-card>
 </template>
 
-<script>
-export default {
-    props: ["book", "libraryId"],
-}
+<script setup>
+defineProps(["book", "libraryId"]);
 </script>

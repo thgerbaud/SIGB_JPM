@@ -10,32 +10,33 @@
     </GoogleLogin>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { login } from '@/services/AuthService';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
-export default {
-    data() {
-        return {
-            errorDialog: false,
-        }
-    },
-    methods: {
-        async callback(response) {
-            login(response.code)
-                .then(data => {
-                    const token = data.accessToken;
-                    const user = data.userData;
-                    console.log(token); //! temp
-                    this.$store.commit('setToken', token);
-                    this.$store.commit('setUser', user);
-                    this.$router.push(`/home/libraries`);
-                })
-                .catch(() => {
-                    this.errorDialog = true;
-                });
-        }
-    },
-    components: { ErrorDialog }
+
+defineProps(["library"]);
+
+const router = useRouter();
+const store = useStore();
+
+const errorDialog = ref(false);
+
+async function callback(response) {
+    login(response.code)
+        .then(data => {
+            const token = data.accessToken;
+            const user = data.userData;
+            console.log(token); //! temp
+            store.commit('setToken', token);
+            store.commit('setUser', user);
+            router.push(`/home/libraries`);
+        })
+        .catch(() => {
+            errorDialog.value = true;
+        });
 }
 </script>
 

@@ -2,7 +2,7 @@
     <SettingsSectionTemplate :title="`Invités (${library.users?.length ?? 0}/${maxGuests})`">
         <template #content>
             <v-list v-if="library.users?.length > 0">
-                <GuestListItem v-for="user in library.users" :key="user.id" :guest="user"
+                <GuestListItem v-for="user in library.users" :key="user.id" :guest="user" :libraryId="library.id"
                     @deleted="(library) => { deletedSnackbar = true; update(library) }" />
             </v-list>
             <p v-else class="font-italic">Aucun invité pour le moment</p>
@@ -22,31 +22,25 @@
     </SettingsSectionTemplate>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import GuestListItem from '@/components/settings/users/guests/GuestListItem.vue';
 import AddGuestModal from '@/components/settings/users/guests/AddGuestModal.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            maxGuests: 10,
-            addGuestModal: false,
-            deletedSnackbar: false,
-        }
-    },
-    methods: {
-        closeModal() {
-            this.addGuestModal = false;
-        },
-        update(library) {
-            this.$store.commit('setLibrary', library);
-        },
-    },
-    components: {
-        SettingsSectionTemplate,
-        GuestListItem,
-        AddGuestModal,
-    },
+
+defineProps(["library"]);
+const store = useStore();
+
+const maxGuests = 10;
+const addGuestModal = ref(false);
+const deletedSnackbar = ref(false);
+
+function closeModal() {
+    addGuestModal.value = false;
+}
+
+function update(library) {
+    store.commit('setLibrary', library);
 }
 </script>

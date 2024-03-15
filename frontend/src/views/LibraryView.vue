@@ -11,64 +11,57 @@
 	</v-main>
 </template>
 
-<script>
-/* ----- components ----- */
+<script setup>
+import { ref, inject, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 import NavBar from '@/components/utils/nav/NavBar.vue';
 import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
 import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
 import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
-/* ----- services ----- */
 import { getLibrary } from '@/services/LibraryDataService';
-/* ---------- */
-export default {
-	components: { NavBar, ExpiredSessionDialog, NotFoundDialog, AccessDeniedDialog, ErrorDialog },
-	data() {
-		return {
-			/* ----- dialogs ----- */
-			expiredSessionDialog: false,
-			notFoundDialog: false,
-			accessDeniedDialog: false,
-			errorDialog: false,
-			errorMessage: "Oups! Une erreur s'est produite..."
-			/* ---------- */
-		};
-	},
-	computed: {
-		library() {
-			return this.$store.getters.getLibrary;
-		},
-	},
-	methods: {
-		async retrieveLibrary() {
-			if (this.library?.id !== this.$route.params.library) {
-				await getLibrary(this.$route.params.library)
-					.then(library => {
-						this.$store.commit('setLibrary', library)
-					})
-					.catch(e => {
-						console.log(e); //TODO
-					});
-			}
-		},
-	},
-	async created() {
-		/* ----- global events listeners ----- */
-		this.globalEmitter.on('401', () => {
-			this.expiredSessionDialog = true;
-		});
-		this.globalEmitter.on('403', () => {
-			this.accessDeniedDialog = true;
-		});
-		this.globalEmitter.on('404', () => {
-			this.notFoundDialog = true;
-		});
-		this.globalEmitter.on('error', ({ message }) => {
-			this.errorMessage = message || "Oups! Une erreur s'est produite"
-			this.errorDialog = true;
-		});
-		/* ---------- */
-		await this.retrieveLibrary();
+
+const store = useStore();
+const route = useRoute();
+const globalEmitter = inject('globalEmitter');
+
+const expiredSessionDialog = ref(false);
+const notFoundDialog = ref(false);
+const accessDeniedDialog = ref(false);
+const errorDialog = ref(false);
+const errorMessage = ref("Oups! Une erreur s'est produite...");
+
+const library = computed(() => store.getters.getLibrary);
+
+async function retrieveLibrary() {
+	if (library?.id !== route.params.library) {
+		await getLibrary(route.params.library)
+			.then(library => {
+				store.commit('setLibrary', library)
+			})
+			.catch(e => {
+				console.log(e); //TODO
+			});
 	}
-};
+}
+
+globalEmitter.on('401', () => {
+	expiredSessionDialog.value = true;
+});
+
+globalEmitter.on('403', () => {
+	accessDeniedDialog.value = true;
+});
+
+globalEmitter.on('404', () => {
+	notFoundDialog.value = true;
+});
+
+globalEmitter.on('error', ({ message }) => {
+	errorMessage.value = message || "Oups! Une erreur s'est produite"
+	errorDialog.value = true;
+});
+
+retrieveLibrary();
 </script>

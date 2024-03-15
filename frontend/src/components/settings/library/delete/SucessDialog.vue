@@ -8,8 +8,14 @@
                 <p>La bibliothèque a bien été supprimée, vous allez être redirigé(e) vers la liste de vos biblothèques.</p>
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$router.push('/home/libraries')">Ok</v-btn>
+                <v-btn block @click="router.push('/home/libraries')">Ok</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+</script>

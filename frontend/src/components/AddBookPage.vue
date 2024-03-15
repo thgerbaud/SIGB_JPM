@@ -11,33 +11,25 @@
     </section>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import SearchIsbn from '@/components/library/add/SearchIsbn.vue';
 import IsbnResult from '@/components/library/add/IsbnResult.vue';
 import AddBookForm from '@/components/library/add/AddBookForm.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            bookFound: null,
-            addBook: false,
-        }
-    },
-    components: {
-        SearchIsbn,
-        IsbnResult,
-        AddBookForm
-    },
-    methods: {
-        goBack() {
-            this.isbn = "";
-            this.addSuccessDialog = false;
-            this.addBook = false;
-            this.bookFound = null;
-        },
-        returnHome() {
-            this.$router.push(`/${this.library.id}/books/`);
-        }
-    }
+
+const props = defineProps(["library"]);
+const router = useRouter();
+
+const bookFound = ref(null);
+const addBook = ref(false);
+
+function goBack() {
+    addBook.value = false;
+    bookFound.value = null;
+}
+
+function returnHome() {
+    router.push(`/${props.library.id}/books/`);
 }
 </script>

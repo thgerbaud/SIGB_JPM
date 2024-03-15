@@ -28,55 +28,43 @@
     </v-container>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import { getAll } from '@/services/LibraryDataService';
 import LibraryListItem from '@/components/home/LibraryListItem.vue';
 import CreateButton from '@/components/home/CreateButton.vue';
 import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
-export default {
-    props: ["user"],
-    data() {
-        return {
-            loading: false,
-            libraries: [],
-            expiredSessionDialog: false,
-            errorDialog: false,
-            errorMessage: "Oups! une erreur s'est produite...",
-            errorMet: false
-        };
-    },
-    components: {
-        LibraryListItem,
-        CreateButton,
-        ExpiredSessionDialog,
-        ErrorDialog
-    },
-    methods: {
-        retrieveLibraries() {
-            getAll()
-                .then(response => {
-                    this.libraries = response ?? [];
-                    this.loading = false;
-                })
-                .catch(err => {
-                    if (err.message.includes(401)) {
-                        this.expiredSessionDialog = true;
-                    } else if (err.message.includes(500)) {
-                        this.errorMessage = "Oups! Une erreur s'est produite du côté du serveur...";
-                        this.errorDialog = true;
-                    } else {
-                        this.errorMessage = "Oups! Une erreur inattendue s'est produite...";
-                        this.errorDialog = true;
-                    }
-                    this.loading = false;
-                    this.errorMet = true;
-                });
+
+const loading = ref(false);
+const libraries = ref([]);
+const expiredSessionDialog = ref(false);
+const errorDialog = ref(false);
+const errorMessage = ref("Oups! une erreur s'est produite...");
+const errorMet = ref(false);
+
+const retrieveLibraries = async () => {
+    loading.value = true;
+    try {
+        const response = await getAll();
+        libraries.value = response ?? [];
+        loading.value = false;
+    } catch (err) {
+        if (err.message.includes(401)) {
+            expiredSessionDialog.value = true;
+        } else if (err.message.includes(500)) {
+            errorMessage.value = "Oups! Une erreur s'est produite du côté du serveur...";
+            errorDialog.value = true;
+        } else {
+            errorMessage.value = "Oups! Une erreur inattendue s'est produite...";
+            errorDialog.value = true;
         }
-    },
-    async created() {
-        this.loading = true;
-        this.retrieveLibraries();
+        loading.value = false;
+        errorMet.value = true;
     }
 };
+
+onMounted(() => {
+    retrieveLibraries();
+});
 </script>

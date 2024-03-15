@@ -1,5 +1,5 @@
 <template>
-    <InfoDialog v-model="infoDialog" @ok="$router.push(`/${library.id}/books`)" title="Livre supprimé"
+    <InfoDialog v-model="infoDialog" @ok="router.push(`/${library.id}/books`)" title="Livre supprimé"
         message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
     <EditBookModal :book="book" :library="library" v-model="editBookModal" @cancel="editBookModal = false"
@@ -17,62 +17,58 @@
     </v-toolbar>
 </template>
 
-<script>
+<script setup>
+import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import EditBookModal from '@/components/book/EditBookModal.vue';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
 import { update, deleteBook } from '@/services/BookDataService';
-export default {
-    props: ["book", "library"],
-    data() {
-        return {
-            editBookModal: false,
-            deleteDialog: false,
-            infoDialog: false
-        }
-    },
-    components: {
-        EditBookModal,
-        ConfirmDialog,
-        InfoDialog
-    },
-    methods: {
-        editBook(data) {
-            update(this.book.id, data)
-                .then(updatedBook => {
-                    this.editBookModal = false;
-                    this.$emit('update', updatedBook);
-                })
-                .catch(err => {
-                    this.processError(err);
-                });
-        },
-        confirmDeletion() {
-            this.deleteDialog = false;
-            deleteBook(this.book.id)
-                .then(() => {
-                    this.infoDialog = true;
-                })
-                .catch(err => {
-                    this.processError(err);
-                });
-        },
-        processError(err) {
-            if (err.message.includes('[401]')) {
-                this.globalEmitter.emit('401');
-            } else if (err.message.includes('[403]')) {
-                this.globalEmitter.emit('403');
-            } else if (err.message.includes('[404]')) {
-                this.globalEmitter.emit('404');
-            } else if (err.message.includes('[400]')) {
-                this.globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
-            } else if (err.message.includes('[500]')) {
-                this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
-            } else {
-                this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
-            }
-        }
-    },
-    emits: ["update"],
+
+const props = defineProps(["book", "library"]);
+const emit = defineEmits(["update"]);
+const router = useRouter();
+const globalEmitter = inject('globalEmitter');
+
+const editBookModal = ref(false);
+const deleteDialog = ref(false);
+const infoDialog = ref(false);
+
+function editBook(data) {
+    update(props.book.id, data)
+        .then(updatedBook => {
+            editBookModal.value = false;
+            emit('update', updatedBook);
+        })
+        .catch(err => {
+            processError(err);
+        });
+}
+
+function confirmDeletion() {
+    deleteDialog.value = false;
+    deleteBook(props.book.id)
+        .then(() => {
+            infoDialog.value = true;
+        })
+        .catch(err => {
+            processError(err);
+        });
+}
+
+function processError(err) {
+    if (err.message.includes('[401]')) {
+        globalEmitter.emit('401');
+    } else if (err.message.includes('[403]')) {
+        globalEmitter.emit('403');
+    } else if (err.message.includes('[404]')) {
+        globalEmitter.emit('404');
+    } else if (err.message.includes('[400]')) {
+        globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
+    } else if (err.message.includes('[500]')) {
+        globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+    } else {
+        globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+    }
 }
 </script>

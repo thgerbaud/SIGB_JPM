@@ -7,8 +7,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: ["title"]
-}
+<script setup>
+defineProps(["title"]);
 </script>

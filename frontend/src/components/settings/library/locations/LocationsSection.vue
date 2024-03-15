@@ -3,7 +3,7 @@
         <template #content>
             <v-list v-if="library.locations?.length > 0">
                 <LocationListItem v-for="location in library.locations" :location="location" :library="library"
-                    :key="location.id" @update="update"/>
+                    :key="location.id" @update="update" />
             </v-list>
             <p v-else class="font-italic">Aucun emplacement pour le moment</p>
             <v-snackbar color="primary" timeout="3000" v-model="updatedSnackbar">
@@ -19,31 +19,25 @@
     </SettingsSectionTemplate>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import LocationListItem from '@/components/settings/library/locations/LocationListItem.vue';
 import AddLocationModal from '@/components/settings/library/locations/AddLocationModal.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            addLocationModal: false,
-            updatedSnackbar: false,
-        }
-    },
-    methods: {
-        closeModal() {
-            this.addLocationModal = false;
-        },
-        update(library) {
-            this.$store.commit('setLibrary', library);
-            this.updatedSnackbar = true;
-        },
-    },
-    components: {
-        SettingsSectionTemplate,
-        LocationListItem,
-        AddLocationModal,
-    },
+
+defineProps(["library"]);
+const store = useStore();
+
+const addLocationModal = ref(false);
+const updatedSnackbar = ref(false);
+
+function closeModal() {
+    addLocationModal.value = false;
+}
+
+function update(library) {
+    store.commit('setLibrary', library);
+    updatedSnackbar.value = true;
 }
 </script>

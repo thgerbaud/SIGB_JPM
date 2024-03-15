@@ -8,19 +8,18 @@
     </v-avatar>
 </template>
   
-<script>
-export default {
-    props: {
-        number: Number,
-        size: {
-            type: Number,
-            default: 50
-        }
-    },
-    computed: {
-        textSize() {
-            return `${this.size / 2}px`;
-        }
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+    number: Number,
+    size: {
+        type: Number,
+        default: 50
     }
-};
+});
+
+const textSize = computed(() => {
+    return `${props.size / 2}px`;
+});
 </script>

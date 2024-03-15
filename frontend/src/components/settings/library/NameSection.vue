@@ -6,17 +6,8 @@
     </SettingsSectionTemplate>
 </template>
 
-<script>
+<script setup>
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            maxAdmins: 3,
-        }
-    },
-    components: {
-        SettingsSectionTemplate,
-    },
-}
+
+defineProps(["library"]);
 </script>

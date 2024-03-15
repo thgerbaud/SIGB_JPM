@@ -5,20 +5,31 @@
                 <v-icon icon="mdi-check-circle" color="primary"></v-icon>
             </template>
             <v-card-text>
-                Votre livre <b>"{{ title }}"</b> a bien été ajouté à votre bibliothèque ({{ nbCopies }}  exemplaire(s) au total) !
+                Votre livre <b>"{{ props.title }}"</b> a bien été ajouté à votre bibliothèque ({{ props.nbCopies }}  exemplaire(s) au total) !
                 Que voulez-vous faire maintenant ?
             </v-card-text>
             <v-card-actions>
-                <v-btn class="flex-grow-1" @click="$emit('goHome')">Revenir à l'accueil</v-btn>
-                <v-btn-secondary class="flex-grow-1" @click="$emit('addAnother')">Ajouter un autre livre</v-btn-secondary>
-                <v-btn variant="flat" class="flex-grow-1"  @click="$emit('seeBook')">Voir le livre</v-btn>
+                <v-btn class="flex-grow-1" @click="goHome">Revenir à l'accueil</v-btn>
+                <v-btn-secondary class="flex-grow-1" @click="addAnother">Ajouter un autre livre</v-btn-secondary>
+                <v-btn variant="flat" class="flex-grow-1"  @click="seeBook">Voir le livre</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["nbCopies", "title"]
+<script setup>
+const props = defineProps(["nbCopies", "title"]);
+const emit = defineEmits(["goHome", "addAnother", "seeBook"]);
+
+function goHome() {
+    emit('goHome');
+}
+
+function addAnother() {
+    emit('addAnother');
+}
+
+function seeBook() {
+    emit('seeBook');
 }
 </script>

@@ -14,20 +14,14 @@
     </v-card>
 </template>
 
-<script>
+<script setup>
 import CopiesSection from '@/components/book/copies/CopiesSection.vue';
 import DetailsSection from '@/components/book/DetailsSection.vue';
-export default {
-    props: ["book", "library"],
-    components: {
-        CopiesSection,
-        DetailsSection
-    },
-    methods: {
-        updateBook(updatedBook) {
-            this.$emit('update', updatedBook);
-        },
-    },
-    emits: ["update"]
+
+defineProps(["book", "library"]);
+const emit = defineEmits(["update"]);
+
+function updateBook(updatedBook) {
+    emit('update', updatedBook);
 }
 </script>

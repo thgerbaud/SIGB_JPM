@@ -8,14 +8,12 @@
                 Oups... Il semblerait que vous n'ayez pas les permissions nécessaires pour accéder à cette ressource ou effectuer cette opération.
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$emit('ok')">Ok</v-btn>
+                <v-btn block @click="emit('ok')">Ok</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    emits: ["ok"],
-}
+<script setup>
+const emit = defineEmits(["ok"]);
 </script>

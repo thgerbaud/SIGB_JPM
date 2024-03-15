@@ -8,15 +8,13 @@
                 {{ message }}
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$emit('ok')">{{ btnText || "Ok" }}</v-btn>
+                <v-btn block @click="emit('ok')">{{ btnText || "Ok" }}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
-    props: ["title", "message", "btnText"],
-    emits: ["ok"],
-}
+<script setup>
+defineProps(["title", "message", "btnText"]);
+const emit = defineEmits(["ok"]);
 </script>

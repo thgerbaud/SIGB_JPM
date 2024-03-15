@@ -14,7 +14,7 @@
             </v-row>
             <!-- Sous-catégories (niv. 2) -->
             <div v-for="(subcategory, j) in category.subcategories" :key="subcategory">
-                <v-row :class="{ 'mt-4' : j > 0}">
+                <v-row :class="{ 'mt-4': j > 0 }">
                     <v-col cols="1">
                         <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
                     </v-col>
@@ -74,75 +74,77 @@
 
     <div class="d-flex justify-space-between">
         <v-btn-secondary @click="prev" prepend-icon="mdi-chevron-left" :disabled="!isFormValid">Précédent</v-btn-secondary>
-        <v-btn-tertiary color="error" @click="$emit('cancel')">Annuler</v-btn-tertiary>
+        <v-btn-tertiary color="error" @click="emit('cancel')">Annuler</v-btn-tertiary>
         <v-btn @click="setCategories" prepend-icon="mdi-check" :disabled="!isFormValid">Terminer</v-btn>
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            categories: [],
-            rules: {
-                required: (value) => (!!value?.trim()) || "Le nom ne doit pas être vide.",
-                duplicate: (category) => (value) => this.isNameUnique(value, category) || "Vous avez plusieurs catégories avec le même nom.",
-                //TODO regex / length ?
-            },
-            isFormValid: true
-        }
-    },
-    watch: {
-        categories: {
-            handler() {
-                this.$refs.categoriesForm.validate();
-            },
-            deep: true
-        }
-    },
-    methods: {
-        addCategory() {
-            this.categories.push({ name: "", subcategories: [] });
-        },
-        addSubcategory(i) {
-            this.categories[i]?.subcategories.push({ name: "", subcategories: [] });
-        },
-        addSubsubcategory(i, j) {
-            this.categories[i]?.subcategories[j]?.subcategories.push({ name: "" });
-        },
-        removeCategory(i) {
-            this.categories.splice(i, 1);
-        },
-        removeSubcategory(i, j) {
-            this.categories[i]?.subcategories.splice(j, 1);
-        },
-        removeSubsubcategory(i, j, k) {
-            this.categories[i]?.subcategories[j]?.subcategories.splice(k, 1);
-        },
-        isNameUnique(value, currentCategory) {
-            const testValue = value?.trim().toLowerCase();
-            const checkUnique = (category) => {
-                if (category.name?.trim().toLowerCase() === testValue && category !== currentCategory) {
-                    return false;
-                }
-                if (category.subcategories) {
-                    return category.subcategories.every(checkUnique);
-                }
-                return true;
-            };
-            return this.categories.every(checkUnique);
-        },
-        setCategories() {
-            if (this.isFormValid) {
-                this.$emit('next', this.categories);
-            }
-        },
-        prev() {
-            if (this.isFormValid) {
-                this.$emit('prev');
-            }
-        }
-    },
-    emits: ["prev", "next", "cancel"]
+<script setup>
+import { ref, watch } from 'vue';
+
+const emit = defineEmits(["prev", "next", "cancel"]);
+
+const categories = ref([]);
+const isFormValid = ref(true);
+const categoriesForm = ref(null);
+
+const rules = {
+    required: (value) => (!!value?.trim()) || "Le nom ne doit pas être vide.",
+    duplicate: (category) => (value) => isNameUnique(value, category) || "Vous avez plusieurs catégories avec le même nom."
+    //TODO regex / length ?
+};
+
+function addCategory() {
+    categories.value.push({ name: "", subcategories: [] });
 }
+
+function addSubcategory(i) {
+    categories.value[i]?.subcategories.push({ name: "", subcategories: [] });
+}
+
+function addSubsubcategory(i, j) {
+    categories.value[i]?.subcategories[j]?.subcategories.push({ name: "" });
+}
+
+function removeCategory(i) {
+    categories.value.splice(i, 1);
+}
+
+function removeSubcategory(i, j) {
+    categories.value[i]?.subcategories.splice(j, 1);
+}
+
+function removeSubsubcategory(i, j, k) {
+    categories.value[i]?.subcategories[j]?.subcategories.splice(k, 1);
+}
+
+function isNameUnique(value, currentCategory) {
+    const testValue = value?.trim().toLowerCase();
+    const checkUnique = (category) => {
+        if (category.name?.trim().toLowerCase() === testValue && category !== currentCategory) {
+            return false;
+        }
+        if (category.subcategories) {
+            return category.subcategories.every(checkUnique);
+        }
+        return true;
+    };
+    return categories.value.every(checkUnique);
+}
+
+function setCategories() {
+    if (isFormValid.value) {
+        emit('next', categories.value);
+    }
+}
+
+function prev() {
+    if (isFormValid.value) {
+        emit('prev');
+    }
+}
+
+watch(categories, () => {
+    categoriesForm.value.validate();
+}, { deep: true });
 </script>

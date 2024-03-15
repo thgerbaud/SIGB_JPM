@@ -21,83 +21,83 @@
     </v-dialog>
 </template>
 
-<script>
+<script setup>
 import { updateCopy } from '@/services/BookDataService';
-export default {
-    props: ["copy", "library", "bookId"],
-    data() {
-        return {
-            newCode: this.copy?.code,
-            newLocation: this.copy?.location,
-            rules: {
-                required: (value) => !!value || "Champ obligatoire.",
-                code: (value) => (/^[a-zA-Z0-9]+$/.test(value)) || "Ne doit contenir que des chiffres et des lettres."
-            },
-            loading: false,
-            isFormValid: false,
-        }
-    },
-    computed: {
-        locationItems() {
-            let items = this.library.locations.map(({ name, id }) => ({ title: name, value: id }));
-            items.unshift({ title: "Non précisé", value: null });
-            return items;
-        },
-        isDifferent() {
-            return (this.newCode !== this.copy?.code) || (this.newLocation !== this.copy?.location);
-        }
-    },
-    watch: {
-        copy() {
-            this.reset();
-        }
-    },
-    methods: {
-        handleCodeInput() {
-            this.newCode = this.newCode.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        },
-        reset() {
-            this.newCode = this.copy?.code;
-            this.newLocation = this.copy?.location;
-        },
-        cancel() {
-            this.reset();
-            this.$emit('cancel');
-        },
-        save() {
-            this.loading = true;
-            const payload = {};
-            if (this.newCode !== this.copy?.code) {
-                payload.code = this.newCode;
+import { ref, watch, computed, inject, toRef } from 'vue';
+
+const props = defineProps(["copy", "library", "bookId"]);
+const emit = defineEmits(["cancel", "update"]);
+const globalEmitter = inject('globalEmitter');
+
+const copy = toRef(props.copy);
+const newCode = ref(props.copy?.code);
+const newLocation = ref(props.copy?.location);
+const loading = ref(false);
+const isFormValid = ref(false);
+const rules = {
+    required: (value) => !!value || "Champ obligatoire.",
+    code: (value) => (/^[a-zA-Z0-9]+$/.test(value)) || "Ne doit contenir que des chiffres et des lettres."
+}
+
+const locationItems = computed(() => {
+    let items = props.library.locations.map(({ name, id }) => ({ title: name, value: id }));
+    items.unshift({ title: "Non précisé", value: null });
+    return items;
+});
+
+const isDifferent = computed(() => {
+    return (newCode.value !== props.copy?.code) || (newLocation.value !== props.copy?.location);
+});
+
+watch(copy, () => {
+    reset();
+});
+
+function handleCodeInput() {
+    newCode.value = newCode.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+}
+
+function reset() {
+    newCode.value = props.copy?.code;
+    newLocation.value = props.copy?.location;
+}
+
+function cancel() {
+    reset();
+    emit('cancel');
+}
+
+const save = () => {
+    loading.value = true;
+    const payload = {};
+    if (newCode.value !== props.copy?.code) {
+        payload.code = newCode.value;
+    }
+    if (newLocation.value !== props.copy?.location) {
+        payload.location = newLocation.value;
+    }
+    updateCopy(props.bookId, props.copy.id, payload)
+        .then(updatedBook => {
+            emit('update', updatedBook);
+        })
+        .catch(err => {
+            if (err.message.includes('[401]')) {
+                globalEmitter.emit('401');
+            } else if (err.message.includes('[403]')) {
+                globalEmitter.emit('403');
+            } else if (err.message.includes('[404]')) {
+                globalEmitter.emit('404');
+            } else if (err.message.includes('[400]')) {
+                const errorMessage = err.message.includes("Duplicate") ? "Il semblerait que vous ayez déjà un livre identifié avec ce code. Veuillez choisir un code unique pour votre exemplaire et réessayez..." : "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer...";
+                globalEmitter.emit('error', { message: errorMessage });
+            } else if (err.message.includes('[500]')) {
+                globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+            } else {
+                globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
             }
-            if (this.newLocation !== this.copy?.location) {
-                payload.location = this.newLocation;
-            }
-            updateCopy(this.bookId, this.copy.id, payload)
-                .then(updatedBook => {
-                    this.$emit('update', updatedBook);
-                })
-                .catch(err => {
-                    if (err.message.includes('[401]')) {
-                        this.globalEmitter.emit('401');
-                    } else if (err.message.includes('[403]')) {
-                        this.globalEmitter.emit('403');
-                    } else if (err.message.includes('[404]')) {
-                        this.globalEmitter.emit('404');
-                    } else if (err.message.includes('[400]')) {
-                        const errorMessage = err.message.includes("Duplicate") ? "Il semblerait que vous ayez déjà un livre identifié avec ce code. Veuillez choisir un code unique pour votre exemplaire et réessayez..." : "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer...";
-                        this.globalEmitter.emit('error', { message: errorMessage });
-                    } else if (err.message.includes('[500]')) {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
-                    } else {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
-                    }
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        }
-    },
-    emits: ['cancel', 'update']
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 }
 </script>

@@ -5,13 +5,8 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import GoogleButton from '@/components/login/GoogleButton.vue';
-export default {
-    components: {
-        GoogleButton
-    }
-}
 </script>
 
 <style scoped>

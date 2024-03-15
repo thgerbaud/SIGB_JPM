@@ -18,6 +18,6 @@ app.use(router);
 app.use(store);
 app.use(vuetify);
 
-app.config.globalProperties.globalEmitter = globalEmitter;
+app.provide('globalEmitter', globalEmitter);
 
 app.mount('#app');

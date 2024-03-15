@@ -2,7 +2,7 @@
     <SettingsSectionTemplate :title="`Administrateurs (${library.admins?.length ?? 0}/${maxAdmins})`">
         <template #content>
             <v-list>
-                <AdminListItem v-for="admin in library.admins" :key="admin.id" :admin="admin"
+                <AdminListItem v-for="admin in library.admins" :key="admin.id" :admin="admin" :libraryId="library.id"
                     @deleted="(library) => { deletedSnackbar = true; update(library) }" />
             </v-list>
             <v-snackbar v-model="deletedSnackbar" color="primary" timeout="3000">
@@ -21,31 +21,25 @@
     </SettingsSectionTemplate>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import AddAdminModal from '@/components/settings/users/admins/AddAdminModal.vue';
 import AdminListItem from '@/components/settings/users/admins/AdminListItem.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            maxAdmins: 3,
-            addAdminModal: false,
-            deletedSnackbar: false,
-        }
-    },
-    methods: {
-        closeModal() {
-            this.addAdminModal = false;
-        },
-        update(library) {
-            this.$store.commit('setLibrary', library);
-        },
-    },
-    components: {
-        SettingsSectionTemplate,
-        AddAdminModal,
-        AdminListItem,
-    },
+
+defineProps(["library"]);
+const store = useStore();
+
+const maxAdmins = 3;
+const addAdminModal = ref(false);
+const deletedSnackbar = ref(false);
+
+function closeModal() {
+    addAdminModal.value = false;
+}
+
+function update(library) {
+    store.commit('setLibrary', library);
 }
 </script>

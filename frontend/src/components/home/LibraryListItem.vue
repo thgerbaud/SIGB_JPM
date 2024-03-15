@@ -13,14 +13,17 @@
 	</v-list-item>
 </template>
 
-<script>
-export default {
-	props: ["library"],
-	methods: {
-		goToLibrary() {
-			this.$store.commit('setLibrary', this.library);
-			this.$router.push(`/${this.library.id}/books`);
-		}
-	}
+<script setup>
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const props = defineProps(["library"]);
+
+const router = useRouter();
+const store = useStore();
+
+function goToLibrary() {
+    store.commit('setLibrary', props.library);
+    router.push(`/${props.library.id}/books`);
 }
 </script>

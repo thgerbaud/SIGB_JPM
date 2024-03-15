@@ -5,15 +5,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import LogoutConfirmDialog from '@/components/utils/dialogs/LogoutConfirmDialog.vue';
 
-export default {
-    data() {
-        return {
-            logoutDialog: false
-        }
-    },
-    components: { LogoutConfirmDialog }
-}
+const logoutDialog = ref(false);
 </script>

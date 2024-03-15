@@ -19,53 +19,51 @@
     </v-dialog>
 </template>
 
-<script>
+<script setup>
+import { ref, inject } from 'vue';
 import { editLocation } from '@/services/LibraryDataService';
-export default {
-    props: ["library", "location"],
-    data() {
-        return {
-            name: this.location.name,
-            isFormValid: false,
-            loading: false,
-            rules: {
-                required: (value) => !!value?.trim() || "Le nom ne doit pas être vide.",
-                duplicate: (value) => !this.library.locations?.find(location => location.name === value?.trim() && location.id !== this.location.id) || "Un emplacement avec ce nom existe déjà.",
-            },
-        }
-    },
-    methods: {
-        cancel() {
-            this.name = this.location.name;
-            this.$emit('cancel');
-        },
-        add() {
-            this.loading = true;
-            editLocation(this.library.id, this.location.id, this.name)
-                .then(library => {
-                    this.$emit('update', library)
-                    this.loading = false;
-                })
-                .catch(err => {
-                    this.loading = false;
-                    if (err.message.includes('[401]')) {
-                        this.globalEmitter.emit('401');
-                    } else if (err.message.includes('[403]')) {
-                        this.globalEmitter.emit('403');
-                    } else if (err.message.includes('[404]')) {
-                        this.globalEmitter.emit('404');
-                    } else if (err.message.includes('[400]')) {
-                        this.globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
-                    } else if (err.message.includes('[409]')) {
-                        this.globalEmitter.emit('error', { message: "Il semblerait que vous ayez déjà un autre emplacement avec ce nom." });
-                    } else if (err.message.includes('[500]')) {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
-                    } else {
-                        this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
-                    }
-                });
-        },
-    },
-    emits: ["cancel", "update"],
+
+const props = defineProps(["library", "location"]);
+const emit = defineEmits(["cancel", "update"]);
+const globalEmitter = inject('globalEmitter');
+
+const name = ref(props.location.name);
+const isFormValid = ref(false);
+const loading = ref(false);
+const rules = {
+    required: (value) => !!value?.trim() || "Le nom ne doit pas être vide.",
+    duplicate: (value) => !props.library.locations?.find(location => location.name === value?.trim() && location.id !== props.location.id) || "Un emplacement avec ce nom existe déjà.",
+}
+
+function cancel() {
+    name.value = props.location.name;
+    emit('cancel');
+}
+
+function add() {
+    loading.value = true;
+    editLocation(props.library.id, props.location.id, name.value)
+        .then(library => {
+            emit('update', library)
+            loading.value = false;
+        })
+        .catch(err => {
+            loading.value = false;
+            if (err.message.includes('[401]')) {
+                globalEmitter.emit('401');
+            } else if (err.message.includes('[403]')) {
+                globalEmitter.emit('403');
+            } else if (err.message.includes('[404]')) {
+                globalEmitter.emit('404');
+            } else if (err.message.includes('[400]')) {
+                globalEmitter.emit('error', { message: "Hmm... Il semblerait qu'un ou plusieurs paramètres soient invalides, veuillez réessayer..." });
+            } else if (err.message.includes('[409]')) {
+                globalEmitter.emit('error', { message: "Il semblerait que vous ayez déjà un autre emplacement avec ce nom." });
+            } else if (err.message.includes('[500]')) {
+                globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+            } else {
+                globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+            }
+        });
 }
 </script>

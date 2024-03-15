@@ -19,19 +19,12 @@
     </section>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import LibraryTab from '@/components/settings/LibraryTab.vue';
 import UsersTab from '@/components/settings/UsersTab.vue';
-export default {
-    props: ["library"],
-    data() {
-        return {
-            tab: 0
-        }
-    },
-    components: {
-        LibraryTab,
-        UsersTab
-    }
-}
+
+defineProps(["library"]);
+
+const tab = ref(0);
 </script>

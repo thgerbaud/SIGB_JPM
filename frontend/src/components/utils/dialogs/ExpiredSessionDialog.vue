@@ -8,8 +8,13 @@
                 Votre session a expiré, veuillez vous reconnecter pour continuer !
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="$router.push('/login')">Ok</v-btn>
+                <v-btn block @click="router.push('/login')">Ok</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+</script>

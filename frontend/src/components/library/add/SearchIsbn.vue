@@ -17,7 +17,7 @@
 
 
             <menu id="form-menu">
-                <v-btn-cancel @click="$emit('cancel')">Annuler</v-btn-cancel>
+                <v-btn-cancel @click="cancel">Annuler</v-btn-cancel>
                 <v-btn type="submit" append-icon="mdi-chevron-right" :loading="loading"
                     :disabled="!isFormValid">Chercher</v-btn>
             </menu>
@@ -27,47 +27,47 @@
     </v-responsive>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
-export default {
-    data() {
-        return {
-            isbn: "",
-            isFormValid: false,
-            loading: false,
-            rules: {
-                required: (value) => !!value || "Champ obligatoire.",
-                isbn_format: (value) => (/^[0-9]+$/.test(value)) || "Numéro invalide (ne doit contenir que des chiffres).",
-                isbn_length: (value) => (value.length === 10 || value.length === 13) || "Doit contenir exactement 10 ou 13 chiffres.",
-            },
-            errorMessage: "",
-            errorAlert: false
+
+const emit = defineEmits(["cancel", "found"]);
+
+const rules = {
+    required: (value) => !!value || "Champ obligatoire.",
+    isbn_format: (value) => (/^[0-9]+$/.test(value)) || "Numéro invalide (ne doit contenir que des chiffres).",
+    isbn_length: (value) => (value.length === 10 || value.length === 13) || "Doit contenir exactement 10 ou 13 chiffres.",
+};
+
+const isbn = ref("");
+const isFormValid = ref(false);
+const loading = ref(false);
+const errorMessage = ref("");
+const errorAlert = ref(false);
+
+function handleIsbnInput() {
+    isbn.value = isbn.value.replace(/\D/g, '');
+}
+
+function cancel() {
+    emit('cancel');
+}
+
+async function searchBook() {
+    loading.value = true;
+    try {
+        const infos = await getBookFromIsbn(isbn.value);
+        if (infos === null) {
+            errorMessage.value = `Aucun résultat pour l'ISBN ${isbn.value}.`;
+            errorAlert.value = true;
+        } else {
+            emit('found', infos);
         }
-    },
-    methods: {
-        handleIsbnInput() {
-            this.isbn = this.isbn.replace(/\D/g, '');
-        },
-        async searchBook() {
-            this.loading = true;
-            getBookFromIsbn(this.isbn)
-                .then(infos => {
-                    if (infos === null) {
-                        this.errorMessage = `Aucun résultat pour l'ISBN ${this.isbn}.`;
-                        this.errorAlert = true;
-                    } else {
-                        this.$emit('found', infos);
-                    }
-                })
-                .catch(() => {
-                    this.errorMessage = "Une erreur s'est produite...";
-                    this.errorAlert = true;
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        },
-    },
-    emits: ["cancel", "found"]
+    } catch (error) {
+        errorMessage.value = "Une erreur s'est produite...";
+        errorAlert.value = true;
+    } finally {
+        loading.value = false;
+    }
 }
 </script>

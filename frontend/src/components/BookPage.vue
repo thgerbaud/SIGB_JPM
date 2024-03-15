@@ -23,63 +23,58 @@
 	</div>
 </template>
   
-<script>
+<script setup>
+import { ref, inject } from 'vue';
+import { useRoute } from 'vue-router';
 import BookCard from '@/components/book/BookCard.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import { getBook } from '@/services/BookDataService';
-export default {
-	props: ["library"],
-	data() {
-		return {
-			id: this.$route.params.id,
-			book: null,
-			loaded: false,
-			errorMet: false,
-			successSnackbar: false,
-			infoDialog: false
-		};
-	},
-	components: {
-		BookCard,
-		BookToolBar,
-	},
-	methods: {
-		retreiveBook() {
-			getBook(this.id)
-				.then(book => {
-					this.book = book;
-					return getBookFromIsbn(book.isbn);
-				})
-				.then(details => {
-					this.book.details = details;
-				})
-				.catch(err => {
-					if (err.message.includes(401)) {
-						this.globalEmitter.emit('401');
-					} else if (err.message.includes(403)) {
-						this.globalEmitter.emit('403');
-					} else if (err.message.includes(404)) {
-						this.globalEmitter.emit('404');
-					} else if (err.message.includes(500)) {
-						this.globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
-					} else {
-						this.globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
-					}
-					this.errorMet = true;
-				})
-				.finally(() => {
-					this.loaded = true;
-				});
-		},
-		updateBook(updatedBook) {
-			updatedBook.details = this.book.details;
-			this.book = updatedBook;
-			this.successSnackbar = true;
-		}
-	},
-	created() {
-		this.retreiveBook();
-	},
-};
+
+defineProps(["library"]);
+const route = useRoute();
+const globalEmitter = inject('globalEmitter');
+
+const id = route.params.id;
+const book = ref(null);
+const loaded = ref(false);
+const errorMet = ref(false);
+const successSnackbar = ref(false);
+
+function retreiveBook() {
+	getBook(id)
+		.then(data => {
+			book.value = data;
+			return getBookFromIsbn(data.isbn);
+		})
+		.then(details => {
+			book.value.details = details;
+		})
+		.catch(err => {
+			//TODO 400
+			if (err.message.includes(401)) {
+				globalEmitter.emit('401');
+			} else if (err.message.includes(403)) {
+				globalEmitter.emit('403');
+			} else if (err.message.includes(404)) {
+				globalEmitter.emit('404');
+			} else if (err.message.includes(500)) {
+				globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+			} else {
+				globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+			}
+			errorMet.value = true;
+		})
+		.finally(() => {
+			loaded.value = true;
+		});
+}
+
+function updateBook(updatedBook) {
+	updatedBook.details = book.value.details;
+	book.value = updatedBook;
+	successSnackbar.value = true;
+}
+
+retreiveBook();
 </script>

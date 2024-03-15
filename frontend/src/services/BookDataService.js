@@ -4,7 +4,7 @@ const BASE_URL = process.env.VUE_APP_BASE_URL_API + "books/";
 
 /**
  * Permet de récupérer un livre.
- * @param {String} bookId booidkId du livre
+ * @param {String} bookId identifiant du livre
  * @returns {Promise<Object>} livre correspondant
  * @throws code http et message de la réponse en cas d'échec
  */
