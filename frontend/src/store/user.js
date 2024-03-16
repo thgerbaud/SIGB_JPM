@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useLibraryStore } from '@/store/library';
+import { useBooksDetailsStore } from '@/store/booksDetails';
 
 export const useUserStore = defineStore('user', () => {
     const user = ref(null);
@@ -20,7 +21,9 @@ export const useUserStore = defineStore('user', () => {
 
     function logout() {
         const libraryStore = useLibraryStore();
+        const booksDetailsStore = useBooksDetailsStore();
         libraryStore.exitLibrary();
+        booksDetailsStore.clearStore();
         user.value = null;
         token.value = null;
     }

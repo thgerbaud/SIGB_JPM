@@ -1,4 +1,3 @@
-//import store from "@/store";
 import { useUserStore } from '@/store/user';
 
 const userStore = useUserStore();
@@ -15,7 +14,6 @@ export async function getBook(bookId) {
 	const book = await fetch(BASE_URL + bookId, {
 		method: 'GET',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -46,7 +44,6 @@ export async function create(payload) {
 	const book = await fetch(BASE_URL, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -80,7 +77,6 @@ export async function update(bookId, payload) {
 	const book = await fetch(BASE_URL + bookId, {
 		method: 'PUT',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -114,7 +110,6 @@ export async function addCopy(bookId, payload) {
 	const book = await fetch(BASE_URL + `${bookId}/copies`, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -149,7 +144,6 @@ export async function updateCopy(bookId, copyId, payload) {
 	const updatedBook = await fetch(BASE_URL + `${bookId}/copies/${copyId}`, {
 		method: 'PUT',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -183,7 +177,6 @@ export async function deleteCopy(bookId, copyId) {
 	const updatedBook = await fetch(BASE_URL + `${bookId}/copies/${copyId}`, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		},
 	}).then(async res => {
@@ -217,7 +210,6 @@ export async function deleteBook(bookId) {
 	await fetch(BASE_URL + bookId, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		},
 	}).then(async res => {

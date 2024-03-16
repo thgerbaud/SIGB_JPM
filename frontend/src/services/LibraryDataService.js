@@ -1,4 +1,3 @@
-//import store from "@/store";
 import { useUserStore } from '@/store/user';
 
 const userStore = useUserStore();
@@ -15,7 +14,6 @@ export async function getAll() {
 	const libraries = await fetch(BASE_URL, {
 		method: 'GET',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -44,7 +42,6 @@ export async function getLibrary(id) {
 	const library = await fetch(BASE_URL + id, {
 		method: 'GET',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -75,7 +72,6 @@ export async function getBooks(id) {
 	const books = await fetch(BASE_URL + id + '/books', {
 		method: 'GET',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -106,7 +102,6 @@ export async function create(payload) {
 	const library = await fetch(BASE_URL, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -139,7 +134,6 @@ export async function addAdmin(id, adminEmail) {
 	const library = await fetch(BASE_URL + `${id}/admins`, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -174,7 +168,6 @@ export async function deleteAdmin(id, adminId) {
 	const library = await fetch(BASE_URL + `${id}/admins/${adminId}`, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -208,7 +201,6 @@ export async function addGuest(id, guestEmail) {
 	const library = await fetch(BASE_URL + `${id}/users`, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -244,7 +236,6 @@ export async function deleteGuest(id, guestId) {
 	const library = await fetch(BASE_URL + `${id}/users/${guestId}`, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -277,7 +268,6 @@ export async function addLocation(id, name) {
 	const library = await fetch(BASE_URL + `${id}/locations`, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -314,7 +304,6 @@ export async function editLocation(id, locationId, name) {
 	const library = await fetch(BASE_URL + `${id}/locations/${locationId}`, {
 		method: 'PUT',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -350,7 +339,6 @@ export async function deleteLocation(id, locationId) {
 	const library = await fetch(BASE_URL + `${id}/locations/${locationId}`, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		}
 	}).then(async res => {
@@ -384,7 +372,6 @@ export async function addCategory(id, name, parent = undefined) {
 	const library = await fetch(BASE_URL + `${id}/categories`, {
 		method: 'POST',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -421,7 +408,6 @@ export async function editCategory(id, categoryId, name) {
 	const library = await fetch(BASE_URL + `${id}/categories/${categoryId}`, {
 		method: 'PUT',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
@@ -457,7 +443,6 @@ export async function deleteCategory(id, categoryId) {
 	const library = await fetch(BASE_URL + `${id}/categories/${categoryId}`, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		},
 	}).then(async res => {
@@ -489,7 +474,6 @@ export async function deleteLibrary(id) {
 	await fetch(BASE_URL + id, {
 		method: 'DELETE',
 		headers: {
-			//"Authorization": store.getters.getToken,
 			"Authorization": userStore.token,
 		},
 	}).then(async res => {
