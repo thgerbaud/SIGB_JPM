@@ -17,13 +17,13 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useUserStore } from '@/store/user';
 import NavUserMenu from '@/components/utils/nav/NavUserMenu.vue';
 
 defineProps(["library"]);
 
 const router = useRouter();
-const store = useStore();
 
-const user = store.state.user;
+const userStore = useUserStore();
+const user = userStore.user;
 </script>

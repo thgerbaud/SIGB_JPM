@@ -24,13 +24,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import GuestListItem from '@/components/settings/users/guests/GuestListItem.vue';
 import AddGuestModal from '@/components/settings/users/guests/AddGuestModal.vue';
 
 defineProps(["library"]);
-const store = useStore();
+const libraryStore = useLibraryStore();
 
 const maxGuests = 10;
 const addGuestModal = ref(false);
@@ -41,6 +41,6 @@ function closeModal() {
 }
 
 function update(library) {
-    store.commit('setLibrary', library);
+    libraryStore.setLibrary(library);
 }
 </script>

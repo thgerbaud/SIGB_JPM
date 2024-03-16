@@ -13,16 +13,16 @@
 </template>
 
 <script setup>
-import { useStore } from 'vuex';
+import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
 
 const emit = defineEmits(["cancel"]);
 
-const store = useStore();
+const userStore = useUserStore();
 const router = useRouter();
 
 function logout() {
-    store.commit('logout');
+    userStore.logout();
     router.push('/');
 }
 </script>

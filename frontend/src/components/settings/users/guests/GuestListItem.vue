@@ -19,13 +19,13 @@
 
 <script setup>
 import { ref, computed, inject } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import { deleteGuest } from '@/services/LibraryDataService';
 
 const props = defineProps(["guest", "libraryId"]);
 const emit = defineEmits(["deleted"]);
-const store = useStore();
+const libraryStore = useLibraryStore();
 const globalEmitter = inject('globalEmitter');
 
 const confirmDialog = ref(false);
@@ -52,7 +52,7 @@ function removeGuest() {
     deleteGuest(props.libraryId, props.guest.id)
         .then(library => {
             emit('deleted', library);
-            store.commit('setLibrary', library);
+            libraryStore.setLibrary(library);
             loading.value = false;
         })
         .catch(err => {

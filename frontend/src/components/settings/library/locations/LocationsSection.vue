@@ -21,13 +21,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import LocationListItem from '@/components/settings/library/locations/LocationListItem.vue';
 import AddLocationModal from '@/components/settings/library/locations/AddLocationModal.vue';
 
 defineProps(["library"]);
-const store = useStore();
+const libraryStore = useLibraryStore();
 
 const addLocationModal = ref(false);
 const updatedSnackbar = ref(false);
@@ -37,7 +37,7 @@ function closeModal() {
 }
 
 function update(library) {
-    store.commit('setLibrary', library);
+    libraryStore.setLibrary(library);
     updatedSnackbar.value = true;
 }
 </script>

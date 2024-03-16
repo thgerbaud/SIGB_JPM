@@ -23,13 +23,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import AddAdminModal from '@/components/settings/users/admins/AddAdminModal.vue';
 import AdminListItem from '@/components/settings/users/admins/AdminListItem.vue';
 
 defineProps(["library"]);
-const store = useStore();
+const libraryStore = useLibraryStore();
 
 const maxAdmins = 3;
 const addAdminModal = ref(false);
@@ -40,6 +40,6 @@ function closeModal() {
 }
 
 function update(library) {
-    store.commit('setLibrary', library);
+    libraryStore.setLibrary(library);
 }
 </script>

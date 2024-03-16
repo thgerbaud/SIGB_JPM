@@ -20,16 +20,19 @@
 
 <script setup>
 import { ref, inject, computed } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
+import { useUserStore } from '@/store/user';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import { deleteAdmin } from '@/services/LibraryDataService';
 
 const props = defineProps(["admin", "libraryId"]);
 const emit = defineEmits(["deleted"]);
 const globalEmitter = inject('globalEmitter');
-const store = useStore();
+const libraryStore = useLibraryStore();
+const userStore = useUserStore();
 
-const user = store.state.user;
+const user = userStore.user;
+
 const confirmDialog = ref(false);
 const loading = ref(false);
 
@@ -58,7 +61,7 @@ function removeAdmin() {
     deleteAdmin(props.libraryId, props.admin.id)
         .then(library => {
             emit('deleted', library);
-            store.commit('setLibrary', library);
+            libraryStore.setLibrary(library);
             confirmDialog.value = false;
             loading.value = false;
         })

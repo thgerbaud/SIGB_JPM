@@ -1,11 +1,14 @@
 import { createWebHistory, createRouter, RouterView, RouterLink } from "vue-router";
-import store from "@/store";
+//import store from "@/store";
+import { useUserStore } from '@/store/user';
+
 
 RouterView.compatConfig = { MODE: 3 }
 RouterLink.compatConfig = { MODE: 3 }
 
 const checkAuth = (to, from, next) => {
-	if(store.getters.isLoggedIn) {
+	const userStore = useUserStore();
+	if(userStore.isLoggedIn) {
 		next();
 	} else {
 		next('/login');

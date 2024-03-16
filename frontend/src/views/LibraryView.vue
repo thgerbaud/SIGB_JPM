@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref, inject, computed } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import { useRoute } from 'vue-router';
 import NavBar from '@/components/utils/nav/NavBar.vue';
 import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
@@ -22,7 +22,7 @@ import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vu
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 import { getLibrary } from '@/services/LibraryDataService';
 
-const store = useStore();
+const libraryStore = useLibraryStore();
 const route = useRoute();
 const globalEmitter = inject('globalEmitter');
 
@@ -32,13 +32,13 @@ const accessDeniedDialog = ref(false);
 const errorDialog = ref(false);
 const errorMessage = ref("Oups! Une erreur s'est produite...");
 
-const library = computed(() => store.getters.getLibrary);
+const library = computed(() => libraryStore.library);
 
 async function retrieveLibrary() {
 	if (library?.id !== route.params.library) {
 		await getLibrary(route.params.library)
 			.then(library => {
-				store.commit('setLibrary', library)
+				libraryStore.setLibrary(library);
 			})
 			.catch(e => {
 				console.log(e); //TODO

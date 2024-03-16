@@ -1,4 +1,7 @@
-import store from "@/store";
+//import store from "@/store";
+import { useUserStore } from '@/store/user';
+
+const userStore = useUserStore();
 
 const BASE_URL = process.env.VUE_APP_BASE_URL_API + "books/";
 
@@ -12,7 +15,8 @@ export async function getBook(bookId) {
 	const book = await fetch(BASE_URL + bookId, {
 		method: 'GET',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 		}
 	}).then(async res => {
 		if (res.status === 200) {
@@ -42,7 +46,8 @@ export async function create(payload) {
 	const book = await fetch(BASE_URL, {
 		method: 'POST',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
 		body: JSON.stringify(payload)
@@ -75,7 +80,8 @@ export async function update(bookId, payload) {
 	const book = await fetch(BASE_URL + bookId, {
 		method: 'PUT',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
 		body: JSON.stringify(payload)
@@ -108,7 +114,8 @@ export async function addCopy(bookId, payload) {
 	const book = await fetch(BASE_URL + `${bookId}/copies`, {
 		method: 'POST',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
 		body: JSON.stringify(payload)
@@ -142,7 +149,8 @@ export async function updateCopy(bookId, copyId, payload) {
 	const updatedBook = await fetch(BASE_URL + `${bookId}/copies/${copyId}`, {
 		method: 'PUT',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 			"Content-type": "application/json"
 		},
 		body: JSON.stringify(payload)
@@ -175,7 +183,8 @@ export async function deleteCopy(bookId, copyId) {
 	const updatedBook = await fetch(BASE_URL + `${bookId}/copies/${copyId}`, {
 		method: 'DELETE',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 		},
 	}).then(async res => {
 		if (res.status === 200) {
@@ -208,7 +217,8 @@ export async function deleteBook(bookId) {
 	await fetch(BASE_URL + bookId, {
 		method: 'DELETE',
 		headers: {
-			"Authorization": store.getters.getToken,
+			//"Authorization": store.getters.getToken,
+			"Authorization": userStore.token,
 		},
 	}).then(async res => {
 		if (res.status === 204) {

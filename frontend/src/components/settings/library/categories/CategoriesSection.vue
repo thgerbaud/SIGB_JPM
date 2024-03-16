@@ -51,14 +51,14 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 import SettingsSectionTemplate from '@/components/settings/SettingsSectionTemplate.vue';
 import CategoryListItem from '@/components/settings/library/categories/CategoryListItem.vue';
 import AddCategoryModal from '@/components/settings/library/categories/AddCategoryModal.vue';
 
 defineProps(["library"]);
 
-const store = useStore();
+const libraryStore = useLibraryStore();
 
 const addCategoryModal = ref(false);
 const parentCategory = ref(null);
@@ -74,7 +74,7 @@ function closeModal() {
 }
 
 function update(library) {
-    store.commit('setLibrary', library);
+    libraryStore.setLibrary(library);
     updatedSnackbar.value = true;
 }
 </script>

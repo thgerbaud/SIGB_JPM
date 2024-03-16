@@ -15,15 +15,15 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useLibraryStore } from '@/store/library';
 
 const props = defineProps(["library"]);
 
 const router = useRouter();
-const store = useStore();
+const libraryStore = useLibraryStore();
 
 function goToLibrary() {
-    store.commit('setLibrary', props.library);
+    libraryStore.setLibrary(props.library);
     router.push(`/${props.library.id}/books`);
 }
 </script>

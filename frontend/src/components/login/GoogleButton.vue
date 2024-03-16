@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useStore } from 'vuex';
+import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
 import { login } from '@/services/AuthService';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
@@ -20,7 +20,8 @@ import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 defineProps(["library"]);
 
 const router = useRouter();
-const store = useStore();
+const userStore = useUserStore();
+
 
 const errorDialog = ref(false);
 
@@ -30,9 +31,9 @@ async function callback(response) {
             const token = data.accessToken;
             const user = data.userData;
             console.log(token); //! temp
-            store.commit('setToken', token);
-            store.commit('setUser', user);
-            router.push(`/home/libraries`);
+            userStore.setToken(token);
+            userStore.setUser(user);
+            router.push('/home/libraries');
         })
         .catch(() => {
             errorDialog.value = true;
