@@ -39,9 +39,9 @@ main {
 }
 
 section {
-    padding: 2rem;
-    background-color: var(--white);
-    margin-bottom: 1rem;
+    padding: 1rem;
+    /*background-color: var(--white);*/
+    /*margin-bottom: 1rem;*/
 }
 
 menu {

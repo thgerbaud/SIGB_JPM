@@ -2,6 +2,12 @@
     <h2 class="text-h2">{{ book.details?.title }}</h2>
     <h5 class="text-h5 mb-4">{{ book.details?.authors?.join(", ") }}</h5>
 
+    <div class="d-flex align-center mb-4" v-if="averageRating">
+        <v-rating v-model="averageRating" density="compact" readonly half-increments></v-rating>
+        ({{ averageRating }}/5)
+    </div>
+    <p class="mb-4 empty-section" v-else>Aucun avis</p>
+
     <p class="text-justify mb-4">{{ book.details?.description }}</p>
 
     <legend><span class="font-weight-bold">Date de publication :</span> {{
@@ -9,13 +15,22 @@
     </legend>
     <legend><span class="font-weight-bold">N° ISBN :</span> {{ book.isbn }}</legend>
     <legend><span class="font-weight-bold">Catégorie(s) :</span> {{ categoriesToString }}</legend>
-    <legend><span class="font-weight-bold">Exemplaires :</span> {{ book.copies?.length }}</legend>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 
 const props = defineProps(["book", "library"]);
+
+const averageRating = computed(() => {
+    const length = props.book.comments.length;
+    if (length > 0) {
+        const total = props.book.comments.reduce((accumulator, comment) => accumulator + comment.rating, 0);
+        return (total / length).toFixed(1);
+    } else {
+        return null
+    }
+})
 
 const categoriesToString = computed(() => {
     const categoriesNames = findCategoriesName(props.library.categories);

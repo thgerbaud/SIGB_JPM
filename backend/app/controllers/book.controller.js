@@ -71,6 +71,27 @@ exports.verifyAdminPermissions = async (req, res, next) => {
 	}
 }
 
+exports.verifyGlobalPermissions = async (req, res, next) => {
+	try {
+		const libraryId = req.book?.library || req.body.library;
+		const doc = await Library.findOne({ _id: libraryId });
+		if (doc === null) {
+			return res.status(400).send('Invalid library id.');
+		}
+		const library = doc.toJSON();
+
+		if (!library.admins.some(admin => admin.email === req.user) && !library.users.some(user => user.email === req.user)) {
+			return res.status(403).send('Insufficient permissions.');
+		}
+		req.library = library;
+		next();
+
+	} catch (err) {
+		console.error(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
 exports.create = async (req, res) => {
 	try {
 		const library = req.library;
@@ -132,12 +153,6 @@ exports.create = async (req, res) => {
 	}
 }
 
-/**
- * Permet de retrouver un livre.
- * @param {*} req 
- * @param {*} res 
- * @returns 
- */
 exports.findOne = async (req, res) => {
 	try {
 		const book = req.book.toJSON();
@@ -188,11 +203,6 @@ exports.createCopy = async (req, res) => {
 	}
 }
 
-/**
- * Permet de modifier un exemplaire.
- * @param {*} req 
- * @param {*} res 
- **/
 exports.updateCopy = async (req, res) => {
 	try {
 		const book = req.book;
@@ -210,7 +220,7 @@ exports.updateCopy = async (req, res) => {
 			}
 			copy.code = newCode;
 		}
-		
+
 		const newLocation = req.body.location;
 		if (newLocation !== undefined) {
 			copy.location = newLocation;
@@ -241,6 +251,51 @@ exports.deleteCopy = async (req, res) => {
 			await book.deleteOne()
 			return res.sendStatus(204);
 		}
+
+		const updatedDoc = await book.save();
+		return res.status(200).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.addComment = async (req, res) => {
+	try {
+		const book = req.book;
+
+		const comment = {
+			author: req.user,
+			date: new Date(),
+			rating: req.body.rating,
+			text: req.body.text
+		}
+		book.comments.unshift(comment);
+
+		const updatedDoc = await book.save();
+		return res.status(201).send(updatedDoc.toJSON());
+
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send('Internal server error.');
+	}
+}
+
+exports.deleteComment = async (req, res) => {
+	try {
+		const book = req.book;
+
+		const commentId = req.params.commentId;
+		const comment = book.comments.id(commentId);
+		if (comment === null) {
+			return res.status(404).send('Comment not found.');
+		}
+		if (comment.author !== req.user) {
+			return res.status(403).send('Insufficient permissions.');
+		}
+
+		await comment.deleteOne();
 
 		const updatedDoc = await book.save();
 		return res.status(200).send(updatedDoc.toJSON());

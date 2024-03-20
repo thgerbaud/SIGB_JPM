@@ -130,6 +130,39 @@ module.exports = app => {
 	);
 
 	/**
+	 * Permet d'ajouter un commentaire à livre.
+	 * @sortie livre mis à jour
+	 * @auth token necessaire, admin ou invité
+	 * @status 201
+	 */
+	router.post("/:id/comments",
+		getTokenInfos,
+		param('id').isMongoId().withMessage('Invalid book id.'),
+		body('rating').isInt({ min: 1, max: 5}).withMessage('Missing or invalid rating. Rating must be between 1 and 5.'),
+		body('text').isString().bail().withMessage('Missing or invalid text.').trim(),
+		handleValidationResult,
+		book.searchBook,
+		book.verifyGlobalPermissions,
+		book.addComment
+	);
+
+	/**
+	 * Permet de supprimer un commentaire d'un livre.
+	 * @sortie livre mis à jour
+	 * @auth token necessaire, auteur du commentaire
+	 * @status 200
+	 */
+	router.delete("/:id/comments/:commentId",
+		getTokenInfos,
+		param('id').isMongoId().withMessage('Invalid book id.'),
+		param('commentId').isMongoId().withMessage('Invalid comment id.'),
+		handleValidationResult,
+		book.searchBook,
+		book.verifyGlobalPermissions,
+		book.deleteComment
+	);
+
+	/**
 	 * Permet de supprimer un exemplaire d'un livre.
 	 * Supprime le livre s'il s'agit du dernier exemplaire.
 	 * @sortie livre mis à jour s'il reste au moins un exemplaire

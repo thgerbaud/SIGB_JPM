@@ -3,10 +3,24 @@ const { Schema } = require('mongoose');
 
 const copySchema = new Schema({
 	code: String,
-	location: { type: Schema.Types.ObjectId, default: null }
+	location: { type: Schema.Types.ObjectId, default: null },
 });
 
 copySchema.set('toJSON', {
+	transform: (doc, ret) => {
+		ret.id = ret._id; // Renommer _id en id
+		delete ret._id;   // Supprimer _id
+	}
+});
+
+const commentSchema = new Schema({
+	author: String,
+	date: Date,
+	rating: Number,
+	text: String,
+});
+
+commentSchema.set('toJSON', {
 	transform: (doc, ret) => {
 		ret.id = ret._id; // Renommer _id en id
 		delete ret._id;   // Supprimer _id
@@ -18,7 +32,7 @@ const bookSchema = new Schema({
 	library: { type: Schema.Types.ObjectId, ref: 'Library' },
 	categories: [Schema.Types.ObjectId],
 	copies: [copySchema],
-	comments: [Object] //? plus tard
+	comments: [commentSchema],
 });
 
 bookSchema.set('toJSON', {

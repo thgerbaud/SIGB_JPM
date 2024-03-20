@@ -1,6 +1,6 @@
 <template>
 	<NavBar :library="library" v-if="library" />
-	<v-main class="ma-4 bg-tertiary">
+	<v-main class="ma-4 bg-background">
 		<!-- global dialogs -->
 		<ExpiredSessionDialog v-model="expiredSessionDialog" />
 		<NotFoundDialog v-model="notFoundDialog" @ok="notFoundDialog = false" /> <!--? redirection ?-->
@@ -14,7 +14,7 @@
 <script setup>
 import { ref, inject, computed } from 'vue';
 import { useLibraryStore } from '@/store/library';
-import { useRoute } from 'vue-router';
+import { useRoute, RouterView } from 'vue-router';
 import NavBar from '@/components/utils/nav/NavBar.vue';
 import ExpiredSessionDialog from '@/components/utils/dialogs/ExpiredSessionDialog.vue';
 import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';

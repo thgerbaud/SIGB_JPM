@@ -9,7 +9,7 @@
         :text='`Etes-vous sûr de vouloir supprimer le livre "${book.details.title}" ? Tous les exemplaires seront retirés de la bibliothèques.`'
         @cancel="deleteDialog = false" @ok="confirmDeletion" />
 
-    <v-toolbar density="compact" class="my-2">
+    <v-toolbar density="compact" class="my-2 bg-transparent">
         <v-spacer></v-spacer>
         <v-btn-secondary color="error" prepend-icon="mdi-delete-outline" class="mr-2"
             @click="deleteDialog = true">Supprimer</v-btn-secondary>

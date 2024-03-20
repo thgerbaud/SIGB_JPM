@@ -201,6 +201,70 @@ export async function deleteCopy(bookId, copyId) {
 }
 
 /**
+ * Permet d'ajouter un commentaire pour un livre.
+ * @param {String} bookId id du livre
+ * @param {String} payload commentaire
+ * @returns {Object} livre mis à jour
+ */
+export async function postComment(bookId, payload) {
+	const book = await fetch(BASE_URL + `${bookId}/comments`, {
+		method: 'POST',
+		headers: {
+			"Authorization": userStore.token,
+			"Content-type": "application/json"
+		},
+		body: JSON.stringify(payload)
+	}).then(async res => {
+		if (res.status === 201) {
+			return res.json();
+		} else {
+			//400 invalid field
+			//401 invalid credentials
+			//403 unauthorized
+			//404 not found
+			//500 internal error
+			const message = await res.text();
+			throw new Error(`[${res.status.toString()}] ${message}`);
+		}
+	}).catch(err => {
+		throw err;
+	});
+
+	return book;
+}
+
+/**
+ * Permet de supprimer un commentaire d'un livre.
+ * @param {String} bookId id du livre
+ * @param {String} commentId id du commentaire
+ * @returns {Object} livre modifié
+ */
+export async function deleteComment(bookId, commentId) {
+	const updatedBook = await fetch(BASE_URL + `${bookId}/comments/${commentId}`, {
+		method: 'DELETE',
+		headers: {
+			"Authorization": userStore.token,
+		},
+	}).then(async res => {
+		if (res.status === 200) {
+			return res.json();
+		} else {
+			//400 invalid id
+			//401 invalid credentials
+			//403 unauthorized
+			//404 not found
+			//500 internal error
+			const message = await res.text();
+			throw new Error(`[${res.status.toString()}] ${message}`);
+		}
+	}).catch(err => {
+		throw err;
+	});
+
+	return updatedBook;
+}
+
+/**
  * Permet de supprimer un livre.
  * @param {String} bookId id du livre à supprimer
  * @returns {Promise<vobookId>}

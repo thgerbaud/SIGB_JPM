@@ -1,7 +1,7 @@
 <template>
 	<v-snackbar v-model="successSnackbar" color="primary" timeout="3000">
 		<v-icon icon="mdi-check-circle-outline"></v-icon>
-		Livre mis à jour.
+		{{ successMessage }}
 	</v-snackbar>
 
 	<div v-if="!loaded">
@@ -20,6 +20,10 @@
 		<BookCard :book="book" :library="library" @update="updateBook" />
 
 		<BookToolBar :book="book" :library="library" v-if="library.isAdmin" @update="updateBook" />
+
+		<CopiesSection :book="book" :library="library" @update="updateBook" />
+
+		<CommentsSection :book="book" @update="updateBook"/>
 	</div>
 </template>
   
@@ -28,6 +32,8 @@ import { ref, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import BookCard from '@/components/book/BookCard.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
+import CopiesSection from '@/components/book/copies/CopiesSection.vue';
+import CommentsSection from '@/components/book/comments/CommentsSection.vue';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
 import { getBook } from '@/services/BookDataService';
 
@@ -40,6 +46,8 @@ const book = ref(null);
 const loaded = ref(false);
 const errorMet = ref(false);
 const successSnackbar = ref(false);
+const defaultSuccessMessage = "Livre mis à jour";
+const successMessage = ref(defaultSuccessMessage);
 
 function retreiveBook() {
 	getBook(id)
@@ -70,9 +78,10 @@ function retreiveBook() {
 		});
 }
 
-function updateBook(updatedBook) {
+function updateBook(updatedBook, message) {
 	updatedBook.details = book.value.details;
 	book.value = updatedBook;
+	successMessage.value = message || defaultSuccessMessage;
 	successSnackbar.value = true;
 }
 

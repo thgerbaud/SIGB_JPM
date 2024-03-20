@@ -46,5 +46,8 @@ export default createVuetify({
             color: 'error',
             variant: 'outlined',
         },
+        VRating: {
+            color: 'rating',
+        },
     },
 });
