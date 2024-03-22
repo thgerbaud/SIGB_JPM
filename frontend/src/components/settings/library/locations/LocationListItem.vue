@@ -1,35 +1,24 @@
 <template>
-    <ConfirmDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="confirmDeletion" />
+    <ConfirmDeletionDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="confirmDeletion" />
 
     <EditLocationModal v-model="editLocationModal" :library="library" :location="location" @cancel="closeEditModal"
         @update="(library) => { closeEditModal(); emit('update', library) }" />
 
-    <v-list-item>
-        <v-list-item-title>
-            <span :class="{ active: hover }">{{ location.name }}</span>
-        </v-list-item-title>
-        <template #append>
-            <div @mouseover="hover = true" @mouseleave="hover = false">
-                <v-btn-secondary prepend-icon="mdi-pencil-outline" class="mr-2" density="comfortable"
-                    @click="editLocationModal = true">Modifier</v-btn-secondary>
-                <v-btn-cancel prepend-icon="mdi-delete-outline" density="comfortable" @click="confirmDialog = true"
-                    :loading="loading">Supprimer</v-btn-cancel>
-            </div>
-        </template>
-    </v-list-item>
+    <SettingsListItem :title="location.name" :loading="loading" @edit="editLocationModal = true"
+        @delete="confirmDialog = true" />
 </template>
 
 <script setup>
 import { ref, computed, inject } from 'vue';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
 import EditLocationModal from '@/components/settings/library/locations/EditLocationModal.vue';
+import SettingsListItem from '@/components/settings/SettingsListItem.vue';
 import { deleteLocation } from '@/services/LibraryDataService';
 
 const props = defineProps(["location", "library"]);
 const emit = defineEmits(["update"]);
 const globalEmitter = inject('globalEmitter');
 
-const hover = ref(false);
 const confirmDialog = ref(false);
 const editLocationModal = ref(false);
 const loading = ref(false);
@@ -45,7 +34,7 @@ const dialogOptions = computed(() => {
 });
 
 function closeEditModal() {
-    editLocationModal.value  = false;
+    editLocationModal.value = false;
 }
 
 function confirmDeletion() {
@@ -57,7 +46,7 @@ function confirmDeletion() {
             loading.value = false;
         })
         .catch(err => {
-            loading .value= false;
+            loading.value = false;
             if (err.message.includes('[401]')) {
                 globalEmitter.emit('401');
             } else if (err.message.includes('[403]')) {
@@ -74,9 +63,3 @@ function confirmDeletion() {
         });
 }
 </script>
-
-<style>
-.active {
-    background-color: yellow;
-}
-</style>

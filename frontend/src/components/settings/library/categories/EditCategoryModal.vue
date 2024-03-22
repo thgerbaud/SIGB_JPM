@@ -7,8 +7,8 @@
             <v-card-text>
                 <v-form v-model="isFormValid">
                     <legend>Entrez le nouveau nom de la catégorie :</legend>
-                    <v-text-field label="Nom" class="mt-4" v-model="name" variant="outlined" clearable
-                        :rules="[rules.required, rules.required]"></v-text-field>
+                    <v-text-field label="Nom" class="mt-4" v-model="name" clearable
+                        :rules="[rules.required, rules.required]" autofocus></v-text-field>
                 </v-form>
             </v-card-text>
             <v-card-actions>

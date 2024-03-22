@@ -28,9 +28,9 @@
             <v-card-text>
                 <v-form v-model="isFormValid" @submit.prevent>
                     <legend>Entrez l'adresse Gmail de l'administrateur à ajouter :</legend>
-                    <v-text-field label="Adresse Gmail" variant="outlined" class="mt-4" suffix="@gmail.com" v-model="email"
+                    <v-text-field label="Adresse Gmail" class="mt-4" suffix="@gmail.com" v-model="email"
                         :rules="[rules.required, rules.isValid, rules.duplicate, rules.length]" clearable
-                        @input="handleEmailInput" maxlength="30"></v-text-field>
+                        @input="handleEmailInput" maxlength="30" autofocus></v-text-field>
                     <legend>Si la personne a déjà accès à votre bibliothèque en tant que simple invité, elle sera retirée de
                         la liste des invités.</legend>
                 </v-form>

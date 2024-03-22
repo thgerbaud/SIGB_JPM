@@ -9,7 +9,7 @@
                     cette action est irréversible.</p>
                 <p class="mb-2">Pour confirmer, tapez «<b>{{ name }}</b>» dans le champ ci-dessous :</p>
                 <v-form v-model="isFormValid">
-                    <v-text-field variant="outlined" :placeholder="name" :rules="[rules.matches]" hide-details
+                    <v-text-field :placeholder="name" :rules="[rules.matches]" hide-details
                         :disabled="loading"></v-text-field>
                 </v-form>
             </v-card-text>

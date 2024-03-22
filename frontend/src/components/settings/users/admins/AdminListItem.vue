@@ -1,28 +1,16 @@
 <template>
-    <ConfirmDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="removeAdmin" />
+    <ConfirmDeletionDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="removeAdmin" />
 
-    <v-list-item>
-        <v-list-item-title>
-            <span>{{ admin.email }}</span>
-            <span v-if="isCurrentUser" class="font-italic"> (vous)</span>
-        </v-list-item-title>
-        <v-list-item-subtitle v-if="admin.pending">
-            <span>Invitation envoyée...</span>
-        </v-list-item-subtitle>
-        <template #append v-if="!isCurrentUser">
-            <v-btn-cancel v-if="admin.pending" prepend-icon="mdi-email-remove-outline"
-                @click="confirmDialog = true">Annuler</v-btn-cancel>
-            <v-btn-cancel v-else prepend-icon="mdi-account-remove" @click="confirmDialog = true"
-                :loading="loading">Exclure</v-btn-cancel>
-        </template>
-    </v-list-item>
+    <SettingsUserListItem :user="admin" :is-current-user="isCurrentUser" :loading="loading"
+        @exclude="confirmDialog = true" />
 </template>
 
 <script setup>
 import { ref, inject, computed } from 'vue';
 import { useLibraryStore } from '@/store/library';
 import { useUserStore } from '@/store/user';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
+import SettingsUserListItem from '@/components/settings/users/SettingsUserListItem.vue';
 import { deleteAdmin } from '@/services/LibraryDataService';
 
 const props = defineProps(["admin", "libraryId"]);

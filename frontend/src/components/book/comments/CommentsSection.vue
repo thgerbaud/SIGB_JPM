@@ -1,15 +1,15 @@
 <template>
-    <section>
-        <h5 class="text-h5 mb-4">Commentaires ({{ book.comments.length }})</h5>
+    <SectionTemplate :subtitle="`Commentaires (${ book.comments.length })`">
         <AddCommentForm v-if="!hasPosted" :bookId="book.id" @update="update" />
         <CommentItem v-for="comment in book.comments" :bookId="book.id" :comment="comment" :key="comment.id"
             @update="update" />
-    </section>
+    </SectionTemplate>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { useUserStore } from '@/store/user';
+import SectionTemplate from '@/components/utils/SectionTemplate.vue';
 import CommentItem from '@/components/book/comments/CommentItem.vue';
 import AddCommentForm from '@/components/book/comments/AddCommentForm.vue';
 

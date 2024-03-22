@@ -1,26 +1,14 @@
 <template>
-    <ConfirmDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="removeGuest" />
+    <ConfirmDeletionDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="removeGuest" />
 
-    <v-list-item>
-        <v-list-item-title>
-            <span>{{ guest.email }}</span>
-        </v-list-item-title>
-        <v-list-item-subtitle v-if="guest.pending">
-            <span>Invitation envoyée...</span>
-        </v-list-item-subtitle>
-        <template #append>
-            <v-btn-cancel v-if="guest.pending" prepend-icon="mdi-email-remove-outline"
-                @click="confirmDialog = true">Annuler</v-btn-cancel>
-            <v-btn-cancel v-else prepend-icon="mdi-account-remove" @click="confirmDialog = true"
-                :loading="loading">Exclure</v-btn-cancel>
-        </template>
-    </v-list-item>
+    <SettingsUserListItem :user="guest" :loading="loading" @exclude="confirmDialog = true" />
 </template>
 
 <script setup>
 import { ref, computed, inject } from 'vue';
 import { useLibraryStore } from '@/store/library';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
+import SettingsUserListItem from '@/components/settings/users/SettingsUserListItem.vue';
 import { deleteGuest } from '@/services/LibraryDataService';
 
 const props = defineProps(["guest", "libraryId"]);

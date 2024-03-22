@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p id="main-legend">Connectez-vous pour continuer</p>
+        <h5 class="text-h6 text-sm-h5 text-center mb-4 font-weight-light">Connectez-vous pour continuer</h5>
         <GoogleButton />
     </div>
 </template>
@@ -8,14 +8,3 @@
 <script setup>
 import GoogleButton from '@/components/login/GoogleButton.vue';
 </script>
-
-<style scoped>
-#main-legend {
-    color: var(--white);
-    font-size: var(--medium3);
-    text-align: center;
-    font-family: system-ui;
-    font-weight: 300;
-    margin-bottom: 2rem;
-}
-</style>

@@ -5,7 +5,7 @@
     <EditBookModal :book="book" :library="library" v-model="editBookModal" @cancel="editBookModal = false"
         @save="editBook" />
 
-    <ConfirmDialog title="Supprimer le livre ?" cancelText="Annuler" okText="Supprimer" v-model="deleteDialog"
+    <ConfirmDeletionDialog title="Supprimer le livre ?" cancelText="Annuler" okText="Supprimer" v-model="deleteDialog"
         :text='`Etes-vous sûr de vouloir supprimer le livre "${book.details.title}" ? Tous les exemplaires seront retirés de la bibliothèques.`'
         @cancel="deleteDialog = false" @ok="confirmDeletion" />
 
@@ -21,7 +21,7 @@
 import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import EditBookModal from '@/components/book/EditBookModal.vue';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
 import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
 import { update, deleteBook } from '@/services/BookDataService';
 

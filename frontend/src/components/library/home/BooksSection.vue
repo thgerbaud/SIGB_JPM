@@ -2,32 +2,32 @@
     <v-snackbar v-model="snackbar" timeout="5000" color="error">Les détails d'un ou plusieurs livres n'ont pas pu être
         chargés.</v-snackbar>
 
-    <v-toolbar class="bg-transparent overflow-visible">
-        <v-responsive :max-width="500" class="overflow-visible">
-            <v-text-field clearable label="Chercher un livre" hide-details prepend-inner-icon="mdi-magnify"
-                variant="outlined" density="compact" v-model="searchValue"></v-text-field>
-            <!-- problème de hauteur avec le v-combobox
-            <v-combobox clearable label="Chercher un livre" :items="searchingList" prepend-inner-icon="mdi-magnify"
-                variant="outlined" density="compact"></v-combobox>
-            -->
-        </v-responsive>
-        <v-spacer></v-spacer>
-        <v-responsive class="overflow-visible" :max-width="250">
-            <v-select clearable label="Trier par" :items="sortOptions" variant="outlined" v-model="sortOption" hide-details
-                prepend-inner-icon="mdi-sort" density="compact"></v-select>
-        </v-responsive>
+    <v-toolbar class="bg-transparent overflow-visible my-8 my-md-0">
+        <div class="d-flex flex-column flex-md-row w-100 justify-space-between">
+            <v-sheet min-width="50%" class="mb-4">
+                <v-text-field clearable label="Chercher un livre" hide-details prepend-inner-icon="mdi-magnify"
+                    density="compact" v-model="searchValue"></v-text-field>
+                <!-- <v-combobox clearable label="Chercher un livre" :items="searchingList" prepend-inner-icon="mdi-magnify"
+                    variant="outlined" density="compact" v-model="searchValue"></v-combobox> -->
+            </v-sheet>
+            <v-sheet min-width="25%">
+                <v-select clearable label="Trier par" :items="sortOptions" v-model="sortOption" hide-details
+                    prepend-inner-icon="mdi-sort" density="compact" :min-width="250"></v-select>
+            </v-sheet>
+        </div>
     </v-toolbar>
 
     <div v-if="!loaded" class="d-flex flex-wrap">
         <v-skeleton-loader type="card" v-for="n in 5" :key="n" class="mx-2" width="200"></v-skeleton-loader>
     </div>
-    <div v-else-if="errorMet" class="empty-section ma-4 text-center">
+    <div v-else-if="errorMet" class="font-italic text-disabled ma-4 text-center">
         <v-icon icon="mdi-server-off" size="x-large" class="mb-4"></v-icon>
         <p>
             Impossible de récupérer vos livres.
             Essayez de rafaîchir la page, si l'erreur persiste veuillez réessayer plus tard.
         </p>
     </div>
+    <p v-else-if="sortedBooks.length === 0" class="my-4 font-italic text-disabled">Aucun livre</p>
     <BooksList v-else v-for="(list, index) in sortedBooks" :key="index" :books="list" :libraryId="library.id" />
 </template>
 
@@ -55,15 +55,15 @@ const snackbar = ref(false);
 
 const filteredBooks = computed(() => {
     if (searchValue.value) {
-        return books.value.filter(book => book.details.title.toLowerCase().includes(searchValue.value.trim().toLowerCase()));
+        return books.value.filter(book => book.details?.title.toLowerCase().includes(searchValue.value.trim().toLowerCase()));
     } else {
         return books.value;
     }
 });
 
-/*searchingList() {
-    return books.value.map(book => `${book.details.title} - ${book.details.authors.join(', ')}`);
-},*/
+/* const searchingList = computed(() => {
+    return books.value.map(book => `${book.details?.title} - ${book.details?.authors.join(', ')}`);
+}); */
 
 const sortedBooks = computed(() => {
     switch (sortOption.value) {

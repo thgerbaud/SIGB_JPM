@@ -3,8 +3,8 @@
         message="Une erreur s'est produite lors de l'authentification avec Google. Veuillez réessayer plus tard." />
 
     <GoogleLogin :callback="callback">
-        <button id="login-btn">
-            <img id="google-logo" src="@/assets/google.svg" alt="Google logo">
+        <button id="login-btn" class="px-md-8 py-sm-4 rounded-pill d-flex align-center bg-white">
+            <img id="google-logo" src="@/assets/google.svg" alt="Google logo" class="mr-2" />
             <legend id="btn-legend">Se connecter avec Google</legend>
         </button>
     </GoogleLogin>
@@ -42,25 +42,7 @@ async function callback(response) {
 </script>
 
 <style scoped>
-#login-btn {
-    background-color: var(--white);
-    height: 4rem;
-    padding: 0 4rem;
-    border-radius: 2rem;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-
 #google-logo {
     height: 2rem;
-}
-
-#btn-legend {
-    color: var(--label-color);
-    font-size: var(--medium2);
-    white-space: nowrap;
 }
 </style>

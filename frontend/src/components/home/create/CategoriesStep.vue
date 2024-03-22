@@ -1,78 +1,55 @@
 <template>
     <v-form class="pb-4" v-model="isFormValid" ref="categoriesForm">
+        <div v-if="categories.length === 0" class="py-2">
+            <p class="font-italic text-disabled">Aucune catégorie...</p>
+        </div>
+
+        <!-- Catégories principales (niv. 1) -->
         <div v-for="(category, i) in categories" :key="category">
-            <!-- Catégorie principale (niv. 1) -->
-            <v-row class="mt-4">
-                <v-col class="py-0">
-                    <v-text-field v-model="category.name" :label="`Catégorie ${i + 1}`" variant="outlined" clearable
-                        density="compact" placeholder="Ex: Fiction"
-                        :rules="[rules.required, rules.duplicate(category)]"></v-text-field>
-                </v-col>
-                <v-col cols="1" class="py-0">
-                    <v-btn variant="plain" icon="mdi-close-circle" color="error" @click="removeCategory(i)"></v-btn>
-                </v-col>
-            </v-row>
+            <div class="d-flex">
+                <v-text-field v-model="category.name" :label="`Catégorie ${i + 1}`" clearable density="compact"
+                    placeholder="Ex: Fiction" :rules="[rules.required, rules.duplicate(category)]"></v-text-field>
+                <v-btn variant="plain" icon="mdi-close-circle" color="error" @click="removeCategory(i)"></v-btn>
+            </div>
+
             <!-- Sous-catégories (niv. 2) -->
             <div v-for="(subcategory, j) in category.subcategories" :key="subcategory">
-                <v-row :class="{ 'mt-4': j > 0 }">
-                    <v-col cols="1">
-                        <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
-                    </v-col>
-                    <v-col class="py-0">
-                        <v-text-field v-model="subcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}`"
-                            variant="outlined" clearable density="compact" placeholder="Ex: Roman"
-                            :rules="[rules.required, rules.duplicate(subcategory)]"></v-text-field>
-                    </v-col>
-                    <v-col cols="1" class="py-0">
-                        <v-btn variant="plain" icon="mdi-close-circle" color="error"
-                            @click="removeSubcategory(i, j)"></v-btn>
-                    </v-col>
-                </v-row>
+                <div class="d-flex">
+                    <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
+                    <v-text-field v-model="subcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}`" clearable
+                        density="compact" placeholder="Ex: Roman"
+                        :rules="[rules.required, rules.duplicate(subcategory)]"></v-text-field>
+                    <v-btn variant="plain" icon="mdi-close-circle" color="error" @click="removeSubcategory(i, j)"></v-btn>
+                </div>
+
                 <!-- Sous-catégories (niv. 3)-->
                 <div v-for="(subsubcategory, k) in subcategory.subcategories" :key="subsubcategory">
-                    <v-row>
-                        <v-col cols="2" class="text-right">
-                            <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
-                        </v-col>
-                        <v-col class="py-0">
-                            <v-text-field v-model="subsubcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}.${k + 1}`"
-                                variant="outlined" clearable density="compact" placeholder="Ex: Roman policier"
-                                :rules="[rules.required, rules.duplicate(subsubcategory)]"></v-text-field>
-                        </v-col>
-                        <v-col cols="1" class="py-0">
-                            <v-btn variant="plain" icon="mdi-close-circle" color="error"
-                                @click="removeSubsubcategory(i, j, k)"></v-btn>
-                        </v-col>
-                    </v-row>
+                    <div class="d-flex ml-4 ml-md-8">
+                        <v-icon icon="mdi-subdirectory-arrow-right"></v-icon>
+                        <v-text-field v-model="subsubcategory.name" :label="`Sous-catégorie ${i + 1}.${j + 1}.${k + 1}`"
+                            clearable density="compact" placeholder="Ex: Roman policier"
+                            :rules="[rules.required, rules.duplicate(subsubcategory)]"></v-text-field>
+                        <v-btn variant="plain" icon="mdi-close-circle" color="error"
+                            @click="removeSubsubcategory(i, j, k)"></v-btn>
+                    </div>
                 </div>
-                <v-row>
-                    <v-col cols="2" class="py-0"></v-col>
-                    <v-col class="py-0">
-                        <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubsubcategory(i, j)" class="mb-4"
-                            density="compact">ajouter
-                            une
-                            sous-catégorie</v-btn>
-                    </v-col>
-                </v-row>
+                <!-- Fin sous-catégories niv. 3 -->
 
+                <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubsubcategory(i, j)" class="mb-4 ml-4 ml-md-8"
+                    density="compact">ajouter une sous-catégorie</v-btn>
             </div>
-            <!-- Fin sous-catégories niv. 3 -->
-            <v-row>
-                <v-col cols="1" class="py-0"></v-col>
-                <v-col class="py-0">
-                    <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubcategory(i)" class="mb-4"
-                        density="compact">ajouter une
-                        sous-catégorie</v-btn>
-                </v-col>
-            </v-row>
             <!-- Fin sous-catégories niv. 2 -->
+
+            <v-btn variant="plain" prepend-icon="mdi-plus" @click="addSubcategory(i)" class="mb-4" density="compact">ajouter
+                une sous-catégorie</v-btn>
         </div>
+        <!-- Fin catégories niv. 1 -->
+
         <v-btn variant="plain" prepend-icon="mdi-plus" @click="addCategory" class="pl-0 mt-4" density="compact">ajouter une
             catégorie</v-btn>
-        <!-- Fin catégories niv. 1 -->
     </v-form>
 
-    <div class="d-flex justify-space-between">
+    <div class="d-flex flex-column flex-md-row justify-space-between">
         <v-btn-secondary @click="prev" prepend-icon="mdi-chevron-left" :disabled="!isFormValid">Précédent</v-btn-secondary>
         <v-btn-tertiary color="error" @click="emit('cancel')">Annuler</v-btn-tertiary>
         <v-btn @click="setCategories" prepend-icon="mdi-check" :disabled="!isFormValid">Terminer</v-btn>

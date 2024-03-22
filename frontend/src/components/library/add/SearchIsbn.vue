@@ -1,25 +1,25 @@
 <template>
     <v-responsive max-width="800" class="ma-auto">
 
-        <v-form v-model="isFormValid" @submit.prevent="searchBook">
-            <h4 class="text-h4">Recherche par ISBN</h4>
+        <v-form v-model="isFormValid" @submit.prevent>
+            <h4 class="text-h6 text-sm-h5 text-md-h4">Recherche par ISBN</h4>
             <p class="my-2">
                 Entrez le numéro ISBN du livre que vous souhaitez ajouter.
             </p>
             <v-alert type="info" variant="tonal" color="primary" density="compact" class="mb-4"
-                text="Si vous souhaitez ajouter un exemplaire d'un livre déjà enregistré dans votre bibliothèque, vous pouvez vous rendre sur la page du livre, et cliquer sur 'ajouter un exemplaire'."></v-alert>
+                text="Si vous souhaitez ajouter un exemplaire d'un livre déjà enregistré dans votre bibliothèque, vous pouvez vous rendre sur la page du livre, et cliquer sur «ajouter un exemplaire»."></v-alert>
             <v-alert v-model="errorAlert" type="error" variant="tonal" density="compact" class="mb-4"
                 :text="errorMessage"></v-alert>
-            <v-text-field label="N° ISBN" variant="outlined" v-model="isbn" clearable prepend-inner-icon="mdi-magnify"
+            <v-text-field label="N° ISBN" v-model="isbn" clearable prepend-inner-icon="mdi-magnify"
                 hint="Code à 10 ou 13 chiffres, souvent situé en quatrième de couverture."
                 :rules="[rules.required, rules.isbn_format, rules.isbn_length]" persistent-hint @input="handleIsbnInput"
-                maxlength="13"></v-text-field>
+                maxlength="13" autofocus></v-text-field>
 
 
-            <menu id="form-menu">
+            <menu class="form-menu flex-column flex-md-row">
                 <v-btn-cancel @click="cancel">Annuler</v-btn-cancel>
-                <v-btn type="submit" append-icon="mdi-chevron-right" :loading="loading"
-                    :disabled="!isFormValid">Chercher</v-btn>
+                <v-btn append-icon="mdi-chevron-right" :loading="loading"
+                    :disabled="!isFormValid" @click="searchBook">Chercher</v-btn>
             </menu>
 
         </v-form>

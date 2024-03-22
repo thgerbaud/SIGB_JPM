@@ -6,8 +6,8 @@
             </template>
             <v-card-item>
                 <v-form class="my-2" @submit.prevent v-model="isFormValid">
-                    <v-select label="Catégories" variant="outlined" multiple clearable hint="(optionnel)" persistent-hint
-                        :items="categoriesSelectItems" v-model="newCategories">
+                    <v-select label="Catégories" multiple clearable hint="(optionnel)" persistent-hint
+                        :items="categoriesSelectItems" v-model="newCategories" no-data-text="Aucune catégorie">
                         <template #item="data">
                             <v-divider v-if="data.props.depth === 0"></v-divider>
                             <v-list-item v-bind="data.props">

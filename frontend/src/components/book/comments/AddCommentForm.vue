@@ -4,7 +4,7 @@
             <legend class="font-weight-bold">Ajouter un commentaire</legend>
             <v-form v-model="isFormValid" @submit.prevent="post">
                 <v-rating v-model="rating" density="compact"></v-rating>
-                <v-textarea v-model="text" variant="outlined" label="Laissez un commentaire pour les autres utilisateurs..." clearable></v-textarea>
+                <v-textarea v-model="text" label="Laissez un commentaire pour les autres utilisateurs..." clearable></v-textarea>
                 <menu class="text-right">
                     <v-btn type="submit" :disabled="!isFormValid">Envoyer</v-btn>
                 </menu>

@@ -9,9 +9,3 @@
 import AppInfo from '@/components/login/AppInfo.vue';
 import LoginOptions from '@/components/login/LoginOptions.vue';
 </script>
-
-<style scoped>
-main {
-    padding-top: 6rem;
-}
-</style>

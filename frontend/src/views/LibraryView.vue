@@ -40,9 +40,19 @@ async function retrieveLibrary() {
 			.then(library => {
 				libraryStore.setLibrary(library);
 			})
-			.catch(e => {
-				console.log(e); //TODO
-			});
+			.catch(err => {
+            if (err.message.includes('[401]')) {
+                globalEmitter.emit('401');
+            } else if (err.message.includes('[403]')) {
+                globalEmitter.emit('403');
+            } else if (err.message.includes('[404]')) {
+                globalEmitter.emit('404');
+            } else if (err.message.includes('[500]')) {
+                globalEmitter.emit('error', { message: "Oups! Une erreur s'est produite du côté du serveur..." });
+            } else {
+                globalEmitter.emit('error', { message: "Oups! Une erreur inattendue s'est produite..." });
+            }
+        })
 	}
 }
 

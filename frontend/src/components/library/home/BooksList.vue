@@ -4,7 +4,7 @@
 	<div id="books-list" class="my-4 d-flex flex-wrap" v-if="books.items && books.items.length > 0">
 		<BooksListItem v-for="book in books.items" :key="book.id" :book="book" :libraryId="libraryId" />
 	</div>
-	<p class="my-4 text-center empty-section" v-else>Aucun livre correspondant</p>
+	<p class="my-4 font-italic text-disabled" v-else>Aucun livre correspondant</p>
 </template>
 	
 <script setup>

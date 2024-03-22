@@ -49,5 +49,14 @@ export default createVuetify({
         VRating: {
             color: 'rating',
         },
+        VTextField: {
+            variant: 'outlined',
+        },
+        VSelect: {
+            variant: 'outlined',
+        },
+        VTextarea: {
+            variant: 'outlined',
+        },
     },
 });

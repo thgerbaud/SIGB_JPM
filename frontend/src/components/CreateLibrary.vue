@@ -7,23 +7,23 @@
 
     <ErrorDialog v-model="errorDialog" @close="errorDialog = false" :message="errorMessage" />
 
-    <v-container>
-        <span class="text-center">
-            <h2 class="text-h2">Créer une nouvelle bibliothèque</h2>
-        </span>
-        <v-carousel :show-arrows="false" progress="primary-lighten-1" id="create-library-carousel" class="mx-auto my-8"
-            height="auto" v-model="currentStep" hide-delimiters>
-            <v-carousel-item v-for="(step, index) in steps" :key="index">
-                <v-card class="pa-4 ma-auto">
-                    <div class="ma-4 text-center">
-                        <CircleNumber :number="index + 1" :size="70" />
-                        <h2>{{ step.name }}</h2>
-                    </div>
-                    <div v-for="(legend, index) in step.legends" :key="index" class="text-justify mb-4">{{ legend }}</div>
+    <v-container class="ma-0 ma-md-auto">
+        <h2 class="text-h4 text-sm-h3 text-md-h2 text-md-center mb-8">Créer une nouvelle bibliothèque</h2>
+
+        <v-stepper :model-value="currentStep" :mobile="!mdAndUp">
+            <v-stepper-header>
+                <StepperHeaderItem v-for="(step, index) in steps" :title="step.name" :value="index + 1"
+                    :current-step="currentStep" :is-last="index + 1 === steps.length" />
+            </v-stepper-header>
+
+            <v-stepper-window>
+                <v-stepper-window-item v-for="(step, index) in steps" :key="index" :value="index + 1">
+                    <h4 class="text-h5 text-sm-h4 mb-4">{{ step.name }}</h4>
+                    <p v-for="(legend, index) in step.legends" :key="index" class="text-justify mb-2">{{ legend }}</p>
                     <component :is="step.component" @prev="step.prev" @next="step.next" @cancel="cancelDialog = true" />
-                </v-card>
-            </v-carousel-item>
-        </v-carousel>
+                </v-stepper-window-item>
+            </v-stepper-window>
+        </v-stepper>
     </v-container>
 </template>
   
@@ -31,15 +31,17 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { create } from '@/services/LibraryDataService';
+import { useDisplay } from 'vuetify';
+import StepperHeaderItem from '@/components/home/create/StepperHeaderItem.vue';
 import NameStep from '@/components/home/create/NameStep.vue';
 import LocationsStep from '@/components/home/create/LocationsStep.vue';
 import CategoriesStep from '@/components/home/create/CategoriesStep.vue';
-import CircleNumber from '@/components/utils/CircleNumber.vue';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
 import CreateSuccessDialog from '@/components/home/create/CreateSuccessDialog.vue';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog';
 
 const router = useRouter();
+const { mdAndUp } = useDisplay();
 
 const steps = [
     {
@@ -71,7 +73,7 @@ const steps = [
         next: setCategories
     }
 ];
-const currentStep = ref(0);
+const currentStep = ref(1);
 const successDialog = ref(false);
 const cancelDialog = ref(false);
 const errorDialog = ref(false);
@@ -90,7 +92,7 @@ function nextStep() {
 }
 
 function prevStep() {
-    if (currentStep.value > 0) {
+    if (currentStep.value > 1) {
         currentStep.value--;
     }
 }

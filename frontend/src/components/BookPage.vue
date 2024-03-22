@@ -8,7 +8,7 @@
 		<v-skeleton-loader type="card"></v-skeleton-loader>
 	</div>
 
-	<div v-else-if="errorMet" class="text-center empty-section ma-4">
+	<div v-else-if="errorMet" class="text-center font-italic text-disabled ma-4">
 		<v-icon icon="mdi-book-alert-outline" size="x-large" class="mb-4"></v-icon>
 		<p>
 			Impossible de récupérer les informations du livre.<br>
@@ -17,7 +17,7 @@
 	</div>
 
 	<div v-else>
-		<BookCard :book="book" :library="library" @update="updateBook" />
+		<DetailsSection :book="book" :library="library" @update="updateBook" />
 
 		<BookToolBar :book="book" :library="library" v-if="library.isAdmin" @update="updateBook" />
 
@@ -30,7 +30,7 @@
 <script setup>
 import { ref, inject } from 'vue';
 import { useRoute } from 'vue-router';
-import BookCard from '@/components/book/BookCard.vue';
+import DetailsSection from '@/components/book/DetailsSection.vue';
 import BookToolBar from '@/components/book/BookToolBar.vue';
 import CopiesSection from '@/components/book/copies/CopiesSection.vue';
 import CommentsSection from '@/components/book/comments/CommentsSection.vue';

@@ -4,12 +4,12 @@
             <v-card-item>
                 <p class="mb-4">Modifiez le code et/ou l'emplacement de votre exemplaire.</p>
                 <v-form v-model="isFormValid" @submit.prevent>
-                    <v-text-field label="Code" variant="outlined" v-model="newCode" clearable
+                    <v-text-field label="Code" v-model="newCode" clearable
                         hint="Choisissez un code unique pour identifier votre exemplaire"
-                        :rules="[rules.required, rules.code]" persistent-hint maxlength="10"
-                        @input="handleCodeInput(index)"></v-text-field>
-                    <v-select label="Emplacement" variant="outlined" :items="locationItems" v-model="newLocation" clearable
-                        hint="(optionnel)" persistent-hint></v-select>
+                        :rules="[rules.required, rules.code]" persistent-hint maxlength="10" @input="handleCodeInput(index)"
+                        autofocus></v-text-field>
+                    <v-select label="Emplacement" :items="locationItems" v-model="newLocation" clearable hint="(optionnel)"
+                        persistent-hint no-data-text="Aucun emplacement"></v-select>
                 </v-form>
             </v-card-item>
             <v-card-actions>

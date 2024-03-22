@@ -1,6 +1,6 @@
 <template>
-    <ConfirmDialog v-if="isMine" v-model="confirmDeleteDialog" title="Confirmer la suppression" okText="Supprimer" cancelText="Annuler"
-        text="Voulez-vous supprimer votre commentaire ?"
+    <ConfirmDeletionDialog v-if="isMine" v-model="confirmDeleteDialog" title="Confirmer la suppression" okText="Supprimer" cancelText="Annuler"
+        text="Voulez-vous supprimer votre commentaire ?" icon="mdi-forum-remove"
         @cancel="confirmDeleteDialog = false" @ok="confirmDeletion" />
 
     <v-card class="mb-2 d-flex" variant="outlined">
@@ -24,7 +24,7 @@
 import { ref, computed, inject } from 'vue';
 import { useUserStore } from '@/store/user';
 import { deleteComment } from '@/services/BookDataService';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
 
 const props = defineProps(["comment", "bookId"]);
 const emit = defineEmits(["update"]);

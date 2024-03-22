@@ -10,12 +10,12 @@
                     Vous pouvez également indiquer son emplacement pour aider vos usagers à le trouver.
                 </p>
                 <v-form v-model="isFormValid" @submit.prevent>
-                    <v-text-field label="Code" variant="outlined" v-model="code" clearable
+                    <v-text-field label="Code" v-model="code" clearable
                         hint="Choisissez un code unique pour identifier votre exemplaire"
-                        :rules="[rules.required, rules.code]" persistent-hint maxlength="10"
-                        @input="handleCodeInput(index)"></v-text-field>
-                    <v-select label="Emplacement" variant="outlined" :items="locationItems" v-model="location" clearable
-                        hint="(optionnel)" persistent-hint></v-select>
+                        :rules="[rules.required, rules.code]" persistent-hint maxlength="10" @input="handleCodeInput(index)"
+                        autofocus></v-text-field>
+                    <v-select label="Emplacement" :items="locationItems" v-model="location" clearable hint="(optionnel)"
+                        persistent-hint no-data-text="Aucun emplacement"></v-select>
                 </v-form>
             </v-card-item>
             <v-card-actions>

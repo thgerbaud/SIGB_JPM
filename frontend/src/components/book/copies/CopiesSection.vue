@@ -5,9 +5,7 @@
     <InfoDialog v-model="deletedInfoDialog" @ok="router.push(`/${library.id}/books`)" title="Livre supprimé"
         message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
-    <section>
-        <h5 class="text-h5 mb-4">Exemplaires ({{ book.copies.length }})</h5>
-
+    <SectionTemplate :subtitle="`Exemplaires (${book.copies.length})`">
         <span class="d-flex mt-4">
             <v-table density="compact">
                 <thead>
@@ -25,14 +23,15 @@
 
         <v-btn variant="text" prepend-icon="mdi-plus" v-if="library.isAdmin" @click="addCopyModal = true">ajouter un
             exemplaire</v-btn>
-    </section>
+    </SectionTemplate>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import SectionTemplate from '@/components/utils/SectionTemplate.vue';
 import CopyRaw from '@/components/book/copies/CopyRaw.vue';
-import AddCopyModal from '@/components/book/AddCopyModal.vue';
+import AddCopyModal from '@/components/book/copies/AddCopyModal.vue';
 import InfoDialog from '@/components/utils/dialogs/InfoDialog.vue';
 
 defineProps(["book", "library"]);

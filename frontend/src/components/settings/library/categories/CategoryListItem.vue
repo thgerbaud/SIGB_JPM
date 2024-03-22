@@ -1,35 +1,24 @@
 <template>
-    <ConfirmDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="confirmDeletion" />
+    <ConfirmDeletionDialog v-model="confirmDialog" v-bind="dialogOptions" @cancel="confirmDialog = false" @ok="confirmDeletion" />
 
     <EditCategoryModal v-model="editCategoryModal" :library="library" :category="category" @cancel="closeEditModal"
         @update="(library) => { closeEditModal(); emit('update', library) }" />
 
-    <v-list-item>
-        <v-list-item-title>
-            <span :class="{ active: hover }">- {{ category.name }}</span>
-        </v-list-item-title>
-        <template #append>
-            <div @mouseover="hover = true" @mouseleave="hover = false">
-                <v-btn-secondary prepend-icon="mdi-pencil-outline" class="mr-2" density="comfortable"
-                    @click="editCategoryModal = true">Modifier</v-btn-secondary>
-                <v-btn-cancel prepend-icon="mdi-delete-outline" density="comfortable" @click="confirmDialog = true"
-                    :loading="loading">Supprimer</v-btn-cancel>
-            </div>
-        </template>
-    </v-list-item>
+    <SettingsListItem :title="category.name" :loading="loading" @edit="editCategoryModal = true"
+        @delete="confirmDialog = true" />
 </template>
 
 <script setup>
 import { ref, inject, computed } from 'vue';
-import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog.vue';
+import ConfirmDeletionDialog from '@/components/utils/dialogs/ConfirmDeletionDialog.vue';
 import EditCategoryModal from '@/components/settings/library/categories/EditCategoryModal.vue';
+import SettingsListItem from '@/components/settings/SettingsListItem.vue';
 import { deleteCategory } from '@/services/LibraryDataService';
 
 const props = defineProps(["library", "category"]);
 const emit = defineEmits(["update"]);
 const globalEmitter = inject('globalEmitter');
 
-const hover = ref(false);
 const confirmDialog = ref(false);
 const editCategoryModal = ref(false);
 const loading = ref(false);
@@ -74,9 +63,3 @@ function confirmDeletion() {
         });
 }
 </script>
-
-<style>
-.active {
-    background-color: yellow;
-}
-</style>

@@ -8,12 +8,13 @@
         @cancel="cancel" />
 
     <v-responsive max-width="800" class="ma-auto">
-        <h4 class="text-h4">{{ book.title }}</h4>
-        <h5 class="text-h5">{{ book.authors?.join(', ') }}</h5>
+        <h4 class="text-h5 text-md-h4">{{ book.title }}</h4>
+        <h5 class="text-h6 text-md-h5">{{ book.authors?.join(', ') }}</h5>
         <v-form class="my-4" v-model="isFormValid" ref="addForm" @submit.prevent="saveBook">
 
-            <v-select label="Catégories" variant="outlined" multiple clearable hint="(optionnel)" persistent-hint
-                :items="categoriesSelectItems" v-model="categories">
+            <v-select label="Catégories" multiple clearable hint="(optionnel)" persistent-hint
+                no-data-text="Aucune catégorie" :items="categoriesSelectItems" v-model="categories"
+                :density="(smAndDown) ? 'compact' : 'default'">
                 <template #item="data">
                     <v-divider v-if="data.props.depth === 0"></v-divider>
                     <v-list-item v-bind="data.props">
@@ -33,17 +34,18 @@
             </p>
 
             <v-container class="px-0">
-                <v-row v-for="(copy, index) in copies" :key="copy">
+                <v-row v-for="(copy, index) in copies" :key="copy" :dense="smAndDown">
                     <v-col class="pb-0">
-                        <v-text-field label="Code" variant="outlined" v-model="copy.code" clearable
+                        <v-text-field label="Code" v-model="copy.code" clearable
                             hint="Choisissez un code unique pour identifier votre exemplaire"
                             :rules="[rules.required, rules.code, rules.duplicates(index)]" persistent-hint maxlength="10"
-                            @input="handleCodeInput(index)"></v-text-field>
+                            @input="handleCodeInput(index)" :density="(smAndDown) ? 'compact' : 'default'"></v-text-field>
                     </v-col>
                     <v-col class="pb-0">
-                        <v-select label="Emplacement" variant="outlined"
+                        <v-select label="Emplacement"
                             :items="library.locations?.map(({ name, id }) => ({ title: name, value: id }))"
-                            v-model="copy.location" clearable hint="(optionnel)" persistent-hint></v-select>
+                            v-model="copy.location" clearable hint="(optionnel)" persistent-hint
+                            :density="(smAndDown) ? 'compact' : 'default'" no-data-text="Aucun emplacement"></v-select>
                     </v-col>
                     <v-col cols="1" class="pb-0" v-if="copies.length > 1">
                         <v-btn variant="plain" icon="mdi-close-circle" color="error" @click="removeCopy(index)"></v-btn>
@@ -52,7 +54,7 @@
                 <v-btn variant="text" prepend-icon="mdi-plus" @click="addCopy">ajouter un exemplaire</v-btn>
             </v-container>
 
-            <menu id="form-menu">
+            <menu class="form-menu flex-column flex-md-row">
                 <v-btn-secondary prepend-icon="mdi-chevron-left" @click="previous">Revenir</v-btn-secondary>
                 <v-btn-cancel @click="confirmCancelDialog = true">Annuler</v-btn-cancel>
                 <v-btn type="submit" :loading="loading" prepend-icon="mdi-check" :disabled="!isFormValid">Terminer</v-btn>
@@ -64,6 +66,7 @@
 <script setup>
 import { ref, computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify';
 import AddSuccessDialog from '@/components/library/add/AddSuccessDialog';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog';
 import { create } from '@/services/BookDataService';
@@ -72,6 +75,7 @@ const props = defineProps(["library", "book"]);
 const emit = defineEmits(["previous", "cancel"]);
 const globalEmitter = inject('globalEmitter');
 const router = useRouter();
+const { smAndDown } = useDisplay();
 
 const categories = ref([]);
 const copies = ref([{ code: "", location: null }]);

@@ -28,9 +28,9 @@
             <v-card-text>
                 <v-form v-model="isFormValid" @submit.prevent>
                     <legend>Entrez l'adresse Gmail de la personne à inviter :</legend>
-                    <v-text-field label="Adresse Gmail" variant="outlined" class="mt-4" suffix="@gmail.com" v-model="email"
+                    <v-text-field label="Adresse Gmail" class="mt-4" suffix="@gmail.com" v-model="email"
                         :rules="[rules.required, rules.isValid, rules.duplicateInUsers, rules.duplicateInAdmins, rules.length]"
-                        clearable @input="handleEmailInput" maxlength="30"></v-text-field>
+                        clearable @input="handleEmailInput" maxlength="30" autofocus></v-text-field>
                 </v-form>
             </v-card-text>
             <v-card-actions>

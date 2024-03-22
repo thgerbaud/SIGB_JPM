@@ -6,17 +6,17 @@
         </v-chip>
     </div>
     <div v-else class="py-2">
-        <p class="empty-section">Aucun emplacement...</p>
+        <p class="font-italic text-disabled">Aucun emplacement...</p>
     </div>
     <div class="d-flex justify-start">
-        <v-text-field v-model="newLocation" variant="outlined" label="Ajouter un emplacement" @keyup.enter="addLocation"
-            :rules="[rules.duplicate]" clearable hint="Ex.: ??" persistent-hint></v-text-field>
+        <v-text-field v-model="newLocation" label="Ajouter un emplacement" @keyup.enter="addLocation"
+            :rules="[rules.duplicate]" clearable hint="Ex.: Salle 102D" persistent-hint autofocus></v-text-field>
         <div class="ml-2">
             <v-btn @click="addLocation" icon="mdi-plus"
                 :disabled="!newLocation?.trim() || isDuplicate(newLocation)"></v-btn>
         </div>
     </div>
-    <div class="d-flex justify-space-between">
+    <div class="d-flex flex-column flex-md-row justify-space-between">
         <v-btn-secondary @click="prev" prepend-icon="mdi-chevron-left">Précédent</v-btn-secondary>
         <v-btn-tertiary color="error" @click="emit('cancel')">Annuler</v-btn-tertiary>
         <v-btn @click="setLocations" append-icon="mdi-chevron-right">Suivant</v-btn>
