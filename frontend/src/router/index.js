@@ -1,5 +1,4 @@
 import { createWebHistory, createRouter, RouterView, RouterLink } from "vue-router";
-//import store from "@/store";
 import { useUserStore } from '@/store/user';
 
 
@@ -27,7 +26,7 @@ export default createRouter({
 				{
 					path: "",
 					name: "login",
-					component: () => import("@/components/LoginPage")
+					component: () => import("@/pages/LoginPage")
 				}
 			]
 		},
@@ -40,12 +39,12 @@ export default createRouter({
 				{
 					path: "libraries",
 					name: "libraries",
-					component: () => import("@/components/LibrariesPage")
+					component: () => import("@/pages/LibrariesPage")
 				},
 				{
 					path: "create",
 					name: "create-library",
-					component: () => import("@/components/CreateLibrary")
+					component: () => import("@/pages/CreateLibrary")
 				}
 			]
 		},
@@ -58,22 +57,22 @@ export default createRouter({
 				{
 					path: "books",
 					name: "books",
-					component: () => import("@/components/LibraryHome")
+					component: () => import("@/pages/LibraryHome")
 				},
 				{
 					path: "books/add",
 					name: "add",
-					component: () => import("@/components/AddBookPage")
+					component: () => import("@/pages/AddBookPage")
 				},
 				{
 					path: "books/:id",
 					name: "books-details",
-					component: () => import("@/components/BookPage")
+					component: () => import("@/pages/BookPage")
 				},
 				{
 					path: "settings",
 					name: "settings",
-					component: () => import("@/components/SettingsPage")
+					component: () => import("@/pages/SettingsPage")
 				}
 			]
 		}
