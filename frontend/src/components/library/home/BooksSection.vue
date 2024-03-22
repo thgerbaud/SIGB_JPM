@@ -2,13 +2,11 @@
     <v-snackbar v-model="snackbar" timeout="5000" color="error">Les détails d'un ou plusieurs livres n'ont pas pu être
         chargés.</v-snackbar>
 
-    <v-toolbar class="bg-transparent overflow-visible my-8 my-md-0">
-        <div class="d-flex flex-column flex-md-row w-100 justify-space-between">
+    <v-toolbar class="bg-transparent my-8 my-md-0">
+        <div class="d-flex flex-column flex-md-row w-100 justify-space-between pt-2">
             <v-sheet min-width="50%" class="mb-4">
-                <v-text-field clearable label="Chercher un livre" hide-details prepend-inner-icon="mdi-magnify"
-                    density="compact" v-model="searchValue"></v-text-field>
-                <!-- <v-combobox clearable label="Chercher un livre" :items="searchingList" prepend-inner-icon="mdi-magnify"
-                    variant="outlined" density="compact" v-model="searchValue"></v-combobox> -->
+                <v-combobox clearable label="Chercher un livre" :items="searchingList" prepend-inner-icon="mdi-magnify"
+                    variant="outlined" density="compact" v-model="searchValue" hide-details></v-combobox>
             </v-sheet>
             <v-sheet min-width="25%">
                 <v-select clearable label="Trier par" :items="sortOptions" v-model="sortOption" hide-details
@@ -45,29 +43,31 @@ const books = ref([]);
 const loaded = ref(false);
 const sortOptions = [
     { title: "Titre", value: "TIT" },
+    { title: "Auteur", value: "AUT" },
     { title: "Emplacement", value: "EMP" },
     { title: "Catégorie", value: "CAT" }
 ];
 const sortOption = ref(null);
-const searchValue = ref("");
+const searchValue = ref(null);
 const errorMet = ref(false);
 const snackbar = ref(false);
 
 const filteredBooks = computed(() => {
     if (searchValue.value) {
-        return books.value.filter(book => book.details?.title.toLowerCase().includes(searchValue.value.trim().toLowerCase()));
+        return books.value.filter(book => book.searchLabel?.toLowerCase().includes(searchValue.value.trim().toLowerCase()));
     } else {
         return books.value;
     }
 });
 
-/* const searchingList = computed(() => {
-    return books.value.map(book => `${book.details?.title} - ${book.details?.authors.join(', ')}`);
-}); */
+const searchingList = computed(() => {
+    return books.value.map(book => book.searchLabel);
+});
 
 const sortedBooks = computed(() => {
     switch (sortOption.value) {
         case "TIT": return sortBooksByTitle();
+        case "AUT": return sortBooksByAuthor();
         case "EMP": return sortBooksByLocations();
         case "CAT": return sortBooksByCategories();
         default: return [{
@@ -88,6 +88,7 @@ async function loadBooks() {
             try {
                 const details = await getBookFromIsbn(book.isbn);
                 book.details = details;
+                book.searchLabel = (details) ? `${book.details?.title} - ${book.details?.authors.join(', ')}` : undefined;
             } catch (err) {
                 //TODO 429 quota dépassé
                 snackbar.value = true;
@@ -130,6 +131,34 @@ function sortBooksByTitle() {
     // tri de la liste principale par ordre alphabétique
     groups.sort((a, b) => a.title.localeCompare(b.title));
     return groups;
+}
+
+function sortBooksByAuthor() {
+    const dict = {};
+    const unknown = { title: "Inconnu", items: [] };
+    filteredBooks.value.forEach(book => {
+        if (book.details && book.details?.authors?.length > 0) {
+            book.details.authors.forEach(author => {
+                if (dict[author]) {
+                    dict[author].items.push(book);
+                } else {
+                    dict[author] = { title: author, items: [book] };
+                }
+            });
+        } else {
+            unknown.items.push(book);
+        }
+    });
+
+    const res = [];
+    for (const author in dict) {
+        res.push(dict[author]);
+    }
+    res.sort((a, b) => a.title.localeCompare(b.title));
+    if (unknown.items.length > 0) {
+        res.push(unknown);
+    }
+    return res;
 }
 
 function sortBooksByLocations() {
