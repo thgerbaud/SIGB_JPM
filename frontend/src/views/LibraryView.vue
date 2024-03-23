@@ -1,7 +1,6 @@
 <template>
 	<NavBar :library="library" v-if="library" />
 	<v-main class="ma-4 bg-background">
-		
 		<ExpiredSessionDialog v-model="expiredSessionDialog" />
 		<NotFoundDialog v-model="notFoundDialog" @ok="goBack" />
 		<AccessDeniedDialog v-model="accessDeniedDialog" @ok="goBack" />

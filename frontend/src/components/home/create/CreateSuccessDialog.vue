@@ -8,7 +8,7 @@
                 Votre bibliothèque "{{ name }}" a bien été créée ! Vous allez maintenant pouvoir y ajouter vos livres...
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="flat" class="flex-grow-1"  @click="router.push(`/${id}/books`)">Y aller</v-btn>
+                <v-btn variant="flat" class="flex-grow-1"  @click="router.push(`/${id}`)">Y aller</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

@@ -1,5 +1,5 @@
 <template>
-    <v-list-item class="bg-transparent pa-4 pa-md-6 rounded-lg" value="create" @click="router.push('/home/create')">
+    <v-list-item class="bg-transparent pa-4 pa-md-6 rounded-lg" value="create" @click="router.push('/create-library')">
         <template v-slot:prepend>
             <v-icon icon="mdi-plus"></v-icon>
         </template>

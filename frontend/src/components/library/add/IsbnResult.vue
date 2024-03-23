@@ -42,7 +42,7 @@ function cancel() {
 
 function next() {
     if( existingBook.value ) {
-        router.push(`/${props.libraryId}/books/${existingBook.value.id}`)
+        router.push(`/${props.libraryId}/${existingBook.value.id}`)
     } else {
         emit('next');
     }

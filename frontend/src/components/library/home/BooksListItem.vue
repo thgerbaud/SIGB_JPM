@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="book.details" variant="flat" class="pa-2" width="200" :to="`/${libraryId}/books/${book.id}`">
+    <v-card v-if="book.details" variant="flat" class="pa-2" width="200" :to="`/${libraryId}/${book.id}`">
         <v-img height="200" :src="book.details.image"></v-img>
         <v-card-text>
             <p class="font-weight-bold">{{ book.details.title }}</p>

@@ -192,6 +192,6 @@ function saveBook() {
 }
 
 function goToBook() {
-    router.push(`/${props.library.id}/books/${createdBook.value.id}`);
+    router.push(`/${props.library.id}/${createdBook.value.id}`);
 }
 </script>

@@ -19,34 +19,33 @@ export default createRouter({
 	routes: [
 		{
 			path: "/login",
-			alias: "/",
 			name: "login",
 			component: () => import("@/views/LoginView"),
 			children: [
 				{
 					path: "",
 					name: "login",
-					component: () => import("@/pages/LoginPage")
-				}
-			]
+					component: () => import("@/pages/LoginPage"),
+				},
+			],
 		},
 		{
-			path: "/home",
+			path: "/",
 			name: "home",
 			beforeEnter: checkAuth,
 			component: () => import("../views/HomeView"),
 			children: [
 				{
-					path: "libraries",
+					path: "",
 					name: "libraries",
-					component: () => import("@/pages/LibrariesPage")
+					component: () => import("@/pages/LibrariesPage"),
 				},
 				{
-					path: "create",
+					path: "create-library",
 					name: "create-library",
-					component: () => import("@/pages/CreateLibrary")
-				}
-			]
+					component: () => import("@/pages/CreateLibrary"),
+				},
+			],
 		},
 		{
 			path: "/:library",
@@ -55,26 +54,26 @@ export default createRouter({
 			component: () => import("@/views/LibraryView"),
 			children: [
 				{
-					path: "books",
+					path: "",
 					name: "books",
-					component: () => import("@/pages/LibraryHome")
+					component: () => import("@/pages/LibraryHome"),
 				},
 				{
-					path: "books/add",
-					name: "add",
-					component: () => import("@/pages/AddBookPage")
+					path: "add-book",
+					name: "add-book",
+					component: () => import("@/pages/AddBookPage"),
 				},
 				{
-					path: "books/:id",
-					name: "books-details",
-					component: () => import("@/pages/BookPage")
+					path: ":book",
+					name: "book-details",
+					component: () => import("@/pages/BookPage"),
 				},
 				{
 					path: "settings",
 					name: "settings",
-					component: () => import("@/pages/SettingsPage")
-				}
-			]
-		}
-	]
+					component: () => import("@/pages/SettingsPage"),
+				},
+			],
+		},
+	],
 });

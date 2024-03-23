@@ -1,7 +1,7 @@
 <template>
     <ConfirmDialog v-model="cancelDialog" title="Annuler la création"
         text="Annuler la création et quitter la page ? Les données entrées seront perdues." okText="Continuer la création"
-        @ok="cancelDialog = false" cancelText="Quitter" @cancel="router.push('/home/libraries/')" />
+        @ok="cancelDialog = false" cancelText="Quitter" @cancel="router.push('/')" />
 
     <CreateSuccessDialog v-model="successDialog" :id="id" :name="library.name" />
 

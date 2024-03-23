@@ -8,7 +8,7 @@
                 </template>
             </v-tooltip>
         </template>
-        <v-app-bar-title @click="router.push(`/${library.id}/books`)" class="cursor-pointer">{{ library.name }}</v-app-bar-title>
+        <v-app-bar-title @click="router.push(`/${library.id}`)" class="cursor-pointer">{{ library.name }}</v-app-bar-title>
         <template v-slot:append>
             <NavUserMenu :user="user" :libraryName="library.name" />
         </template>

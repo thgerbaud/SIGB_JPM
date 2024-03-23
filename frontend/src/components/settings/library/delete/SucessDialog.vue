@@ -5,10 +5,10 @@
                 <v-icon icon="mdi-check" color="primary"></v-icon>
             </template>
             <v-card-text>
-                <p>La bibliothèque a bien été supprimée, vous allez être redirigé(e) vers la liste de vos biblothèques.</p>
+                <p>La bibliothèque a bien été supprimée, vous allez être redirigé(e) vers la liste de vos bibliothèques.</p>
             </v-card-text>
             <v-card-actions>
-                <v-btn block @click="router.push('/home/libraries')">Ok</v-btn>
+                <v-btn block @click="router.push('/')">Ok</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

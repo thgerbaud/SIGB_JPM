@@ -2,7 +2,7 @@
     <AddCopyModal :library="library" :bookId="book.id" v-model="addCopyModal" @cancel="addCopyModal = false"
         @update="updateBook" />
 
-    <InfoDialog v-model="deletedInfoDialog" @ok="router.push(`/${library.id}/books`)" title="Livre supprimé"
+    <InfoDialog v-model="deletedInfoDialog" @ok="router.push(`/${library.id}`)" title="Livre supprimé"
         message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
     <SectionTemplate :subtitle="`Exemplaires (${book.copies.length})`">

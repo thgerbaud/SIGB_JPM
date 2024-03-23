@@ -42,6 +42,6 @@ const exitDialog = ref(false);
 
 function exitLibrary() {
     libraryStore.exitLibrary();
-    router.push('/home/libraries');
+    router.push('/');
 }
 </script>

@@ -29,6 +29,6 @@ function goBack() {
 }
 
 function returnHome() {
-    router.push(`/${props.library.id}/books/`);
+    router.push(`/${props.library.id}/`);
 }
 </script>

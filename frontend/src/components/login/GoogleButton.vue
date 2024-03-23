@@ -33,7 +33,7 @@ async function callback(response) {
             console.log(token); //! temp
             userStore.setToken(token);
             userStore.setUser(user);
-            router.push('/home/libraries');
+            router.push('/');
         })
         .catch(() => {
             errorDialog.value = true;

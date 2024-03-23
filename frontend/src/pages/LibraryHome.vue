@@ -1,7 +1,7 @@
 <template>
 	<SectionTemplate title="Ma bibliothèque">
 		<BooksSection :library="library" />
-		<v-btn v-if="library.isAdmin" prepend-icon="mdi-plus" @click="router.push(`/${library.id}/books/add`)"> ajouter
+		<v-btn v-if="library.isAdmin" prepend-icon="mdi-plus" @click="router.push(`/${library.id}/add-book`)"> ajouter
 			un livre</v-btn>
 	</SectionTemplate>
 </template>

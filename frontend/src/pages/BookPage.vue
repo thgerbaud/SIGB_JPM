@@ -41,7 +41,7 @@ defineProps(["library"]);
 const route = useRoute();
 const globalEmitter = inject('globalEmitter');
 
-const id = route.params.id;
+const id = route.params.book;
 const book = ref(null);
 const loaded = ref(false);
 const errorMet = ref(false);

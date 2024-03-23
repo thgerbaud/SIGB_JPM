@@ -23,6 +23,6 @@ const router = useRouter();
 
 function logout() {
     userStore.logout();
-    router.push('/');
+    router.push('/login');
 }
 </script>

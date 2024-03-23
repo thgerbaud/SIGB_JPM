@@ -1,5 +1,5 @@
 <template>
-    <InfoDialog v-model="infoDialog" @ok="router.push(`/${library.id}/books`)" title="Livre supprimé"
+    <InfoDialog v-model="infoDialog" @ok="router.push(`/${library.id}`)" title="Livre supprimé"
         message="Votre livre a bien été supprimé, vous allez être redirigé vers la page d'accueil de la bibliothèque." />
 
     <EditBookModal :book="book" :library="library" v-model="editBookModal" @cancel="editBookModal = false"

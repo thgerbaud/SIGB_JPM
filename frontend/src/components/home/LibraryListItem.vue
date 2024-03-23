@@ -24,6 +24,6 @@ const libraryStore = useLibraryStore();
 
 function goToLibrary() {
     libraryStore.setLibrary(props.library);
-    router.push(`/${props.library.id}/books`);
+    router.push(`/${props.library.id}`);
 }
 </script>
