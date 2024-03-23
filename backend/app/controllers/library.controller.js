@@ -562,6 +562,7 @@ exports.delete = async (req, res) => {
 	try {
 		const library = req.library;
 		await library.deleteOne();
+		await Book.deleteMany({ library: library._id });
 		return res.sendStatus(204);
 
 	} catch (err) {
