@@ -1,12 +1,12 @@
 <template>
 	<NavBar :library="library" v-if="library" />
 	<v-main class="ma-4 bg-background">
-		<!-- global dialogs -->
+		
 		<ExpiredSessionDialog v-model="expiredSessionDialog" />
-		<NotFoundDialog v-model="notFoundDialog" @ok="notFoundDialog = false" /> <!--? redirection ?-->
-		<AccessDeniedDialog v-model="accessDeniedDialog" @ok="accessDeniedDialog = false" /> <!--? redirection ?-->
+		<NotFoundDialog v-model="notFoundDialog" @ok="goBack" />
+		<AccessDeniedDialog v-model="accessDeniedDialog" @ok="goBack" />
 		<ErrorDialog v-model="errorDialog" :message="errorMessage" @close="errorDialog = false" />
-		<!-- view -->
+		
 		<router-view :library="library" v-if="library"></router-view>
 	</v-main>
 </template>
@@ -21,6 +21,7 @@ import NotFoundDialog from '@/components/utils/dialogs/NotFoundDialog.vue';
 import AccessDeniedDialog from '@/components/utils/dialogs/AccessDeniedDialog.vue';
 import ErrorDialog from '@/components/utils/dialogs/ErrorDialog.vue';
 import { getLibrary } from '@/services/LibraryDataService';
+import router from '@/router';
 
 const libraryStore = useLibraryStore();
 const route = useRoute();
@@ -33,6 +34,10 @@ const errorDialog = ref(false);
 const errorMessage = ref("Oups! Une erreur s'est produite...");
 
 const library = computed(() => libraryStore.library);
+
+function goBack() {
+	router.back();
+}
 
 async function retrieveLibrary() {
 	if (library?.id !== route.params.library) {
