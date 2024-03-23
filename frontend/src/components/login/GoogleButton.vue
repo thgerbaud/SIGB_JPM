@@ -3,7 +3,7 @@
         message="Une erreur s'est produite lors de l'authentification avec Google. Veuillez réessayer plus tard." />
 
     <GoogleLogin :callback="callback">
-        <button id="login-btn" class="px-md-8 py-sm-4 rounded-pill d-flex align-center bg-white">
+        <button id="login-btn" class="px-4 px-md-8 py-2 py-sm-4 rounded-pill d-flex align-center bg-white">
             <img id="google-logo" src="@/assets/google.svg" alt="Google logo" class="mr-2" />
             <legend id="btn-legend">Se connecter avec Google</legend>
         </button>

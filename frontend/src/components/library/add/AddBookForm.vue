@@ -67,6 +67,7 @@
 import { ref, computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
+import { useLibraryStore } from '@/store/library';
 import AddSuccessDialog from '@/components/library/add/AddSuccessDialog';
 import ConfirmDialog from '@/components/utils/dialogs/ConfirmDialog';
 import { create } from '@/services/BookDataService';
@@ -75,6 +76,7 @@ const props = defineProps(["library", "book"]);
 const emit = defineEmits(["previous", "cancel"]);
 const globalEmitter = inject('globalEmitter');
 const router = useRouter();
+const libraryStore = useLibraryStore();
 const { smAndDown } = useDisplay();
 
 const categories = ref([]);
@@ -165,6 +167,7 @@ function saveBook() {
     create(payload)
         .then(response => {
             createdBook.value = response;
+            libraryStore.addBook(response);
             addSuccessDialog.value = true;
         })
         .catch(err => {

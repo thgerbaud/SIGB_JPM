@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref, computed, inject } from 'vue';
+import { useLibraryStore } from '@/store/library';
 import BooksList from '@/components/library/home/BooksList.vue';
 import { getBooks } from '@/services/LibraryDataService';
 import { getBookFromIsbn } from '@/services/GoogleBookService';
@@ -38,6 +39,7 @@ import flattenCategories from '@/utils/flattenCategories';
 
 const props = defineProps(["library"]);
 const globalEmitter = inject('globalEmitter');
+const libraryStore = useLibraryStore();
 
 const books = ref([]);
 const loaded = ref(false);
@@ -84,6 +86,7 @@ const flattenedCategories = computed(() => {
 async function loadBooks() {
     try {
         books.value = await getBooks(props.library.id) ?? [];
+        libraryStore.setBooks(books.value);
         books.value.forEach(async (book) => {
             try {
                 const details = await getBookFromIsbn(book.isbn);

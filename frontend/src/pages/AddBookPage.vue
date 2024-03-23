@@ -2,7 +2,8 @@
     <SectionTemplate title="Ajouter un livre">
         <SearchIsbn v-if="!bookFound" @cancel="returnHome" @found="(datas) => bookFound = datas" />
 
-        <IsbnResult v-else-if="!addBook" :book="bookFound" @previous="goBack" @cancel="returnHome" @next="addBook = true" />
+        <IsbnResult v-else-if="!addBook" :library-id="library.id" :book="bookFound" @previous="goBack" @cancel="returnHome"
+            @next="addBook = true" />
 
         <AddBookForm v-else :library="library" :book="bookFound" @previous="goBack" @cancel="returnHome" />
     </SectionTemplate>

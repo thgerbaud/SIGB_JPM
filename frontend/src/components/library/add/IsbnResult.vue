@@ -9,7 +9,8 @@
                 <p class="text-justify my-4">{{ book.description }}</p>
             </div>
         </div>
-
+        <v-alert v-if="existingBook" type="info" variant="tonal" color="primary" density="compact" class="mb-4"
+            text="Ce livre est déjà présent dans votre bibliothèque. Vous allez être redirigé vers la page du livre."></v-alert>
         <menu class="form-menu flex-column flex-md-row">
             <v-btn-secondary prepend-icon="mdi-chevron-left" @click="previous">Revenir</v-btn-secondary>
             <v-btn-cancel @click="cancel">Annuler</v-btn-cancel>
@@ -19,8 +20,17 @@
 </template>
 
 <script setup>
-defineProps(["book"]);
+import { computed } from 'vue';
+import { useLibraryStore } from '@/store/library';
+import router from '@/router';
+
+const props = defineProps(["book", "libraryId"]);
 const emit = defineEmits(["previous", "next", "cancel"]);
+const libraryStore = useLibraryStore();
+
+const existingBook = computed(() => {
+    return libraryStore.books.find(item => item.isbn === props.book.isbn);
+});
 
 function previous() {
     emit('previous');
@@ -31,6 +41,10 @@ function cancel() {
 }
 
 function next() {
-    emit('next');
+    if( existingBook.value ) {
+        router.push(`/${props.libraryId}/books/${existingBook.value.id}`)
+    } else {
+        emit('next');
+    }
 }
 </script>
